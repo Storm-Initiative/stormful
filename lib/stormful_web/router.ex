@@ -68,6 +68,8 @@ defmodule StormfulWeb.Router do
       on_mount: [{StormfulWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      live "/thoughts", Thoughts.IndexLive
     end
   end
 
