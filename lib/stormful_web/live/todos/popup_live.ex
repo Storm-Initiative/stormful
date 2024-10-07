@@ -7,7 +7,9 @@ defmodule StormfulWeb.Todos.PopupLive do
   @impl true
   def mount(socket) do
     {:ok,
-     socket |> assign(open: false) |> stream(:todos, TaskManagement.list_todos(), reset: true)}
+     socket
+     |> assign(open: false)
+     |> stream(:todos, TaskManagement.list_todos(socket.assigns.current_user), reset: true)}
   end
 
   @impl true

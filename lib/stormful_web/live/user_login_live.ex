@@ -3,7 +3,7 @@ defmodule StormfulWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm text-white">
       <.header class="text-center">
         Log in to account
         <:subtitle>
@@ -20,13 +20,18 @@ defmodule StormfulWeb.UserLoginLive do
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
-          <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
+          <.input
+            class="text-white"
+            field={@form[:remember_me]}
+            type="checkbox"
+            label="Keep me logged in"
+          />
+          <.link href={~p"/users/reset_password"} class="text-sm font-semibold text-white">
             Forgot your password?
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full">
+          <.button phx-disable-with="Logging in..." class="w-full bg-zinc-600">
             Log in <span aria-hidden="true">→</span>
           </.button>
         </:actions>

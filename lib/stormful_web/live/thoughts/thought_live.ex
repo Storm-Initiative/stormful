@@ -11,16 +11,16 @@ defmodule StormfulWeb.Thoughts.ThoughtLive do
         <%= @thought.words %>
       </div>
       <div class="flex gap-2">
-        <.mini_button
-          title="Create a todo from this"
-          phx-click="create-todo-from-me"
-          phx-value-id={@thought.id}
-        >
-          <.icon name="hero-exclamation-circle" />
-        </.mini_button>
-        <.mini_button title="Archive">
-          <.icon name="hero-archive-box-arrow-down" />
-        </.mini_button>
+        <!-- <.mini_button -->
+        <!--   title="Create a todo from this" -->
+        <!--   phx-click="create-todo-from-me" -->
+        <!--   phx-value-id={@thought.id} -->
+        <!-- > -->
+        <!--   <.icon name="hero-exclamation-circle" /> -->
+        <!-- </.mini_button> -->
+        <!-- <.mini_button title="Archive"> -->
+        <!--   <.icon name="hero-archive-box-arrow-down" /> -->
+        <!-- </.mini_button> -->
       </div>
     </div>
     """

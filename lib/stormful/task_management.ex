@@ -4,7 +4,7 @@ defmodule Stormful.TaskManagement do
   """
 
   import Ecto.Query, warn: false
-  alias Stormful.Brainstorming
+  # alias Stormful.Brainstorming
   alias Stormful.Repo
 
   alias Stormful.TaskManagement.Todo
@@ -18,8 +18,8 @@ defmodule Stormful.TaskManagement do
       [%Todo{}, ...]
 
   """
-  def list_todos do
-    Repo.all(Todo)
+  def list_todos(user) do
+    Repo.all(from t in Todo, where: t.user_id == ^user.id)
   end
 
   @doc """
@@ -115,10 +115,11 @@ defmodule Stormful.TaskManagement do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_todo_from_thought(thought_id) do
-    thought = Brainstorming.get_thought!(thought_id)
+  def create_todo_from_thought(_thought_id) do
+    # we do not create todo now
+    # thought = Brainstorming.get_thought!(thought_id)
 
-    create_todo(%{title: thought.words, loose_thought_link: thought.id})
+    # create_todo(%{title: thought.words, loose_thought_link: thought.id})
   end
 
   @doc """
@@ -133,7 +134,7 @@ defmodule Stormful.TaskManagement do
       {:error, %Ecto.Changeset{}}
 
   """
-  def complete_todo(todo) do
-    update_todo(todo, %{completed_at: DateTime.to_naive(DateTime.now("Etc/UTC"))})
+  def complete_todo(_todo) do
+    # update_todo(todo, %{completed_at: DateTime.to_naive(DateTime.now("Etc/UTC"))})
   end
 end

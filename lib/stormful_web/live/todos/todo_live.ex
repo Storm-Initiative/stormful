@@ -1,6 +1,5 @@
 defmodule StormfulWeb.Todos.TodoLive do
   alias Stormful.TaskManagement.Todo
-  alias StormfulWeb.Todos
   use StormfulWeb, :live_view
 
   attr(:todo, Todo, required: true)

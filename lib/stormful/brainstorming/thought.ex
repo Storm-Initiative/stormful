@@ -1,4 +1,6 @@
 defmodule Stormful.Brainstorming.Thought do
+  alias Stormful.Accounts.User
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -34,6 +36,7 @@ defmodule Stormful.Brainstorming.Thought do
     field :words, :string
     field :archived, :boolean
     field :bg_color, :string
+    belongs_to :user, User
 
     timestamps(type: :utc_datetime)
   end
@@ -41,7 +44,7 @@ defmodule Stormful.Brainstorming.Thought do
   @doc false
   def changeset(thought, attrs) do
     thought
-    |> cast(attrs, [:words, :bg_color])
+    |> cast(attrs, [:words, :bg_color, :user_id])
     |> validate_required([:words])
     |> validate_inclusion(:bg_color, colors())
   end

@@ -17,8 +17,12 @@ defmodule Stormful.Brainstorming do
       [%Thought{}, ...]
 
   """
-  def list_thoughts do
-    Repo.all(from t in Thought, where: t.archived == false, order_by: [desc: t.inserted_at])
+  def list_thoughts(user) do
+    Repo.all(
+      from t in Thought,
+        where: t.archived == false and t.user_id == ^user.id,
+        order_by: [desc: t.inserted_at]
+    )
   end
 
   # TODO: we can implement "load on scroll here, you know to not ddos ourselves or something"
@@ -31,8 +35,8 @@ defmodule Stormful.Brainstorming do
       [%Thought{}, ...]
 
   """
-  def list_archived_included_thoughts do
-    Repo.all(from t in Thought, order_by: [desc: t.inserted_at])
+  def list_archived_included_thoughts(user) do
+    Repo.all(from t in Thought, where: t.user_id == ^user.id, order_by: [desc: t.inserted_at])
   end
 
   @doc """
@@ -49,7 +53,8 @@ defmodule Stormful.Brainstorming do
       ** (Ecto.NoResultsError)
 
   """
-  def get_thought!(id), do: Repo.get!(Thought, id)
+  def get_thought!(id, user),
+    do: Repo.one!(from t in Thought, where: t.user_ud == ^user.id and t.id == ^id)
 
   @doc """
   Creates a thought.

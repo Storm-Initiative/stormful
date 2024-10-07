@@ -1,4 +1,6 @@
 defmodule Stormful.TaskManagement.Todo do
+  alias Stormful.Accounts.User
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,6 +9,7 @@ defmodule Stormful.TaskManagement.Todo do
     field :title, :string
     field :completed_at, :naive_datetime
     field :loose_thought_link, :integer
+    belongs_to :user, User
 
     timestamps(type: :utc_datetime)
   end

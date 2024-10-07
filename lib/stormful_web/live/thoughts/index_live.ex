@@ -10,12 +10,13 @@ defmodule StormfulWeb.Thoughts.IndexLive do
     {:ok,
      socket
      |> assign(:todo_modal_open, false)
+     |> assign(:new_board_form_on, false)
      |> assign(:hide_mode, true)
      |> assign_clear_thought_form()}
   end
 
   defp stream_thoughts(socket) do
-    thoughts = Brainstorming.list_thoughts()
+    thoughts = Brainstorming.list_thoughts(socket.assigns.current_user)
 
     socket |> stream(:thoughts, thoughts, reset: true)
   end
@@ -36,21 +37,28 @@ defmodule StormfulWeb.Thoughts.IndexLive do
          socket
          |> put_flash(:info, "Archived #{archived_amount} thoughts")
          |> assign_clear_thought_form()
-         |> stream(:thoughts, Brainstorming.list_thoughts(), reset: true)}
+         |> stream(:thoughts, Brainstorming.list_thoughts(socket.assigns.current_user),
+           reset: true
+         )}
 
       "load archives" ->
         {:noreply,
          socket
          |> put_flash(:info, "Loaded the archives")
          |> assign_clear_thought_form()
-         |> stream(:thoughts, Brainstorming.list_archived_included_thoughts(), reset: true)}
+         |> stream(
+           :thoughts,
+           Brainstorming.list_archived_included_thoughts(socket.assigns.current_user),
+           reset: true
+         )}
 
-      "todos" ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Loading the todos")
-         |> assign(:todo_modal_open, true)
-         |> assign_clear_thought_form()}
+      # TODO: open this up when this beauty is ready, now its a mess
+      # "todos" ->
+      #   {:noreply,
+      #    socket
+      #    |> put_flash(:info, "Loading the todos")
+      #    |> assign(:todo_modal_open, true)
+      #    |> assign_clear_thought_form()}
 
       "close" ->
         {:noreply,
@@ -74,8 +82,20 @@ defmodule StormfulWeb.Thoughts.IndexLive do
          |> assign_clear_thought_form()
          |> stream_thoughts()}
 
+      "new board" ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Create a new board")
+         |> assign(:new_board_form_on, true)
+         |> assign_clear_thought_form()
+         |> stream_thoughts()}
+
       _ ->
-        case Brainstorming.create_thought(%{words: words, bg_color: socket.assigns.submit_color}) do
+        case Brainstorming.create_thought(%{
+               words: words,
+               bg_color: socket.assigns.submit_color,
+               user_id: socket.assigns.current_user.id
+             }) do
           {:ok, thought} ->
             if socket.assigns.hide_mode do
               {:noreply,
