@@ -22,7 +22,7 @@ import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import Hooks from "./hooks"
-import Alpine from 'alpinejs'
+import 'alpinejs'
 window.Alpine = Alpine
 
 Alpine.start()
