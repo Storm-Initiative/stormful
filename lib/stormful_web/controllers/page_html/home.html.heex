@@ -4,55 +4,50 @@
   <h1 class="text-4xl underline font-bold">
     Stormful
   </h1>
-  <div class="flex flex-col items-center">
-    <p class="inline-block mt-16">
-      <h1 class="text-3xl underline font-extrabold px-32">
-        Into the storm!
-      </h1>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 20" className="w-full h-4">
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <path
-          d="M0,10 L10,3 L20,17 L30,7 L40,13 L50,3 L60,17 L70,7 L80,13 L90,3 L100,17 
-             L110,7 L120,13 L130,3 L140,17 L150,7 L160,13 L170,3 L180,17 L190,7 L200,10"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter="url(#glow)"
-        />
-        <path
-          d="M0,10 L7,5 L14,15 L21,8 L28,12 L35,5 L42,15 L49,8 L56,12 L63,5 L70,15 
-             L77,8 L84,12 L91,5 L98,15 L105,8 L112,12 L119,5 L126,15 L133,8 L140,12 
-             L147,5 L154,15 L161,8 L168,12 L175,5 L182,15 L189,8 L196,12 L200,10"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.6"
-        />
-      </svg>
-    </p>
-  </div>
+  <div class="grid grid-cols-2 self-start p-16 grow justify-around w-full">
+    <div class="flex flex-col items-center">
+      <p class="flex flex-col items-center">
+        <h1 class="text-3xl font-extrabold px-16">
+          Into the storm! <.animated_lightning_svg />
+        </h1>
+      </p>
+      <div class="flex flex-col gap-2">
+        <p>
+          Welcome, to the heart of the storm!
+        </p>
+        <p>
+          Let your thoughts flow freely, talk to yourself.
+        </p>
+        <p>
+          This part of the site does not look well so that the insides may be better (:
+        </p>
+      </div>
+    </div>
 
-  <div class="flex flex-col gap-2">
-    <p>
-      Welcome, to the heart of the storm!
-    </p>
-    <p>
-      Let your thoughts flow freely, talk to yourself.
-    </p>
-    <p>
-      This part of the site does not look well so that the insides may be better (:
-    </p>
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <p class="font-bold text-xl underline">
+          What's this?
+        </p>
+        <p class="text-wrap w-full">
+          Stormful is a fully open source software that aims to provide a brand new noting experience. It needs to be as fast as you think, and it needs to be so simple that you wouldn't feel like you're commiting anything while doing this. In other words, you store your thoughts here, and it'll make sure to not get in your way!
+        </p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <p class="font-bold text-xl underline">
+          Wanna get involved?
+        </p>
+        <p class="text-wrap w-full">
+          You may help the project with your valuable contributions through the
+          <a
+            target="_blank"
+            href="https://github.com/spookyorange/stormful"
+            class="underline font-semibold text-black"
+          >
+            official Stormful GitHub repository
+          </a>
+        </p>
+      </div>
+    </div>
   </div>
 </div>

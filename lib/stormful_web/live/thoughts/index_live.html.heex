@@ -7,25 +7,6 @@
 </h2>
 
 <.form for={@thought_form} phx-submit="create-thought" phx-change="change-thought">
-  <div
-    x-data="{showInfo: false, wordsElement: document.querySelector('#thought_words')}"
-    x-init="setTimeout(() => {
-    wordsElement.focus();
-    showInfo = true;
-    setTimeout(() => {showInfo = false}, 2000)
-    }, 100)"
-  >
-    <div class="py-6 text-green-400 flex flex-col justify-center relative">
-      <div
-        class="w-full flex flex-col justify-center items-center absolute top-0 left-0 animate-flash"
-        x-show="showInfo"
-        x-transition
-      >
-        Focused automatically for you (:
-        <p class="justify-self-center"><.icon name="hero-arrow-down" /></p>
-      </div>
-    </div>
-  </div>
   <.input type="message_area" field={@thought_form[:words]} />
   <div class="flex w-full justify-center">
     <.button class={["mt-4 px-6", @submit_color]}>Save[enter]</.button>

@@ -733,4 +733,102 @@ defmodule StormfulWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  def basic_lightning_svg(assigns) do
+    ~H"""
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 20" className="w-full h-4">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <path
+        d="M0,10 L10,3 L20,17 L30,7 L40,13 L50,3 L60,17 L70,7 L80,13 L90,3 L100,17 
+             L110,7 L120,13 L130,3 L140,17 L150,7 L160,13 L170,3 L180,17 L190,7 L200,10"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        filter="url(#glow)"
+      />
+      <path
+        d="M0,10 L7,5 L14,15 L21,8 L28,12 L35,5 L42,15 L49,8 L56,12 L63,5 L70,15 
+             L77,8 L84,12 L91,5 L98,15 L105,8 L112,12 L119,5 L126,15 L133,8 L140,12 
+             L147,5 L154,15 L161,8 L168,12 L175,5 L182,15 L189,8 L196,12 L200,10"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.6"
+      />
+    </svg>
+    """
+  end
+
+  def animated_lightning_svg(assigns) do
+    ~H"""
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 30" className="w-full h-8">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <g>
+        <path
+          d="M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 
+         L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          filter="url(#glow)"
+        >
+          <animate
+            attributeName="d"
+            dur="0.4s"
+            repeatCount="indefinite"
+            values="
+          M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15;
+          M0,15 L10,25 L20,5 L30,20 L40,10 L50,27 L60,2 L70,22 L80,7 L90,17 L100,12 L110,30 L120,0 L130,25 L140,15 L150,5 L160,20 L170,10 L180,27 L190,17 L200,15;
+          M0,15 L10,20 L20,10 L30,25 L40,5 L50,22 L60,12 L70,27 L80,2 L90,17 L100,7 L110,20 L120,15 L130,30 L140,0 L150,25 L160,10 L170,20 L180,12 L190,22 L200,15;
+          M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15"
+          />
+        </path>
+        <path
+          d="M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 
+         L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 
+         L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.6"
+        >
+          <animate
+            attributeName="d"
+            dur="0.3s"
+            repeatCount="indefinite"
+            values="
+          M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15;
+          M0,15 L7,22 L14,7 L21,17 L28,12 L35,25 L42,5 L49,20 L56,10 L63,27 L70,2 L77,17 L84,12 L91,22 L98,7 L105,20 L112,15 L119,30 L126,0 L133,25 L140,10 L147,20 L154,15 L161,5 L168,25 L175,12 L182,22 L189,17 L196,7 L200,15;
+          M0,15 L7,17 L14,12 L21,22 L28,7 L35,20 L42,10 L49,25 L56,5 L63,17 L70,12 L77,27 L84,2 L91,20 L98,15 L105,30 L112,0 L119,22 L126,7 L133,17 L140,12 L147,25 L154,10 L161,15 L168,20 L175,5 L182,27 L189,12 L196,17 L200,15;
+          M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15"
+          />
+        </path>
+      </g>
+    </svg>
+    """
+  end
 end
