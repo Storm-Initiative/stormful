@@ -1,5 +1,6 @@
 defmodule StormfulWeb.UserConfirmationLive do
   use StormfulWeb, :live_view
+  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
 
@@ -55,4 +56,6 @@ defmodule StormfulWeb.UserConfirmationLive do
         end
     end
   end
+
+  use StormfulWeb.BaseUtil.KeyboardSupport
 end

@@ -1,5 +1,6 @@
 defmodule StormfulWeb.UserConfirmationInstructionsLive do
   use StormfulWeb, :live_view
+  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
 
@@ -48,4 +49,6 @@ defmodule StormfulWeb.UserConfirmationInstructionsLive do
      |> put_flash(:info, info)
      |> redirect(to: ~p"/")}
   end
+
+  use StormfulWeb.BaseUtil.KeyboardSupport
 end

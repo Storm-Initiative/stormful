@@ -1,6 +1,7 @@
 defmodule StormfulWeb.Thoughts.IndexLive do
   alias Stormful.TaskManagement
   use StormfulWeb, :live_view
+  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Brainstorming
   alias Stormful.Brainstorming.Thought
@@ -12,6 +13,7 @@ defmodule StormfulWeb.Thoughts.IndexLive do
      |> assign(:todo_modal_open, false)
      |> assign(:new_board_form_on, false)
      |> assign(:hide_mode, true)
+     |> assign_controlful()
      |> assign_clear_thought_form()}
   end
 
@@ -144,4 +146,6 @@ defmodule StormfulWeb.Thoughts.IndexLive do
   defp assign_clear_thought_form(socket) do
     socket |> assign_thought_form(Brainstorming.change_thought(%Thought{}))
   end
+
+  use StormfulWeb.BaseUtil.KeyboardSupport
 end

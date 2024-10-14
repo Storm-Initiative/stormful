@@ -1,5 +1,6 @@
 defmodule StormfulWeb.UserSettingsLive do
   use StormfulWeb, :live_view
+  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
 
@@ -164,4 +165,6 @@ defmodule StormfulWeb.UserSettingsLive do
         {:noreply, assign(socket, password_form: to_form(changeset))}
     end
   end
+
+  use StormfulWeb.BaseUtil.KeyboardSupport
 end

@@ -85,6 +85,7 @@ defmodule StormfulWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import StormfulWeb.CoreComponents
+      import StormfulWeb.Keyboarder
       import StormfulWeb.Gettext
 
       # Shortcut for generating JS commands

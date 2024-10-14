@@ -1,5 +1,6 @@
 defmodule StormfulWeb.UserLoginLive do
   use StormfulWeb, :live_view
+  use StormfulWeb.BaseUtil.Controlful
 
   def render(assigns) do
     ~H"""
@@ -45,4 +46,6 @@ defmodule StormfulWeb.UserLoginLive do
     form = to_form(%{"email" => email}, as: "user")
     {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
+
+  use StormfulWeb.BaseUtil.KeyboardSupport
 end
