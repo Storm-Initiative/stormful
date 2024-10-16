@@ -1,5 +1,6 @@
 defmodule StormfulWeb.Keyboarder do
   use Phoenix.Component
+  import StormfulWeb.CoreComponents
 
   attr :controlful, :boolean, required: true
   attr :keyboarder, :boolean, required: true
@@ -9,9 +10,9 @@ defmodule StormfulWeb.Keyboarder do
     <div
       inert
       class={[
-        "fixed hidden flex-col lg:flex gap-2 lg:items-center w-full max-w-2xl top-4 bg-zinc-800/50 text-white px-8 py-4 text-xl z-[51] opacity-50",
+        "fixed hidden flex-col lg:flex gap-2 lg:items-center w-full max-w-2xl top-0 bg-zinc-800/50 text-white px-8 py-0 text-xl z-[51] opacity-50",
         @controlful && "opacity-75",
-        @keyboarder && "opacity-90"
+        @keyboarder && "opacity-95 bg-inherit"
       ]}
       phx-window-keydown="keydown"
       phx-window-keyup="keyup"
@@ -20,12 +21,25 @@ defmodule StormfulWeb.Keyboarder do
         <p>
           <%= case {@controlful, @keyboarder} do %>
             <% {false, false} -> %>
-              To activate Keyboarder, press CTRL twice!
+              <p class="py-4">
+                To activate Keyboarder, press CTRL twice!
+              </p>
             <% {true, false} -> %>
-              Press CTRL once more to activate Keyboarder!
+              <p class="py-4">
+                Press CTRL once more to activate Keyboarder!
+              </p>
             <% {_, true} -> %>
-              Keyboarder is active!
-              Press ESC or CTRL to cancel Keyboarder
+              <div class="relative w-screen h-screen" inert>
+                <div class="bg-indigo-900 absolute flex w-full h-full pt-8 flex-col items-center gap-4">
+                  <p class="font-bold text-2xl underline">
+                    Keyboarder is active!
+                    Press ESC or CTRL to cancel Keyboarder
+                  </p>
+                  <div class="underline extrabold">
+                    Current context related shortcuts <.icon name="hero-arrow-turn-right-down" />
+                  </div>
+                </div>
+              </div>
             <% {nil, nil} -> %>
               To activate Keyboarder, press CTRL twice!
           <% end %>
