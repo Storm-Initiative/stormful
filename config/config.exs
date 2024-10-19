@@ -64,9 +64,3 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
-
-config :stormful, Sample.Mailer,
-  adapter: Swoosh.Adapters.AmazonSES,
-  region: System.get_env("AWS_REGION"),
-  access_key: System.get_env("AWS_ACCESS_KEY"),
-  secret: System.get_env("AWS_SECRET")

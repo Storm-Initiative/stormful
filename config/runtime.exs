@@ -50,6 +50,7 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "example.com"
   port = String.to_integer(System.get_env("PORT") || "4000")
+  email_from = System.get_env("EMAIL_FROM")
 
   config :stormful, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -63,7 +64,8 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    secret_key_base: secret_key_base
+    secret_key_base: secret_key_base,
+    email_from: email_from
 
   # ## SSL Support
   #
@@ -114,4 +116,9 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+  config :stormful, Stormful.Mailer,
+    adapter: Swoosh.Adapters.AmazonSES,
+    region: System.get_env("AWS_REGION"),
+    access_key: System.get_env("AWS_ACCESS_KEY"),
+    secret: System.get_env("AWS_SECRET")
 end

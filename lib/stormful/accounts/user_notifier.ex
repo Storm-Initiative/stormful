@@ -8,7 +8,7 @@ defmodule Stormful.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Stormful", "contact@example.com"})
+      |> from({"Stormful", StormfulWeb.Endpoint.config(:email_from)})
       |> subject(subject)
       |> text_body(body)
 
