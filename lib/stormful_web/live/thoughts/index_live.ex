@@ -33,7 +33,7 @@ defmodule StormfulWeb.Thoughts.IndexLive do
          |> assign_clear_thought_form()}
 
       "clear" ->
-        {archived_amount, _} = Brainstorming.archive_all()
+        {archived_amount, _} = Brainstorming.archive_all(socket.assigns.current_user)
 
         {:noreply,
          socket

@@ -128,9 +128,12 @@ defmodule Stormful.Brainstorming do
       iex> archive_all()
       {no_of_changed, nil}
   """
-  def archive_all do
+  def archive_all(user) do
     Repo.update_all(
-      from(t in Thought, where: t.archived != ^true, update: [set: [archived: true]]),
+      from(t in Thought,
+        where: t.archived != ^true and t.user_ud == ^user.id,
+        update: [set: [archived: true]]
+      ),
       []
     )
   end
