@@ -131,7 +131,7 @@ defmodule Stormful.Brainstorming do
   def archive_all(user) do
     Repo.update_all(
       from(t in Thought,
-        where: t.archived != ^true and t.user_ud == ^user.id,
+        where: t.archived != ^true and t.user_id == ^user.id,
         update: [set: [archived: true]]
       ),
       []
