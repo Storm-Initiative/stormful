@@ -52,6 +52,7 @@ defmodule StormfulWeb.UserRegistrationLive do
       socket
       |> assign(trigger_submit: false, check_errors: false)
       |> assign_form(changeset)
+      |> assign_controlful()
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end
