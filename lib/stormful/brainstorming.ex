@@ -54,7 +54,7 @@ defmodule Stormful.Brainstorming do
 
   """
   def get_thought!(id, user),
-    do: Repo.one!(from t in Thought, where: t.user_ud == ^user.id and t.id == ^id)
+    do: Repo.one!(from t in Thought, where: t.user_id == ^user.id and t.id == ^id)
 
   @doc """
   Creates a thought.
