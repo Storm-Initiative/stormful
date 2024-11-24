@@ -70,6 +70,9 @@ defmodule StormfulWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
       live "/thoughts", Thoughts.IndexLive
+
+      live "/sensicality/begin", Sensicality.BeginLive
+      live "/sensicality/:sensical_id", Sensicality.TheSensicalLive
     end
   end
 

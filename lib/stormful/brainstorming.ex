@@ -137,4 +137,19 @@ defmodule Stormful.Brainstorming do
       []
     )
   end
+
+  @doc """
+  Returns the list of thoughts that belong to the sensical, ordered in a from oldest to newest fashion
+
+  ## Examples
+
+      iex> list_thoughts_for_a_sensical(sensical_id)
+      [%Thought{}, ...]
+
+  """
+  def list_thoughts_for_a_sensical(sensical_id) do
+    Repo.all(
+      from t in Thought, where: t.sensical_id == ^sensical_id, order_by: [asc: :inserted_at]
+    )
+  end
 end

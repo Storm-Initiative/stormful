@@ -237,7 +237,7 @@ defmodule StormfulWeb.CoreComponents do
       type={@type}
       class={[
         "phx-submit-loading:opacity-75 rounded-lg hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "text-sm font-semibold leading-6 active:text-white/80",
         @class
       ]}
       {@rest}

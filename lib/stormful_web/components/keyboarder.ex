@@ -10,8 +10,8 @@ defmodule StormfulWeb.Keyboarder do
     <div
       inert
       class={[
-        "fixed hidden flex-col lg:flex gap-2 lg:items-center w-full max-w-2xl top-0 bg-zinc-800/50 text-white px-8 py-0 text-xl z-[51] opacity-50",
-        @controlful && "opacity-75",
+        "fixed hidden flex-col lg:flex gap-2 lg:items-center w-full max-w-2xl top-0 bg-black text-white px-8 py-0 text-xl z-[51] opacity-0",
+        @controlful && "opacity-90",
         @keyboarder && "opacity-95 bg-inherit"
       ]}
       phx-window-keydown="keydown"

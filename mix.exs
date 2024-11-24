@@ -59,7 +59,8 @@ defmodule Stormful.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:gen_smtp, "~> 1.0"}
+      {:gen_smtp, "~> 1.0"},
+      {:req, "~> 0.5.7"}
     ]
   end
 

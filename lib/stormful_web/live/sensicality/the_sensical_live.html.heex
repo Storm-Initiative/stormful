@@ -1,0 +1,45 @@
+<div class="flex flex-col items-center justify-center">
+  <span class="text-lg font-semibold">This is</span>
+  <div class="flex items-center">
+    <span class="text-2xl font-bold underline"><%= @sensical.title %></span>
+    <span>
+      &nbsp;
+      <a href={~p'/sensicality/#{@sensical.id}'}><.icon name="hero-link" class="h-5 w-5" /></a>
+    </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-2 mt-4 divide-x-2">
+  <div class="p-4">
+    <p class="flex justify-center text-lg underline">
+      Drop your thoughts here!
+    </p>
+
+    <.form for={@thought_form} phx-submit="create-thought" phx-change="change-thought">
+      <.input type="message_area" field={@thought_form[:words]} />
+      <div class="flex w-full justify-center">
+        <.button class={["mt-4 px-6", @submit_color]}>Save[enter]</.button>
+      </div>
+    </.form>
+
+    <div class="mt-4 flex flex-col gap-4" id="thoughts" phx-update="stream">
+      <div :for={{dom_id, thought} <- @streams.thoughts} dom_id={dom_id} id={dom_id}>
+        <StormfulWeb.Thoughts.ThoughtLive.thought thought={thought} />
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4">
+    <p class="flex justify-center text-lg underline">
+      Here's the plan
+    </p>
+    <div class="text-center font-semibold text-lg mt-4">
+      No plan yet!
+    </div>
+    <div class="flex justify-center mt-4">
+      <.button class="bg-gray-300 text-black">
+        Let the AI create todos for you
+      </.button>
+    </div>
+  </div>
+</div>
