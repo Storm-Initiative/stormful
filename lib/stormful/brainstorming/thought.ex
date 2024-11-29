@@ -27,7 +27,7 @@ defmodule Stormful.Brainstorming.Thought do
       "bg-violet-600",
       "bg-purple-600",
       "bg-fuchsia-600",
-      "bg-ping-600",
+      "bg-pink-600",
       "bg-rose-600",
       "bg-black"
     ]

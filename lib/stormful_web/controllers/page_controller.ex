@@ -5,7 +5,7 @@ defmodule StormfulWeb.PageController do
     # The home page is often custom made,
     # so skip the default app layout.
     if conn.assigns[:current_user] do
-      redirect(conn, to: ~p"/thoughts")
+      redirect(conn, to: ~p"/into-the-storm")
     else
       render(conn, :home, layout: false)
     end

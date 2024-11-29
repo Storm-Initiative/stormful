@@ -22,11 +22,11 @@ defmodule StormfulWeb.Keyboarder do
           <%= case {@controlful, @keyboarder} do %>
             <% {false, false} -> %>
               <p class="py-4">
-                To activate Keyboarder, press CTRL twice!
+                To activate Keyboarder, press CTRL then TAB!
               </p>
             <% {true, false} -> %>
               <p class="py-4">
-                Press CTRL once more to activate Keyboarder!
+                Press TAB to activate Keyboarder!
               </p>
             <% {_, true} -> %>
               <div class="relative w-screen h-screen" inert>
@@ -41,7 +41,7 @@ defmodule StormfulWeb.Keyboarder do
                 </div>
               </div>
             <% {nil, nil} -> %>
-              To activate Keyboarder, press CTRL twice!
+              To activate Keyboarder, press CTRL then TAB!
           <% end %>
         </p>
       </div>

@@ -14,7 +14,10 @@
   <body class="bg-indigo-800 text-white min-h-screen antialiased">
     <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
       <%= if @current_user do %>
-        <li>
+        <li class="flex gap-4 mt-2 md:absolute top-2">
+          <.link href={~p"/users/settings"} class="text-[0.8125rem] leading-6 font-semibold">
+            Account Settings
+          </.link>
           <.link
             href={~p"/users/log_out"}
             method="delete"

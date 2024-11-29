@@ -16,6 +16,10 @@ defmodule StormfulWeb.Sensicality.BeginLive do
     ~H"""
     <div>
       <div class="text-center mb-4 flex flex-col gap-2">
+        <.back navigate={~p"/into-the-storm"}>
+          Go back
+        </.back>
+
         <p class="text-2xl">
           A new <span class="underline">Sensical</span>⛈
         </p>

@@ -1,11 +1,14 @@
 <div class="flex flex-col items-center justify-center">
   <span class="text-lg font-semibold">This is</span>
   <div class="flex items-center">
-    <span class="text-2xl font-bold underline"><%= @sensical.title %></span>
+    <h1 class="text-2xl font-bold underline"><%= @sensical.title %></h1>
     <span>
       &nbsp;
       <a href={~p'/sensicality/#{@sensical.id}'}><.icon name="hero-link" class="h-5 w-5" /></a>
     </span>
+  </div>
+  <div class="mt-8">
+    <.back navigate={~p"/into-the-storm/"}>Go back</.back>
   </div>
 </div>
 
@@ -30,16 +33,63 @@
   </div>
 
   <div class="p-4">
-    <p class="flex justify-center text-lg underline">
-      Here's the plan
-    </p>
-    <div class="text-center font-semibold text-lg mt-4">
-      No plan yet!
-    </div>
-    <div class="flex justify-center mt-4">
-      <.button class="bg-gray-300 text-black">
-        Let the AI create todos for you
-      </.button>
-    </div>
+    <%= if assigns[:selected_plan] do %>
+      <div class="relative">
+        <div class="absolute bottom-[-28px]">
+          <.back navigate={~p"/sensicality/#{@sensical.id}/"}>Back to plans</.back>
+        </div>
+      </div>
+      <div>
+        <h2 class="text-center font-bold text-2xl"><%= @selected_plan.title %></h2>
+      </div>
+    <% else %>
+      <p class="flex justify-center text-lg underline">
+        Here are the plans
+      </p>
+      <%= if @streams.plans.inserts != [] do %>
+        <div class="mt-4 flex flex-wrap gap-4" id="plans" phx-update="stream">
+          <div
+            :for={{dom_id, plan} <- @streams.plans}
+            dom_id={dom_id}
+            id={dom_id}
+            phx-click={JS.patch(~p"/sensicality/#{@sensical.id}/plans/#{plan.id}")}
+            class="p-4 rounded-lg text-center bg-indigo-400 text-black cursor-pointer select-none"
+          >
+            <%= plan.title %>
+          </div>
+        </div>
+      <% else %>
+        <div class="text-center font-semibold text-lg mt-4">
+          No plans been made yet!
+        </div>
+      <% end %>
+      <div class="flex justify-center mt-4 gap-4">
+        <.button
+          class="bg-gray-300 text-black"
+          phx-click={JS.patch(~p"/sensicality/#{@sensical.id}/plans/new")}
+        >
+          Create a plan manually
+        </.button>
+        <.button class="bg-gray-300 text-black">
+          Let the AI create a plan for you
+        </.button>
+      </div>
+    <% end %>
   </div>
 </div>
+
+<.modal
+  :if={@live_action == :new_plan}
+  id="new-plan-modal"
+  show
+  on_cancel={JS.patch(~p"/sensicality/#{@sensical.id}")}
+>
+  <.live_component
+    module={StormfulWeb.Sensicality.Plans.FormComponent}
+    id={:new_plan}
+    title="New plan"
+    sensical_id={@sensical.id}
+    action={@live_action}
+    patch={~p"/sensicality/#{@sensical.id}"}
+  />
+</.modal>

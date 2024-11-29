@@ -4,6 +4,8 @@ defmodule Stormful.Sensicality do
   """
 
   import Ecto.Query, warn: false
+  alias Stormful.Planning.Plan
+  alias Stormful.Brainstorming.Thought
   alias Stormful.Repo
 
   alias Stormful.Sensicality.Sensical
@@ -17,8 +19,10 @@ defmodule Stormful.Sensicality do
       [%Sensical{}, ...]
 
   """
-  def list_sensicals do
-    Repo.all(Sensical)
+  def list_sensicals(user_id) do
+    Repo.all(
+      from s in Sensical, where: s.user_id == ^user_id, order_by: [desc: s.inserted_at], limit: 20
+    )
   end
 
   @doc """
@@ -36,7 +40,14 @@ defmodule Stormful.Sensicality do
 
   """
   def get_sensical!(user_id, id) do
-    Repo.one!(from s in Sensical, where: s.user_id == ^user_id and s.id == ^id)
+    thoughts_query = from t in Thought, order_by: t.inserted_at
+    plans_query = from p in Plan, order_by: p.inserted_at
+
+    Repo.one!(
+      from s in Sensical,
+        where: s.user_id == ^user_id and s.id == ^id,
+        preload: [thoughts: ^thoughts_query, plans: ^plans_query]
+    )
   end
 
   @doc """

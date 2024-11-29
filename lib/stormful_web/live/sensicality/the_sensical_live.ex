@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
+  alias Stormful.Planning
   alias Stormful.Brainstorming.Thought
   alias Stormful.Brainstorming
 
@@ -8,18 +9,48 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
   use StormfulWeb, :live_view
   use StormfulWeb.BaseUtil.Controlful
 
+  @impl true
   def mount(params, _session, socket) do
     current_user = socket.assigns.current_user
 
     sensical = Sensicality.get_sensical!(current_user.id, params["sensical_id"])
-    thoughts_of_that_sensical = Brainstorming.list_thoughts_for_a_sensical(sensical.id)
+    thoughts = sensical.thoughts
+    plans = sensical.plans
 
     {:ok,
      socket
      |> assign_controlful()
      |> assign(sensical: sensical)
-     |> stream(:thoughts, thoughts_of_that_sensical)
+     |> stream(:thoughts, thoughts)
+     |> stream(:plans, plans)
      |> assign_clear_thought_form()}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    {:noreply, socket |> apply_action(socket.assigns.live_action, params)}
+  end
+
+  defp apply_action(socket, :new_plan, _params) do
+    socket
+  end
+
+  defp apply_action(socket, :with_plan, params) do
+    current_user = socket.assigns.current_user
+    sensical = socket.assigns.sensical
+
+    plan = Planning.get_plan_from_sensical!(current_user.id, sensical.id, params["plan_id"])
+
+    socket |> assign(selected_plan: plan)
+  end
+
+  defp apply_action(socket, _, _params) do
+    socket
+  end
+
+  @impl true
+  def handle_info({StormfulWeb.Sensicality.Plans.FormComponent, {:plan_created, plan}}, socket) do
+    {:noreply, socket |> stream_insert(:plans, plan)}
   end
 
   @impl true

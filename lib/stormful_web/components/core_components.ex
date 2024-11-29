@@ -403,7 +403,7 @@ defmodule StormfulWeb.CoreComponents do
 
   def input(%{type: "message_area"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div phx-feedback-for={@name} class="py-4">
       <.label for={@id}><%= @label %></.label>
       <input
         type={@type}
@@ -413,7 +413,7 @@ defmodule StormfulWeb.CoreComponents do
         autocomplete="off"
         class={
           [
-            "mt-2 block w-full focus:ring-0 sm:text-xl sm:leading-6 py-4 bg-transparent",
+            "mt-2 block w-full focus:ring-0 sm:text-xl sm:leading-6 pb-2 bg-transparent",
             "border-b-2 border-white text-center outline-none"
             # "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400,
             # @errors == [] && "border-zinc-300 focus:border-zinc-400",
@@ -620,10 +620,10 @@ defmodule StormfulWeb.CoreComponents do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
+    <div>
       <.link
         navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700 bg-gray-300 p-2 rounded-lg"
       >
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
         <%= render_slot(@inner_block) %>
@@ -747,7 +747,7 @@ defmodule StormfulWeb.CoreComponents do
         </filter>
       </defs>
       <path
-        d="M0,10 L10,3 L20,17 L30,7 L40,13 L50,3 L60,17 L70,7 L80,13 L90,3 L100,17 
+        d="M0,10 L10,3 L20,17 L30,7 L40,13 L50,3 L60,17 L70,7 L80,13 L90,3 L100,17
              L110,7 L120,13 L130,3 L140,17 L150,7 L160,13 L170,3 L180,17 L190,7 L200,10"
         fill="none"
         stroke="currentColor"
@@ -757,8 +757,8 @@ defmodule StormfulWeb.CoreComponents do
         filter="url(#glow)"
       />
       <path
-        d="M0,10 L7,5 L14,15 L21,8 L28,12 L35,5 L42,15 L49,8 L56,12 L63,5 L70,15 
-             L77,8 L84,12 L91,5 L98,15 L105,8 L112,12 L119,5 L126,15 L133,8 L140,12 
+        d="M0,10 L7,5 L14,15 L21,8 L28,12 L35,5 L42,15 L49,8 L56,12 L63,5 L70,15
+             L77,8 L84,12 L91,5 L98,15 L105,8 L112,12 L119,5 L126,15 L133,8 L140,12
              L147,5 L154,15 L161,8 L168,12 L175,5 L182,15 L189,8 L196,12 L200,10"
         fill="none"
         stroke="currentColor"
@@ -785,7 +785,7 @@ defmodule StormfulWeb.CoreComponents do
       </defs>
       <g>
         <path
-          d="M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 
+          d="M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27
          L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15"
           fill="none"
           stroke="currentColor"
@@ -806,8 +806,8 @@ defmodule StormfulWeb.CoreComponents do
           />
         </path>
         <path
-          d="M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 
-         L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 
+          d="M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27
+         L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15
          L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15"
           fill="none"
           stroke="currentColor"

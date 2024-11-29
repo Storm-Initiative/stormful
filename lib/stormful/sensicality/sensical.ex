@@ -1,4 +1,6 @@
 defmodule Stormful.Sensicality.Sensical do
+  alias Stormful.Planning.Plan
+  alias Stormful.Brainstorming.Thought
   alias Stormful.Accounts.User
 
   use Ecto.Schema
@@ -7,6 +9,8 @@ defmodule Stormful.Sensicality.Sensical do
   schema "sensicals" do
     field :title, :string
     belongs_to :user, User
+    has_many :thoughts, Thought
+    has_many :plans, Plan
 
     timestamps(type: :utc_datetime)
   end

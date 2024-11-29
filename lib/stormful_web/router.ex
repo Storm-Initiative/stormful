@@ -71,8 +71,12 @@ defmodule StormfulWeb.Router do
 
       live "/thoughts", Thoughts.IndexLive
 
+      live "/into-the-storm", IntoTheStorm.IndexLive
+
       live "/sensicality/begin", Sensicality.BeginLive
       live "/sensicality/:sensical_id", Sensicality.TheSensicalLive
+      live "/sensicality/:sensical_id/plans/new", Sensicality.TheSensicalLive, :new_plan
+      live "/sensicality/:sensical_id/plans/:plan_id", Sensicality.TheSensicalLive, :with_plan
     end
   end
 
