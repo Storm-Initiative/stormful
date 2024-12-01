@@ -18,7 +18,8 @@ defmodule Stormful.TaskManagement.Todo do
   @doc false
   def changeset(todo, attrs) do
     todo
-    |> cast(attrs, [:title, :description, :completed_at, :loose_thought_link, :plan_id])
-    |> validate_required([:title, :loose_thought_link])
+    |> cast(attrs, [:title, :description, :completed_at, :loose_thought_link, :plan_id, :user_id])
+    |> validate_required([:title, :user_id])
+    |> validate_length(:title, max: 255)
   end
 end

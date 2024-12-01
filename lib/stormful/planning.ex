@@ -4,7 +4,7 @@ defmodule Stormful.Planning do
   """
 
   import Ecto.Query, warn: false
-  alias Stormful.Sensicality
+  alias Stormful.TaskManagement.Todo
   alias Stormful.Repo
 
   alias Stormful.Planning.Plan
@@ -104,22 +104,26 @@ defmodule Stormful.Planning do
   end
 
   @doc """
-  Gets a single plan, authorized by the Sensical. also for extra protection, we take user_id too
+  Gets a single plan, authorized by the user_id
 
   Raises `Ecto.NoResultsError` if the Plan does not exist.
 
   ## Examples
 
-      iex> get_plan_from_sensical!(1, 1, 123)
+      iex> get_plan_from_sensical!(1, 123)
       %Plan{}
 
-      iex> get_plan_from_sensical!(2, 2, 456)
+      iex> get_plan_from_sensical!(2, 456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_plan_from_sensical!(user_id, sensical_id, id) do
-    sensical = Sensicality.get_sensical!(user_id, sensical_id)
+  def get_plan_from_sensical!(user_id, id) do
+    todos_query = from t in Todo, order_by: t.inserted_at
 
-    Repo.one!(from p in Plan, where: p.sensical_id == ^sensical.id and p.id == ^id)
+    Repo.one!(
+      from p in Plan,
+        where: p.user_id == ^user_id and p.id == ^id,
+        preload: [todos: ^todos_query]
+    )
   end
 end

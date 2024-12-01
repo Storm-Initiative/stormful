@@ -7,7 +7,7 @@ defmodule StormfulWeb.Thoughts.ThoughtLive do
   def thought(assigns) do
     ~H"""
     <div class={["flex items-center gap-4 border-white rounded-xl p-2", @thought.bg_color]}>
-      <div class="w-full text-center overflow-x-scroll">
+      <div class="w-full text-center">
         <%= @thought.words %>
       </div>
       <div class="flex gap-2">

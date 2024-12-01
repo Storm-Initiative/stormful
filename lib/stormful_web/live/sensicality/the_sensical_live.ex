@@ -1,6 +1,7 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
   alias Stormful.Planning
   alias Stormful.Brainstorming.Thought
+  alias StormfulWeb.Sensicality.Plans.PlanContainerLive
   alias Stormful.Brainstorming
 
   alias Stormful.Sensicality
@@ -37,9 +38,8 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
 
   defp apply_action(socket, :with_plan, params) do
     current_user = socket.assigns.current_user
-    sensical = socket.assigns.sensical
 
-    plan = Planning.get_plan_from_sensical!(current_user.id, sensical.id, params["plan_id"])
+    plan = Planning.get_plan_from_sensical!(current_user.id, params["plan_id"])
 
     socket |> assign(selected_plan: plan)
   end

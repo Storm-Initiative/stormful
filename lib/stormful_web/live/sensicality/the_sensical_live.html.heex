@@ -40,7 +40,12 @@
         </div>
       </div>
       <div>
-        <h2 class="text-center font-bold text-2xl"><%= @selected_plan.title %></h2>
+        <.live_component
+          module={PlanContainerLive}
+          plan={@selected_plan}
+          current_user={@current_user}
+          id={"plan-#{@selected_plan.id}"}
+        />
       </div>
     <% else %>
       <p class="flex justify-center text-lg underline">
@@ -90,6 +95,7 @@
     title="New plan"
     sensical_id={@sensical.id}
     action={@live_action}
+    current_user={@current_user}
     patch={~p"/sensicality/#{@sensical.id}"}
   />
 </.modal>

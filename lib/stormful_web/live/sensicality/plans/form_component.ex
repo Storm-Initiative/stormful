@@ -8,6 +8,13 @@ defmodule StormfulWeb.Sensicality.Plans.FormComponent do
     {:ok, socket |> assign_plan_form(Planning.change_plan(%Plan{}))}
   end
 
+  def update(assigns, socket) do
+    {:ok,
+     socket
+     |> assign(:current_user, assigns.current_user)
+     |> assign(sensical_id: assigns.sensical_id)}
+  end
+
   def render(assigns) do
     ~H"""
     <div>
@@ -33,7 +40,11 @@ defmodule StormfulWeb.Sensicality.Plans.FormComponent do
 
   def handle_event("create-plan", %{"plan" => %{"title" => title}}, socket) do
     # one last time to update the sensical <3
-    plan = %{title: title, sensical_id: socket.assigns.sensical_id}
+    plan = %{
+      title: title,
+      sensical_id: socket.assigns.sensical_id,
+      user_id: socket.assigns.current_user.id
+    }
 
     socket =
       case Planning.create_plan(plan) do

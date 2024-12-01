@@ -39,6 +39,23 @@ defmodule Stormful.TaskManagement do
   def get_todo!(id), do: Repo.get!(Todo, id)
 
   @doc """
+  Gets a single todo authorized by user_id.
+
+  Raises `Ecto.NoResultsError` if the Todo does not exist.
+
+  ## Examples
+
+      iex> get_todo!(1, 123)
+      %Todo{}
+
+      iex> get_todo!(2, 456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_todo_with_user_id!(user_id, id),
+    do: Repo.one!(from t in Todo, where: t.user_id == ^user_id and t.id == ^id)
+
+  @doc """
   Creates a todo.
 
   ## Examples
@@ -123,7 +140,7 @@ defmodule Stormful.TaskManagement do
   end
 
   @doc """
-  Marks a todo as complete.
+  Marks a todo as complete/uncomplete.
 
   ## Examples
 
@@ -134,7 +151,17 @@ defmodule Stormful.TaskManagement do
       {:error, %Ecto.Changeset{}}
 
   """
-  def complete_todo(_todo) do
-    # update_todo(todo, %{completed_at: DateTime.to_naive(DateTime.now("Etc/UTC"))})
+  def mark_todo(user_id, todo_id, completed) do
+    todo = get_todo_with_user_id!(user_id, todo_id)
+
+    {:ok, date} = DateTime.now("Etc/UTC")
+
+    case completed do
+      true ->
+        update_todo(todo, %{completed_at: date})
+
+      false ->
+        update_todo(todo, %{completed_at: nil})
+    end
   end
 end
