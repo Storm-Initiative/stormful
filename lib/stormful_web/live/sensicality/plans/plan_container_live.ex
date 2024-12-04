@@ -19,19 +19,36 @@ defmodule StormfulWeb.Sensicality.Plans.PlanContainerLive do
   def render(assigns) do
     ~H"""
     <div>
-      <h2 class="text-center font-bold text-2xl"><%= @plan.title %></h2>
+      <div class="flex flex-col gap-0">
+        <p class="text-center text-sm font-bold">Let's do this</p>
+        <h2 class="text-center font-bold text-2xl underline"><%= @plan.title %></h2>
+      </div>
       <.form for={@todo_form} phx-submit="create-todo" phx-change="change-todo" phx-target={@myself}>
-        <label for={@todo_form[:title].id} class="flex justify-center mt-4 font-semibold text-lg">
-          Create a todo
-        </label>
-        <.input type="message_area" field={@todo_form[:title]} />
+        <.input
+          type="message_area"
+          field={@todo_form[:title]}
+          label="Create a todo"
+          placeholder="i may not look like it but i am an input -_-"
+        />
         <div class="flex w-full justify-center">
           <.button class="mt-4 px-6 bg-indigo-700">Alright![enter]</.button>
         </div>
       </.form>
 
-      <div class="flex flex-col gap-2 mt-4" id="plan-todos" phx-update="stream">
-        <.todo :for={{dom_id, todo} <- @streams.todos} id={dom_id} todo={todo} myself={@myself} />
+      <div class="flex flex-col gap-2 mt-4 border-2 p-4">
+        <h3 class="flex justify-center items-center gap-2 underline font-bold text-xl mb-4">
+          <span class="mt-4">
+            <.icon name="hero-arrow-turn-left-down" class="w-8 h-8" />
+          </span>
+          <span>Here are your todos</span>
+          <span class="mt-4">
+            <.icon name="hero-arrow-turn-right-down" class="w-8 h-8" />
+          </span>
+        </h3>
+        <div class="flex flex-col gap-2" id="plan-todos" phx-update="stream">
+          <.todo :for={{dom_id, todo} <- @streams.todos} id={dom_id} todo={todo} myself={@myself} />
+        </div>
+        <p class="text-center text-xl font-bold">⚡ Done and done ✊</p>
       </div>
     </div>
     """
@@ -43,32 +60,40 @@ defmodule StormfulWeb.Sensicality.Plans.PlanContainerLive do
 
   def todo(assigns) do
     ~H"""
-    <div class="flex bg-black p-2 border-2 rounded-sm gap-2 overflow-x-auto" id={@id}>
-      <span>
-        <%= if @todo.completed_at do %>
-          <button
-            phx-click="mark-todo-complete"
-            phx-value-todo-id={@todo.id}
-            phx-value-intention="uncomplete"
-            phx-target={@myself}
-            title={"Completed @ #{@todo.completed_at} UTC"}
-          >
-            <.icon name="hero-check-circle" class="w-6 h-6" />
-          </button>
-        <% else %>
-          <button
-            phx-click="mark-todo-complete"
-            phx-value-todo-id={@todo.id}
-            phx-value-intention="complete"
-            phx-target={@myself}
-          >
-            <.icon name="hero-exclamation-circle" class="w-6 h-6" />
-          </button>
-        <% end %>
-      </span>
-      <span class={@todo.completed_at && "line-through"}>
-        <%= @todo.title %>
-      </span>
+    <div id={@id} title={@todo.completed_at && "Completed @ #{@todo.completed_at} UTC"}>
+      <div class={[
+        "flex bg-black p-2 border-2 rounded-sm gap-2 overflow-x-auto items-center",
+        @todo.completed_at && ["bg-green-800 border-black"],
+        !@todo.completed_at && ["bg-black border-white"]
+      ]}>
+        <span>
+          <%= if @todo.completed_at do %>
+            <button
+              phx-click="mark-todo-complete"
+              phx-value-todo-id={@todo.id}
+              phx-value-intention="uncomplete"
+              phx-target={@myself}
+            >
+              <.icon name="hero-check-circle" class="w-8 h-8" />
+            </button>
+          <% else %>
+            <button
+              phx-click="mark-todo-complete"
+              phx-value-todo-id={@todo.id}
+              phx-value-intention="complete"
+              phx-target={@myself}
+            >
+              <.icon name="hero-exclamation-circle" class="w-8 h-8" />
+            </button>
+          <% end %>
+        </span>
+        <span class={[!@todo.completed_at && "font-semibold", @todo.completed_at && "text-sm"]}>
+          <%= @todo.title %>
+        </span>
+      </div>
+      <div class="flex justify-center items-center pt-2">
+        <.icon name="hero-arrow-long-down" class="w-8 h-8" />
+      </div>
     </div>
     """
   end

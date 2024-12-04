@@ -11,7 +11,7 @@ defmodule StormfulWeb.BaseUtil.Controlful do
         case {socket.assigns.controlful, socket.assigns.keyboarder} do
           {true, false} ->
             socket
-            |> assign(:controlful, true)
+            |> assign(:controlful, false)
 
           {false, false} ->
             assign(socket, :controlful, true)

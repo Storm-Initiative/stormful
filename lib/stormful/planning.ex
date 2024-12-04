@@ -118,7 +118,7 @@ defmodule Stormful.Planning do
 
   """
   def get_plan_from_sensical!(user_id, id) do
-    todos_query = from t in Todo, order_by: t.inserted_at
+    todos_query = from t in Todo, order_by: [asc: t.inserted_at]
 
     Repo.one!(
       from p in Plan,

@@ -404,24 +404,31 @@ defmodule StormfulWeb.CoreComponents do
   def input(%{type: "message_area"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name} class="py-4">
-      <.label for={@id}><%= @label %></.label>
-      <input
-        type={@type}
-        name={@name}
-        id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        autocomplete="off"
-        class={
-          [
-            "mt-2 block w-full focus:ring-0 sm:text-xl sm:leading-6 pb-2 bg-transparent",
-            "border-b-2 border-white text-center outline-none"
-            # "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400,
-            # @errors == [] && "border-zinc-300 focus:border-zinc-400",
-            # @errors != [] && "border-rose-400 focus:border-rose-400"
-          ]
-        }
-        {@rest}
-      />
+      <div class="flex flex-col gap-2">
+        <%= if @label do %>
+          <label for={@id} class="flex mt-4 font-semibold text-lg underline">
+            <%= @label %>&nbsp;<.icon name="hero-arrow-turn-right-down" class="mt-2 ml-2 w-6 h-6" />
+          </label>
+        <% end %>
+        <input
+          type={@type}
+          name={@name}
+          id={@id}
+          placeholder={assigns[:placeholder]}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          autocomplete="off"
+          class={
+            [
+              "mt-2 block w-full focus:ring-0 sm:text-xl sm:leading-6 pb-2 bg-transparent",
+              "border-b-2 border-white text-center outline-none placeholder:text-white/40"
+              # "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400,
+              # @errors == [] && "border-zinc-300 focus:border-zinc-400",
+              # @errors != [] && "border-rose-400 focus:border-rose-400"
+            ]
+          }
+          {@rest}
+        />
+      </div>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """

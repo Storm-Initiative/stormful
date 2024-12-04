@@ -14,12 +14,20 @@
 
 <div class="grid grid-cols-2 mt-4 divide-x-2">
   <div class="p-4">
-    <p class="flex justify-center text-lg underline">
-      Drop your thoughts here!
-    </p>
+    <div class="flex flex-col items-center text-sm font-bold">
+      <p>Think, think...</p>
+      <h2 class="text-2xl font-bold underline">
+        Drop your thoughts here!
+      </h2>
+    </div>
 
     <.form for={@thought_form} phx-submit="create-thought" phx-change="change-thought">
-      <.input type="message_area" field={@thought_form[:words]} />
+      <.input
+        type="message_area"
+        field={@thought_form[:words]}
+        label="Create a thought"
+        placeholder="got a thought? right here pal"
+      />
       <div class="flex w-full justify-center">
         <.button class={["mt-4 px-6", @submit_color]}>Save[enter]</.button>
       </div>
