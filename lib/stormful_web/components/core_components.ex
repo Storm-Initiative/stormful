@@ -237,7 +237,7 @@ defmodule StormfulWeb.CoreComponents do
       type={@type}
       class={[
         "phx-submit-loading:opacity-75 rounded-lg hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 active:text-white/80",
+        "font-semibold leading-6 active:text-white/80 border-2",
         @class
       ]}
       {@rest}
@@ -836,6 +836,20 @@ defmodule StormfulWeb.CoreComponents do
         </path>
       </g>
     </svg>
+    """
+  end
+
+  attr :little_name, :string
+  attr :big_name, :string
+
+  def cool_header(assigns) do
+    ~H"""
+    <div class="flex flex-col items-center text-sm font-bold">
+      <p><%= @little_name %></p>
+      <h2 class="text-2xl font-bold underline">
+        <%= @big_name %>
+      </h2>
+    </div>
     """
   end
 end

@@ -14,12 +14,7 @@
 
 <div class="grid grid-cols-2 mt-4 divide-x-2">
   <div class="p-4">
-    <div class="flex flex-col items-center text-sm font-bold">
-      <p>Think, think...</p>
-      <h2 class="text-2xl font-bold underline">
-        Drop your thoughts here!
-      </h2>
-    </div>
+    <.cool_header little_name="Think, think..." big_name="Drop your thoughts here!" />
 
     <.form for={@thought_form} phx-submit="create-thought" phx-change="change-thought">
       <.input
@@ -57,7 +52,7 @@
       </div>
     <% else %>
       <p class="flex justify-center text-lg underline">
-        Here are the plans
+        <.cool_header little_name="The plans" big_name="Hell yea, the plans!" />
       </p>
       <%= if @streams.plans.inserts != [] do %>
         <div class="mt-4 flex flex-wrap gap-4" id="plans" phx-update="stream">
@@ -66,7 +61,7 @@
             dom_id={dom_id}
             id={dom_id}
             phx-click={JS.patch(~p"/sensicality/#{@sensical.id}/plans/#{plan.id}")}
-            class="p-4 rounded-lg text-center bg-indigo-400 text-black cursor-pointer select-none"
+            class="p-2 px-4 rounded-lg text-center font-bold bg-gray-300 text-black cursor-pointer select-none"
           >
             <%= plan.title %>
           </div>

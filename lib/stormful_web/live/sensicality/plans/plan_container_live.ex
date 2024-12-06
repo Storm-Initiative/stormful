@@ -20,8 +20,7 @@ defmodule StormfulWeb.Sensicality.Plans.PlanContainerLive do
     ~H"""
     <div>
       <div class="flex flex-col gap-0">
-        <p class="text-center text-sm font-bold">Let's do this</p>
-        <h2 class="text-center font-bold text-2xl underline"><%= @plan.title %></h2>
+        <.cool_header little_name="Let's do this" big_name={@plan.title} />
       </div>
       <.form for={@todo_form} phx-submit="create-todo" phx-change="change-todo" phx-target={@myself}>
         <.input
@@ -35,16 +34,7 @@ defmodule StormfulWeb.Sensicality.Plans.PlanContainerLive do
         </div>
       </.form>
 
-      <div class="flex flex-col gap-2 mt-4 border-2 p-4">
-        <h3 class="flex justify-center items-center gap-2 underline font-bold text-xl mb-4">
-          <span class="mt-4">
-            <.icon name="hero-arrow-turn-left-down" class="w-8 h-8" />
-          </span>
-          <span>Here are your todos</span>
-          <span class="mt-4">
-            <.icon name="hero-arrow-turn-right-down" class="w-8 h-8" />
-          </span>
-        </h3>
+      <div class="flex flex-col gap-2 mt-2 p-4">
         <div class="flex flex-col gap-2" id="plan-todos" phx-update="stream">
           <.todo :for={{dom_id, todo} <- @streams.todos} id={dom_id} todo={todo} myself={@myself} />
         </div>
@@ -87,7 +77,7 @@ defmodule StormfulWeb.Sensicality.Plans.PlanContainerLive do
             </button>
           <% end %>
         </span>
-        <span class={[!@todo.completed_at && "font-semibold", @todo.completed_at && "text-sm"]}>
+        <span class={[!@todo.completed_at && "font-semibold text-lg", @todo.completed_at && "text-sm"]}>
           <%= @todo.title %>
         </span>
       </div>

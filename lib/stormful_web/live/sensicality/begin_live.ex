@@ -15,20 +15,21 @@ defmodule StormfulWeb.Sensicality.BeginLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="text-center mb-4 flex flex-col gap-2">
+      <div class="text-center flex flex-col gap-2">
         <.back navigate={~p"/into-the-storm"}>
           Go back
         </.back>
 
-        <p class="text-2xl">
-          A new <span class="underline">Sensical</span>⛈
-        </p>
-        <p class="text-xl">
-          Let's start by naming it, shall we?
-        </p>
+        <div class="mt-6">
+          <.cool_header little_name="It all starts with" big_name="A new Sensical ⛈" />
+        </div>
       </div>
       <.form for={@sensical_form} phx-submit="create-sensical" phx-change="change-sensical">
-        <.input type="message_area" field={@sensical_form[:title]} />
+        <.input
+          type="message_area"
+          field={@sensical_form[:title]}
+          label="Let's start by naming it, shall we?"
+        />
         <div class="flex w-full justify-center">
           <.button class="mt-4 px-6 bg-indigo-700">Yea[enter]</.button>
         </div>
