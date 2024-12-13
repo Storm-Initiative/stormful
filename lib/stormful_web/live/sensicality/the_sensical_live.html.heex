@@ -28,7 +28,7 @@
       </div>
     </.form>
 
-    <div class="mt-4 flex flex-col gap-4" id="thoughts" phx-update="stream">
+    <div class="mt-2 p-4 flex flex-col gap-4" id="thoughts" phx-update="stream">
       <div :for={{dom_id, thought} <- @streams.thoughts} dom_id={dom_id} id={dom_id}>
         <StormfulWeb.Thoughts.ThoughtLive.thought thought={thought} />
       </div>

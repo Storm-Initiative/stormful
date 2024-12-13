@@ -52,7 +52,7 @@ defmodule StormfulWeb.Sensicality.Plans.PlanContainerLive do
     ~H"""
     <div id={@id} title={@todo.completed_at && "Completed @ #{@todo.completed_at} UTC"}>
       <div class={[
-        "flex bg-black p-2 border-2 rounded-sm gap-2 overflow-x-auto items-center",
+        "flex bg-black p-4 border-2 rounded-sm gap-2 overflow-x-auto items-center",
         @todo.completed_at && ["bg-green-800 border-black"],
         !@todo.completed_at && ["bg-black border-white"]
       ]}>

@@ -51,7 +51,7 @@ defmodule StormfulWeb.Sensicality.Plans.FormComponent do
         {:ok, plan} ->
           notify_parent({:plan_created, plan})
 
-          push_patch(socket, to: ~p"/sensicality/#{socket.assigns.sensical_id}")
+          push_patch(socket, to: ~p"/sensicality/#{socket.assigns.sensical_id}/plans/#{plan.id}")
           |> put_flash(:info, "Created successfully ⚡")
 
         {:error, changeset} ->
