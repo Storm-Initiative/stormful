@@ -22,6 +22,10 @@ defmodule StormfulWeb.Sensicality.Plans.PlanContainerLive do
       <div class="flex flex-col gap-0">
         <.cool_header little_name="Let's do this" big_name={@plan.title} />
       </div>
+      <div class="flex pt-6 items-center justify-center gap-2">
+        <.button class="bg-zinc-900 text-gray-300">Todos</.button>
+        <.button class="bg-gray-300 text-zinc-900">Q and A</.button>
+      </div>
       <.form for={@todo_form} phx-submit="create-todo" phx-change="change-todo" phx-target={@myself}>
         <.input
           type="message_area"

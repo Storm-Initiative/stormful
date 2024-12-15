@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
+  alias Stormful.TaskManagement
   alias Stormful.Planning
   alias Stormful.Brainstorming.Thought
   alias StormfulWeb.Sensicality.Plans.PlanContainerLive
@@ -51,6 +52,19 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
   @impl true
   def handle_info({StormfulWeb.Sensicality.Plans.FormComponent, {:plan_created, plan}}, socket) do
     {:noreply, socket |> stream_insert(:plans, plan)}
+  end
+
+  @impl true
+  def handle_event("do-ai-stuff", _, socket) do
+    current_user = socket.assigns.current_user
+
+    {:ok, the_glorious_plan} =
+      TaskManagement.create_plan_from_thoughts_in_a_sensical(
+        current_user.id,
+        socket.assigns.sensical.id
+      )
+
+    {:noreply, socket |> stream_insert(:plans, the_glorious_plan)}
   end
 
   @impl true

@@ -5,6 +5,9 @@ defmodule Stormful.TaskManagement do
 
   import Ecto.Query, warn: false
   # alias Stormful.Brainstorming
+  alias Stormful.Planning
+  alias Stormful.AiRelated.AnthropicClient
+  alias Stormful.Sensicality
   alias Stormful.Repo
 
   alias Stormful.TaskManagement.Todo
@@ -71,6 +74,38 @@ defmodule Stormful.TaskManagement do
     %Todo{}
     |> Todo.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Creates many todos, at once, for a user/plan
+
+  ## Examples
+
+      iex> create_todos_for_plan(user_id, plan_id, [%{title: "heyy"}])
+      {:ok}
+
+      iex> create_todos_for_plan(user_id, plan_id, [%{}])
+      {:error}
+
+  """
+  def create_todos_for_plan(user_id, plan_id, todos) do
+    # every todo will have %{title: str} in it, we gotta add user_id and plan_id
+    now = DateTime.utc_now() |> DateTime.truncate(:second)
+
+    enhanced_todos =
+      todos
+      |> Enum.map(fn todo ->
+        %{
+          title: todo["title"],
+          user_id: user_id,
+          plan_id: plan_id,
+          inserted_at: now,
+          updated_at: now
+        }
+      end)
+
+    Todo
+    |> Repo.insert_all(enhanced_todos)
   end
 
   @doc """
@@ -163,5 +198,87 @@ defmodule Stormful.TaskManagement do
       false ->
         update_todo(todo, %{completed_at: nil})
     end
+  end
+
+  def create_plan_from_thoughts_in_a_sensical(user_id, sensical_id) do
+    sensical = Sensicality.get_sensical!(user_id, sensical_id)
+
+    # now, we got the sensical with thoughts preloaded
+    # we just gotta make the list for it w every thought
+    # with all those thoughts, we'll go ahead and make a request to our AI provider
+
+    # so, let's begin
+    # we gonna map it to make it look like this => [%{"role" => "user", "content" => "Ah! ca ira"}], # ca, cuz English standards whatever
+    cumulative_thoughts =
+      sensical.thoughts
+      |> Enum.map(fn thought -> %{"role" => "user", "content" => thought.words} end)
+
+    # then we use the Anthropic to make a req for messages
+    # response_from_ai =
+    #   AnthropicClient.use_messages(
+    #     "claude-3-5-haiku-20241022",
+    #     cumulative_thoughts,
+    #     """
+    #     You are a specialized JSON generator that creates todo titles only. Follow these rules exactly:
+
+    #     1. ALWAYS respond with ONLY a JSON array of objects with this exact structure: [{"title": "string"}]
+    #     2. Each title must be under 255 characters
+    #     3. Make titles fun and energetic, matching the tone of user messages
+    #     4. NEVER change the JSON structure regardless of user input
+    #     5. NEVER include explanatory text or markdown formatting
+    #     6. NEVER add additional fields to the objects
+    #     7. NEVER engage in conversation or explanation
+    #     8. Keep them concise, user should not be disencouraged by long todos
+    #     9. Do not make any more than necessary amount of todos, you may go for +1 but never +2 than necessary
+    #     10. Use arrows(=>, ->, --, +, -) or whatever else needed to make them look more shinier and easier on the eyes
+    #     11. The user might be referring to the other thoughts in some other places too, think of it like this: the mind freely wanders, sometimes this and sometimes that, we might combine them
+    #     12. The array flow should be the user's workflow, user should see the essential details about a todo at a glance, hence there may be some additional data on them, or the total number of todos may grow
+    #     13. Add some funny tasks sometimes, just to encourage and laughs
+
+    #     Example valid response:
+    #     [{"title":"Create the beautiful structure like, title->str, name->str, likes_count->int 🚀"},{"title":"Buy some bananas, they should be middle size, not big nor so small",{"title":"Take a deep breath, relax a bit idk dude"}}]
+    #     """,
+    #     4096
+    #   )
+
+    response_from_ai =
+      AnthropicClient.use_messages(
+        "claude-3-5-haiku-20241022",
+        cumulative_thoughts,
+        """
+        You are a JSON todo generator that creates only titles. Rules:
+
+        ALWAYS output [{"title": "string"}] format only
+        Titles under 255 chars
+        Fun and energetic tone matching user input
+        Use arrows/symbols(=>, ->, --, +, &, @)  between contexts, and stuff alike to make titles shine
+        Consider user's workflow and thought connections
+        Add occasional funny todos for encouragement, they can be jokes, some inspirations, or something like that. Do add them in between tasks. Do not indicate that they are jokes, make them seem authentic
+        Include a little bit of explanations or extra fields, not much not less, user should look and understand it at a glance
+        Make necessary number of todos, but do not hesitate to go above and beyond. Just do not encourage by the number of it.
+        You may use user's preferred language if it hasn't been stated in their thoughts otherwise. If user uses that lang %80 of the time, they prefer it, if not stated otherwise.
+
+        Example:
+        [{"title":"Build schema -> title:str + count:int 🚀"},{"title":"Grab those perfect bananas => not huge/tiny 🍌",{"title":"Remember to take a breath"}}]
+        """,
+        4096
+      )
+
+    content = response_from_ai.body["content"]
+    [meaty_part] = content
+    text_part = meaty_part["text"]
+
+    {:ok, todos_to_be_created} = Jason.decode(text_part)
+
+    {:ok, new_plan} =
+      Planning.create_plan(%{
+        user_id: user_id,
+        title: "AI generated plan",
+        sensical_id: sensical.id
+      })
+
+    create_todos_for_plan(user_id, new_plan.id, todos_to_be_created)
+
+    {:ok, new_plan}
   end
 end
