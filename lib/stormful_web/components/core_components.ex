@@ -218,17 +218,15 @@ defmodule StormfulWeb.CoreComponents do
   end
 
   @doc """
-  Renders a button.
+  Renders a button with a sliding gradient animation effect.
 
   ## Examples
-
       <.button>Send!</.button>
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
   attr :type, :string, default: nil
   attr :class, :any, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
-
   slot :inner_block, required: true
 
   def button(assigns) do
@@ -236,13 +234,22 @@ defmodule StormfulWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg hover:bg-zinc-700 py-2 px-3",
-        "font-semibold leading-6 active:text-white/80 border-2",
+        "bg-blue-700 hover:bg-blue-600 text-white",
+        "group relative overflow-hidden rounded-lg py-2 px-3",
+        "bg-black/20 hover:bg-black/40",
+        "border border-white/10 hover:border-white/20",
+        "transition-all duration-300 ease-out",
+        "hover:-translate-y-0.5 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]",
+        "font-semibold leading-6",
         @class
       ]}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
+      <span class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent 
+        translate-x-[-100%] group-hover:translate-x-[100%] 
+        transition-transform duration-500">
+      </span>
     </button>
     """
   end

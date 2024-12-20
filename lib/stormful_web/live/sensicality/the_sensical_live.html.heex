@@ -52,6 +52,7 @@
       <p class="flex justify-center text-lg underline">
         <.cool_header little_name="The plans" big_name="Hell yea, the plans!" />
       </p>
+
       <%= if @streams.plans.inserts != [] do %>
         <div class="mt-4 flex flex-wrap gap-4" id="plans" phx-update="stream">
           <div
@@ -59,25 +60,52 @@
             dom_id={dom_id}
             id={dom_id}
             phx-click={JS.patch(~p"/sensicality/#{@sensical.id}/plans/#{plan.id}")}
-            class="p-2 px-4 rounded-lg text-center font-bold bg-gray-300 text-black cursor-pointer select-none"
+            class={[
+              "group relative overflow-hidden",
+              "p-3 px-6 rounded-lg text-center",
+              "font-bold text-white/90 cursor-pointer select-none",
+              "bg-gradient-to-br from-purple-900/50 to-blue-900/50",
+              "border-2 border-purple-400/20",
+              "transition-all duration-500 ease-out",
+              "hover:scale-105",
+              "hover:border-purple-400/40",
+              "hover:shadow-[0_0_20px_rgba(168,85,247,0.4)]",
+              "hover:from-purple-800/50 hover:to-blue-800/50"
+            ]}
           >
             <%= plan.title %>
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div class="absolute inset-0 animate-pulse-slow bg-gradient-to-t from-purple-500/20 to-transparent">
+              </div>
+              <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent">
+              </div>
+              <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent">
+              </div>
+            </div>
           </div>
         </div>
       <% else %>
-        <div class="text-center font-semibold text-lg mt-4">
-          No plans been made yet!
+        <div class="text-center mt-4">
+          <p class="font-bold text-lg text-white/80">
+            The calm before the storm...
+          </p>
+          <p class="text-sm text-white/60 mt-1">
+            Let's brew some plans!
+          </p>
+          <.icon name="hero-arrow-long-down" class="mt-2" />
         </div>
       <% end %>
+
       <div class="flex justify-center mt-4 gap-4">
         <.button
-          class="bg-gray-300 text-black"
+          class="bg-blue-700 hover:bg-blue-600 text-white"
           phx-click={JS.patch(~p"/sensicality/#{@sensical.id}/plans/new")}
         >
-          Create a plan manually
+          <span class="mr-2">✊</span> Create a plan manually
         </.button>
-        <.button class="bg-gray-300 text-black" phx-click="do-ai-stuff">
-          Let the AI create a plan for you
+
+        <.button class="bg-blue-700 hover:bg-blue-600 text-white" phx-click="do-ai-stuff">
+          <span class="mr-2">⚡</span> Let the AI create a plan for you
         </.button>
       </div>
     <% end %>
