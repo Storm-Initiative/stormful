@@ -213,34 +213,6 @@ defmodule Stormful.TaskManagement do
       sensical.thoughts
       |> Enum.map(fn thought -> %{"role" => "user", "content" => thought.words} end)
 
-    # then we use the Anthropic to make a req for messages
-    # response_from_ai =
-    #   AnthropicClient.use_messages(
-    #     "claude-3-5-haiku-20241022",
-    #     cumulative_thoughts,
-    #     """
-    #     You are a specialized JSON generator that creates todo titles only. Follow these rules exactly:
-
-    #     1. ALWAYS respond with ONLY a JSON array of objects with this exact structure: [{"title": "string"}]
-    #     2. Each title must be under 255 characters
-    #     3. Make titles fun and energetic, matching the tone of user messages
-    #     4. NEVER change the JSON structure regardless of user input
-    #     5. NEVER include explanatory text or markdown formatting
-    #     6. NEVER add additional fields to the objects
-    #     7. NEVER engage in conversation or explanation
-    #     8. Keep them concise, user should not be disencouraged by long todos
-    #     9. Do not make any more than necessary amount of todos, you may go for +1 but never +2 than necessary
-    #     10. Use arrows(=>, ->, --, +, -) or whatever else needed to make them look more shinier and easier on the eyes
-    #     11. The user might be referring to the other thoughts in some other places too, think of it like this: the mind freely wanders, sometimes this and sometimes that, we might combine them
-    #     12. The array flow should be the user's workflow, user should see the essential details about a todo at a glance, hence there may be some additional data on them, or the total number of todos may grow
-    #     13. Add some funny tasks sometimes, just to encourage and laughs
-
-    #     Example valid response:
-    #     [{"title":"Create the beautiful structure like, title->str, name->str, likes_count->int 🚀"},{"title":"Buy some bananas, they should be middle size, not big nor so small",{"title":"Take a deep breath, relax a bit idk dude"}}]
-    #     """,
-    #     4096
-    #   )
-
     response_from_ai =
       AnthropicClient.use_messages(
         "claude-3-5-haiku-20241022",
