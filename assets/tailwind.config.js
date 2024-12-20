@@ -21,9 +21,14 @@ module.exports = {
           '0%, 50%, 100%': { transform: 'translateY(0px)' },
           '25%, 75%': { transform: 'translateY(20px)' },
         },
+        shine: {
+          '0%, 100%': { backgroundPosition: '-100% center' },
+          '50%': { backgroundPosition: '100% center' }
+        },
       },
       animation: {
         flash: 'flash 0.6s ease-out',
+        shine: 'shine 4s ease-in-out infinite',
       },
     },
   },

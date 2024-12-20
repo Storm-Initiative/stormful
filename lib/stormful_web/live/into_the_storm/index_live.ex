@@ -36,7 +36,7 @@ defmodule StormfulWeb.IntoTheStorm.IndexLive do
             </svg>
 
             <span class="transition-all duration-300 group-hover:scale-[1.02] group-hover:text-white">
-              Another!
+              We strike, once more!
             </span>
 
             <span class="hero-arrow-right ml-2 h-5 w-5 transform transition-all duration-300 group-hover:translate-x-1 group-hover:text-blue-400">

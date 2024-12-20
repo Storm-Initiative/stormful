@@ -1,12 +1,10 @@
+<.cool_header
+  little_name="This is"
+  big_name={@sensical.title}
+  link={~p'/sensicality/#{@sensical.id}'}
+/>
+
 <div class="flex flex-col items-center justify-center">
-  <span class="text-lg font-semibold">This is</span>
-  <div class="flex items-center">
-    <h1 class="text-2xl font-bold underline"><%= @sensical.title %></h1>
-    <span>
-      &nbsp;
-      <a href={~p'/sensicality/#{@sensical.id}'}><.icon name="hero-link" class="h-5 w-5" /></a>
-    </span>
-  </div>
   <div class="mt-8">
     <.back navigate={~p"/into-the-storm/"}>Go back</.back>
   </div>

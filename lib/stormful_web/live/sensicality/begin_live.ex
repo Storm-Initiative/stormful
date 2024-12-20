@@ -15,7 +15,7 @@ defmodule StormfulWeb.Sensicality.BeginLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="text-center flex flex-col gap-2">
+      <div class="text-center flex flex-col items-center gap-2">
         <.back navigate={~p"/into-the-storm"}>
           Go back
         </.back>

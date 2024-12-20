@@ -615,25 +615,30 @@ defmodule StormfulWeb.CoreComponents do
     """
   end
 
-  @doc """
-  Renders a back navigation link.
-
-  ## Examples
-
-      <.back navigate={~p"/posts"}>Back to posts</.back>
-  """
   attr :navigate, :any, required: true
   slot :inner_block, required: true
 
   def back(assigns) do
     ~H"""
-    <div>
+    <div class="flex">
       <.link
         navigate={@navigate}
-        class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700 bg-gray-300 p-2 rounded-lg"
+        class="group relative overflow-hidden rounded-lg px-4 py-2 
+          bg-black/20 hover:bg-black/40 
+          border border-white/10 hover:border-white/20
+          transition-all duration-300 ease-out
+          hover:-translate-y-0.5 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]
+          flex items-center gap-2 text-sm font-semibold text-white/90"
       >
-        <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
+        <.icon
+          name="hero-arrow-left-solid"
+          class="h-4 w-4 text-blue-400 group-hover:text-yellow-400 transition-colors duration-300"
+        />
         <%= render_slot(@inner_block) %>
+        <span class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent 
+          translate-x-[-100%] group-hover:translate-x-[100%] 
+          transition-transform duration-500">
+        </span>
       </.link>
     </div>
     """
@@ -780,58 +785,58 @@ defmodule StormfulWeb.CoreComponents do
 
   def animated_lightning_svg(assigns) do
     ~H"""
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 30" className="w-full h-8">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 30" class="w-[475px] h-8">
       <defs>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
+        <linearGradient id="electric-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#60A5FA" />
+          <stop offset="50%" stop-color="#FACC15" />
+          <stop offset="100%" stop-color="#60A5FA" />
+          <animate attributeName="x1" values="0%;100%;0%" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="x2" values="100%;200%;100%" dur="3s" repeatCount="indefinite" />
+        </linearGradient>
       </defs>
       <g>
         <path
           d="M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27
-         L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15"
+             L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          filter="url(#glow)"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-blue-400"
         >
           <animate
             attributeName="d"
             dur="0.4s"
             repeatCount="indefinite"
             values="
-          M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15;
-          M0,15 L10,25 L20,5 L30,20 L40,10 L50,27 L60,2 L70,22 L80,7 L90,17 L100,12 L110,30 L120,0 L130,25 L140,15 L150,5 L160,20 L170,10 L180,27 L190,17 L200,15;
-          M0,15 L10,20 L20,10 L30,25 L40,5 L50,22 L60,12 L70,27 L80,2 L90,17 L100,7 L110,20 L120,15 L130,30 L140,0 L150,25 L160,10 L170,20 L180,12 L190,22 L200,15;
-          M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15"
+              M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15;
+              M0,15 L10,25 L20,5 L30,20 L40,10 L50,27 L60,2 L70,22 L80,7 L90,17 L100,12 L110,30 L120,0 L130,25 L140,15 L150,5 L160,20 L170,10 L180,27 L190,17 L200,15;
+              M0,15 L10,20 L20,10 L30,25 L40,5 L50,22 L60,12 L70,27 L80,2 L90,17 L100,7 L110,20 L120,15 L130,30 L140,0 L150,25 L160,10 L170,20 L180,12 L190,22 L200,15;
+              M0,15 L10,10 L20,20 L30,5 L40,25 L50,12 L60,22 L70,7 L80,17 L90,2 L100,27 L110,15 L120,25 L130,5 L140,20 L150,10 L160,30 L170,0 L180,22 L190,12 L200,15"
           />
         </path>
         <path
           d="M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27
-         L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15
-         L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15"
+             L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15
+             L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.6"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="text-yellow-400"
         >
           <animate
             attributeName="d"
             dur="0.3s"
             repeatCount="indefinite"
             values="
-          M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15;
-          M0,15 L7,22 L14,7 L21,17 L28,12 L35,25 L42,5 L49,20 L56,10 L63,27 L70,2 L77,17 L84,12 L91,22 L98,7 L105,20 L112,15 L119,30 L126,0 L133,25 L140,10 L147,20 L154,15 L161,5 L168,25 L175,12 L182,22 L189,17 L196,7 L200,15;
-          M0,15 L7,17 L14,12 L21,22 L28,7 L35,20 L42,10 L49,25 L56,5 L63,17 L70,12 L77,27 L84,2 L91,20 L98,15 L105,30 L112,0 L119,22 L126,7 L133,17 L140,12 L147,25 L154,10 L161,15 L168,20 L175,5 L182,27 L189,12 L196,17 L200,15;
-          M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15"
+              M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15;
+              M0,15 L7,22 L14,7 L21,17 L28,12 L35,25 L42,5 L49,20 L56,10 L63,27 L70,2 L77,17 L84,12 L91,22 L98,7 L105,20 L112,15 L119,30 L126,0 L133,25 L140,10 L147,20 L154,15 L161,5 L168,25 L175,12 L182,22 L189,17 L196,7 L200,15;
+              M0,15 L7,17 L14,12 L21,22 L28,7 L35,20 L42,10 L49,25 L56,5 L63,17 L70,12 L77,27 L84,2 L91,20 L98,15 L105,30 L112,0 L119,22 L126,7 L133,17 L140,12 L147,25 L154,10 L161,15 L168,20 L175,5 L182,27 L189,12 L196,17 L200,15;
+              M0,15 L7,12 L14,17 L21,7 L28,22 L35,10 L42,20 L49,5 L56,25 L63,15 L70,27 L77,2 L84,17 L91,12 L98,22 L105,7 L112,20 L119,10 L126,25 L133,5 L140,15 L147,30 L154,0 L161,20 L168,10 L175,25 L182,15 L189,5 L196,22 L200,15"
           />
         </path>
       </g>
@@ -839,17 +844,43 @@ defmodule StormfulWeb.CoreComponents do
     """
   end
 
-  attr :little_name, :string
   attr :big_name, :string
+  attr :little_name, :string
+  attr :link, :string, required: false
 
   def cool_header(assigns) do
     ~H"""
-    <div class="flex flex-col items-center text-sm font-bold">
-      <p><%= @little_name %></p>
-      <h2 class="text-2xl font-bold underline">
-        <%= @big_name %>
-      </h2>
+    <div class="flex flex-col items-center space-y-2 py-3">
+      <!-- Little name with subtle pulse -->
+      <p class="text-base font-bold text-zinc-300 animate-[pulse_4s_ease-in-out_infinite]">
+        <%= @little_name %>
+      </p>
+      <span class="flex gap-2 items-center">
+        <!-- Big name with clean lightning effect -->
+        <h2 class="relative text-3xl font-bold">
+          <!-- Single smooth underline -->
+          <span class="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-blue-400 via-yellow-300 to-blue-400 opacity-70
+          animate-[shine_6s_linear_infinite]">
+          </span>
+          <!-- Clean text -->
+          <span class="relative text-white">
+            <%= @big_name %>
+          </span>
+        </h2>
+        <%= if assigns[:link]  do %>
+          <span>
+            &nbsp; <a href={assigns.link}><.icon name="hero-link" class="h-6 w-6" /></a>
+          </span>
+        <% end %>
+      </span>
     </div>
+
+    <style type="text/css">
+      @keyframes shine {
+        0%, 100% { background-position: -100% center; }
+        50% { background-position: 100% center; }
+      }
+    </style>
     """
   end
 end
