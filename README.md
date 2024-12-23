@@ -12,7 +12,7 @@ Stormful, the beautiful thought/task management service that you use everyday!
 
 ## Why does it exist?
 
-Because this is what the world needs. A todo app that does not screw you, or want money from you at every step. Stormful may be a paid service in the future(probably), to cover expenses of serves & AI services. However, it is, and it will always, be easy to host & use. This is where this app differs, you choose what you want, and what you want to sacrifice!
+Because this is what the world needs. A todo app that does not screw you, or want money from you at every step. Stormful may be a paid service in the future(probably), to cover expenses of servers & AI services. However, it is, and it will always, be easy to host & use. This is where this app differs, you choose what you want, and what you want to sacrifice!
 
 ## The mission, the big picture
 
