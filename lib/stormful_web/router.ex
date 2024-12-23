@@ -77,6 +77,14 @@ defmodule StormfulWeb.Router do
       live "/sensicality/:sensical_id", Sensicality.TheSensicalLive
       live "/sensicality/:sensical_id/plans/new", Sensicality.TheSensicalLive, :new_plan
       live "/sensicality/:sensical_id/plans/:plan_id", Sensicality.TheSensicalLive, :with_plan
+
+      live "/sensicality/:sensical_id/plans/:plan_id/immersive/brainstorm",
+           StormfulWeb.Immersive.ImmerseSensicalLive,
+           :brainstorm
+
+      live "/sensicality/:sensical_id/plans/:plan_id/immersive/managetasks",
+           StormfulWeb.Immersive.ImmerseSensicalLive,
+           :managetasks
     end
   end
 

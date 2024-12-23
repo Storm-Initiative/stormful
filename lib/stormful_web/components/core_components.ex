@@ -792,7 +792,7 @@ defmodule StormfulWeb.CoreComponents do
 
   def animated_lightning_svg(assigns) do
     ~H"""
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 30" class="w-[475px] h-8">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 30" class="w-[470px] h-8">
       <defs>
         <linearGradient id="electric-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%" stop-color="#60A5FA" />
