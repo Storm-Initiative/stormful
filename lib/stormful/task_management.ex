@@ -226,8 +226,7 @@ defmodule Stormful.TaskManagement do
         Use arrows/symbols(=>, ->, --, +, &, @)  between contexts, and stuff alike to make titles shine
         Consider user's workflow and thought connections
         Add occasional funny todos for encouragement, they can be jokes, some inspirations, or something like that. Do add them in between tasks. Do not indicate that they are jokes, make them seem authentic
-        Include a little bit of explanations or extra fields, not much not less, user should look and understand it at a glance
-        Make necessary number of todos, but do not hesitate to go above and beyond. Just do not encourage by the number of it.
+        Include a good amount of data inside them. Do not overexplain, but no need to be short too
         You may use user's preferred language if it hasn't been stated in their thoughts otherwise. If user uses that lang %80 of the time, they prefer it, if not stated otherwise.
 
         Example:
