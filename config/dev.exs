@@ -27,7 +27,8 @@ config :stormful, StormfulWeb.Endpoint,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:stormful, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:stormful, ~w(--watch)]}
-  ]
+  ],
+  email_from: "salutations@stormful.nonexistent"
 
 # ## SSL Support
 #
