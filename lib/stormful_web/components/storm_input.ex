@@ -56,6 +56,8 @@ defmodule StormfulWeb.StormInput do
              user_id: socket.assigns.current_user.id
            }) do
       {:noreply, socket |> assign_clear_wind_form()}
+    else
+      {:error, changeset} -> {:noreply, socket |> assign_wind_form(changeset)}
     end
   end
 

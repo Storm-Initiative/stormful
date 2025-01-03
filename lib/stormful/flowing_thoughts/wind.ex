@@ -19,5 +19,6 @@ defmodule Stormful.FlowingThoughts.Wind do
     wind
     |> cast(attrs, [:words, :long_words, :user_id, :sensical_id])
     |> validate_required([:words, :user_id])
+    |> validate_length(:words, min: 1, max: 255)
   end
 end

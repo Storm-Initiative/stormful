@@ -7,7 +7,7 @@ defmodule StormfulWeb.Thoughts.ThoughtLive do
   def thought(assigns) do
     ~H"""
     <div class="group">
-      <div class="flex items-center gap-3 px-6 py-4 bg-[#1a1a2e] rounded-lg hover:bg-[#1a1a2e]/80 transition-all duration-300">
+      <div class="flex items-center gap-3 px-6 py-4 bg-[#1a1a2e] rounded-lg hover:bg-[#1a1a2e]/80 transition-all duration-300 overflow-x-auto">
         <div class="flex-shrink-0">
           <.icon
             name="hero-bolt"
