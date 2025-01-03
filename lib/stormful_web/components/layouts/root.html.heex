@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" | Stormful">
-      <%= assigns[:page_title] || "Into the storm!" %>
+      {assigns[:page_title] || "Into the storm!"}
     </.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
@@ -14,7 +14,7 @@
   <body class="bg-indigo-800 text-white min-h-screen antialiased">
     <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
       <%= if @current_user do %>
-        <li class="flex gap-4 mt-2 md:absolute top-2">
+        <li class="flex gap-4 mt-2 md:absolute top-4">
           <.link
             href={~p"/users/settings"}
             class="group relative overflow-hidden rounded-lg px-4 py-2 text-sm font-semibold text-white/90 
@@ -56,7 +56,7 @@
       <% end %>
     </ul>
     <div>
-      <%= @inner_content %>
+      {@inner_content}
     </div>
   </body>
 </html>

@@ -4,6 +4,7 @@ defmodule Stormful.Sensicality do
   """
 
   import Ecto.Query, warn: false
+  alias Stormful.FlowingThoughts.Wind
   alias Stormful.Planning.Plan
   alias Stormful.Brainstorming.Thought
   alias Stormful.Repo
@@ -40,13 +41,14 @@ defmodule Stormful.Sensicality do
 
   """
   def get_sensical!(user_id, id) do
-    thoughts_query = from t in Thought, order_by: t.inserted_at
+    # we can do wild shit like w.id with ULID, its truly powerful :raised_fist:
+    winds_query = from(w in Wind, order_by: w.id)
     plans_query = from p in Plan, order_by: p.inserted_at
 
     Repo.one!(
       from s in Sensical,
         where: s.user_id == ^user_id and s.id == ^id,
-        preload: [thoughts: ^thoughts_query, plans: ^plans_query]
+        preload: [winds: ^winds_query, plans: ^plans_query]
     )
   end
 

@@ -210,8 +210,8 @@ defmodule Stormful.TaskManagement do
     # so, let's begin
     # we gonna map it to make it look like this => [%{"role" => "user", "content" => "Ah! ca ira"}], # ca, cuz English standards whatever
     cumulative_thoughts =
-      sensical.thoughts
-      |> Enum.map(fn thought -> %{"role" => "user", "content" => thought.words} end)
+      sensical.winds
+      |> Enum.map(fn wind -> %{"role" => "user", "content" => wind.words} end)
 
     response_from_ai =
       AnthropicClient.use_messages(

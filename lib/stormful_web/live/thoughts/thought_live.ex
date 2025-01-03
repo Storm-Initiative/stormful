@@ -1,26 +1,25 @@
 defmodule StormfulWeb.Thoughts.ThoughtLive do
+  alias Stormful.FlowingThoughts.Wind
   use StormfulWeb, :live_view
-  alias Stormful.Brainstorming.Thought
 
-  attr :thought, Thought, required: true
+  attr :wind, Wind, required: true
 
   def thought(assigns) do
     ~H"""
-    <div class="flex items-center gap-4 border-white p-4 border-2 bg-black rounded-sm overflow-x-auto">
-      <div
-        title="This little dot is very very much needed, don't worry about it"
-        class={["w-4 h-4 rounded-full", @thought.bg_color]}
-      >
-      </div>
-      <div class="flex items-center justify-center p-1">
-        <.icon name="hero-arrow-right" class="w-6 h-6" />
-      </div>
-      <div class="text-xl font-bold w-full overflow-x-auto">
-        <%= @thought.words %>
+    <div class="group">
+      <div class="flex items-center gap-3 px-6 py-4 bg-[#1a1a2e] rounded-lg hover:bg-[#1a1a2e]/80 transition-all duration-300">
+        <div class="flex-shrink-0">
+          <.icon
+            name="hero-bolt"
+            class="w-4 h-4 text-blue-400/70 group-hover:text-blue-300 transition-colors"
+          />
+        </div>
+
+        <p class="text-lg text-white/90 font-medium leading-relaxed break-normal">
+          {@wind.words}
+        </p>
       </div>
     </div>
     """
   end
-
-  # INFO: putting this here so that tailwind would pick it
 end

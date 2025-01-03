@@ -4,21 +4,21 @@
   </div>
 </div>
 
-<header class="flex flex-col justify-center font-extrabold px-4 sm:px-6 lg:px-8 mt-4">
-  <p class="inline-block">
+<header class="flex flex-col justify-center font-extrabold px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-950 via-indigo-900 to-purple-900 py-4">
+  <p class="flex flex-col justify-center items-start">
     <span class="text-4xl">
       May it be&nbsp;<.link
         navigate={~p"/into-the-storm"}
         class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
       >Stormful</.link>&nbsp;tonight!
     </span>
-    <.link navigate={~p"/into-the-storm"}><.animated_lightning_svg /></.link>
+    <.link class="grow-0" navigate={~p"/into-the-storm"}><.animated_lightning_svg /></.link>
   </p>
 </header>
 
 <main class="px-4 py-8 sm:px-6 lg:px-0">
   <div class="mx-auto max-w-2xl lg:max-w-none lg:w-screen lg:px-16 lg:mx-auto">
     <.flash_group flash={@flash} />
-    <%= @inner_content %>
+    {@inner_content}
   </div>
 </main>
