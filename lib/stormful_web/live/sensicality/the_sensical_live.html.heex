@@ -22,7 +22,12 @@
     <div class="p-4">
       <.cool_header little_name="Think, think..." big_name="Your thoughts, here!" />
 
-      <div class="mt-2 p-4 flex flex-col gap-4" id="winds" phx-update="stream">
+      <div
+        class="mt-2 p-4 flex flex-col gap-4"
+        id="winds"
+        phx-hook="WindScroller"
+        phx-update="stream"
+      >
         <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
           <!-- todo => make in this wind context -->
           <StormfulWeb.Thoughts.ThoughtLive.thought wind={wind} />

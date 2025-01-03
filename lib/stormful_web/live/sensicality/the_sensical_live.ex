@@ -53,7 +53,7 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
 
   @impl true
   def handle_info({:new_wind, wind}, socket) do
-    {:noreply, stream_insert(socket, :winds, wind)}
+    {:noreply, stream_insert(socket, :winds, wind) |> push_event("scroll-to-latest-wind", %{})}
   end
 
   @impl true
