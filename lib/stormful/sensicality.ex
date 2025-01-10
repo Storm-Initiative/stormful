@@ -6,7 +6,6 @@ defmodule Stormful.Sensicality do
   import Ecto.Query, warn: false
   alias Stormful.FlowingThoughts.Wind
   alias Stormful.Planning.Plan
-  alias Stormful.Brainstorming.Thought
   alias Stormful.Repo
 
   alias Stormful.Sensicality.Sensical

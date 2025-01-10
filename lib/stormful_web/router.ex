@@ -69,8 +69,6 @@ defmodule StormfulWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
-      live "/thoughts", Thoughts.IndexLive
-
       live "/into-the-storm", IntoTheStorm.IndexLive
 
       live "/sensicality/begin", Sensicality.BeginLive
@@ -78,13 +76,13 @@ defmodule StormfulWeb.Router do
       live "/sensicality/:sensical_id/plans/new", Sensicality.TheSensicalLive, :new_plan
       live "/sensicality/:sensical_id/plans/:plan_id", Sensicality.TheSensicalLive, :with_plan
 
-      live "/sensicality/:sensical_id/plans/:plan_id/immersive/brainstorm",
-           StormfulWeb.Immersive.ImmerseSensicalLive,
-           :brainstorm
+      # live "/sensicality/:sensical_id/plans/:plan_id/immersive/brainstorm",
+      #      StormfulWeb.Immersive.ImmerseSensicalLive,
+      #      :brainstorm
 
-      live "/sensicality/:sensical_id/plans/:plan_id/immersive/managetasks",
-           StormfulWeb.Immersive.ImmerseSensicalLive,
-           :managetasks
+      # live "/sensicality/:sensical_id/plans/:plan_id/immersive/managetasks",
+      #      StormfulWeb.Immersive.ImmerseSensicalLive,
+      #      :managetasks
     end
   end
 
