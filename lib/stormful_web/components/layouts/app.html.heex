@@ -4,7 +4,7 @@
   </div>
 </div>
 
-<header class="flex flex-col justify-center font-extrabold px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-950 via-indigo-900 to-purple-900 py-4">
+<header class="flex justify-between font-extrabold px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-950 via-indigo-900 to-purple-900 py-6">
   <p class="flex flex-col justify-center items-start">
     <span class="text-4xl">
       May it be&nbsp;<.link
@@ -14,6 +14,39 @@
     </span>
     <.link class="grow-0" navigate={~p"/into-the-storm"}><.animated_lightning_svg /></.link>
   </p>
+
+  <%= if @current_user do %>
+    <ul>
+      <li class="flex justify-end gap-4 mt-2">
+        <.link
+          href={~p"/users/settings"}
+          class="group relative overflow-hidden rounded-lg px-4 py-2 text-sm font-semibold text-white/90 
+        bg-black/20 hover:bg-black/40 border border-white/10 hover:border-white/20
+        transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]
+        flex items-center gap-2"
+        >
+          <.icon
+            name="hero-cog-6-tooth"
+            class="w-4 h-4 text-blue-400 group-hover:text-yellow-400 transition-colors duration-300"
+          /> Account Settings
+        </.link>
+
+        <.link
+          href={~p"/users/log_out"}
+          method="delete"
+          class="group relative overflow-hidden rounded-lg px-4 py-2 text-sm font-semibold text-white/90 
+        bg-black/20 hover:bg-black/40 border border-white/10 hover:border-white/20
+        transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_15px_rgba(234,179,8,0.2)]
+        flex items-center gap-2"
+        >
+          <.icon
+            name="hero-arrow-right-on-rectangle"
+            class="w-4 h-4 text-yellow-400 group-hover:text-blue-400 transition-colors duration-300"
+          /> Log out
+        </.link>
+      </li>
+    </ul>
+  <% end %>
 </header>
 
 <main class="px-4 py-8 sm:px-6 lg:px-0">

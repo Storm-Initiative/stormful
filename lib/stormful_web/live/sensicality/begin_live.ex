@@ -25,11 +25,13 @@ defmodule StormfulWeb.Sensicality.BeginLive do
         </div>
       </div>
       <.form for={@sensical_form} phx-submit="create-sensical" phx-change="change-sensical">
-        <.input
-          type="message_area"
-          field={@sensical_form[:title]}
-          label="Let's start by naming it, shall we?"
-        />
+        <div class="text-lg">
+          <.input
+            type="message_area"
+            field={@sensical_form[:title]}
+            label="Let's start by naming it, shall we?"
+          />
+        </div>
         <div class="flex w-full justify-center">
           <.button class="mt-4 px-6 bg-indigo-700">Yea[enter]</.button>
         </div>

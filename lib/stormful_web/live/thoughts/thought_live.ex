@@ -4,18 +4,18 @@ defmodule StormfulWeb.Thoughts.ThoughtLive do
 
   attr :wind, Wind, required: true
 
-  def thought(assigns) do
+  def wind(assigns) do
     ~H"""
     <div class="group">
-      <div class="flex items-center gap-3 px-6 py-4 bg-[#1a1a2e] rounded-lg hover:bg-[#1a1a2e]/80 transition-all duration-300 overflow-x-auto">
+      <div class="flex items-center gap-3 px-6 py-6 bg-black/70 rounded-lg hover:bg-black/50 transition-all duration-300 overflow-x-auto">
         <div class="flex-shrink-0">
           <.icon
             name="hero-bolt"
-            class="w-4 h-4 text-blue-400/70 group-hover:text-blue-300 transition-colors"
+            class="w-10 h-10 text-blue-400/70 group-hover:text-blue-300 transition-colors"
           />
         </div>
 
-        <p class="text-lg text-white/90 font-medium leading-relaxed break-normal">
+        <p class="text-2xl text-white/90 font-bold leading-relaxed break-normal">
           {@wind.words}
         </p>
       </div>

@@ -6,7 +6,7 @@ defmodule StormfulWeb.StormInput do
 
   def render(assigns) do
     ~H"""
-    <div class="fixed bottom-0 left-0 right-0 bg-indigo-900 z-[1] border-t border-indigo-700 p-4">
+    <div class="fixed bottom-0 left-0 right-0 bg-indigo-900 z-[1] border-t border-indigo-700 p-4 text-xl">
       <div class="max-w-7xl mx-auto">
         <.form
           phx-target={@myself}
@@ -15,7 +15,7 @@ defmodule StormfulWeb.StormInput do
           phx-change="change_wind"
           class="flex gap-4 items-center"
         >
-          <div class="flex-grow">
+          <div class="flex-grow text-2xl">
             <.input
               type="message_area"
               field={@wind_form[:words]}

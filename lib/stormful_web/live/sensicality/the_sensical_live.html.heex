@@ -1,10 +1,4 @@
 <div class="pb-28">
-  <.cool_header
-    little_name="This is"
-    big_name={@sensical.title}
-    link={~p'/sensicality/#{@sensical.id}'}
-  />
-
   <.live_component
     module={StormfulWeb.StormInput}
     id="storm-input"
@@ -12,122 +6,14 @@
     current_user={@current_user}
   />
 
-  <div class="flex flex-col items-center justify-center">
-    <div class="mt-8">
-      <.back navigate={~p"/into-the-storm/"}>Go back</.back>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-2 mt-4 divide-x-2">
+  <div class="flex flex-col gap-4">
     <div class="p-4">
-      <.cool_header little_name="Think, think..." big_name="Your thoughts, here!" />
-
-      <div
-        class="mt-2 p-4 flex flex-col gap-4"
-        id="winds"
-        phx-hook="WindScroller"
-        phx-update="stream"
-      >
+      <div class="p-4 flex flex-col gap-4" id="winds" phx-hook="WindScroller" phx-update="stream">
         <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
           <!-- todo => make in this wind context -->
-          <StormfulWeb.Thoughts.ThoughtLive.thought wind={wind} />
+          <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
         </div>
       </div>
     </div>
-
-    <div class="p-4">
-      <%= if assigns[:selected_plan] do %>
-        <div class="relative">
-          <div class="absolute bottom-[-28px]">
-            <.back navigate={~p"/sensicality/#{@sensical.id}/"}>Back to plans</.back>
-          </div>
-        </div>
-        <div>
-          <.live_component
-            module={PlanContainerLive}
-            plan={@selected_plan}
-            current_user={@current_user}
-            id={"plan-#{@selected_plan.id}"}
-          />
-        </div>
-      <% else %>
-        <p class="flex justify-center text-lg underline">
-          <.cool_header little_name="The plans" big_name="Hell yea, the plans!" />
-        </p>
-
-        <%= if @streams.plans.inserts != [] do %>
-          <div class="mt-4 flex flex-wrap gap-4" id="plans" phx-update="stream">
-            <div
-              :for={{dom_id, plan} <- @streams.plans}
-              dom_id={dom_id}
-              id={dom_id}
-              phx-click={JS.patch(~p"/sensicality/#{@sensical.id}/plans/#{plan.id}")}
-              class={[
-                "group relative overflow-hidden",
-                "p-3 px-6 rounded-lg text-center",
-                "font-bold text-white/90 cursor-pointer select-none",
-                "bg-gradient-to-br from-purple-900/50 to-blue-900/50",
-                "border-2 border-purple-400/20",
-                "transition-all duration-500 ease-out",
-                "hover:scale-105",
-                "hover:border-purple-400/40",
-                "hover:shadow-[0_0_20px_rgba(168,85,247,0.4)]",
-                "hover:from-purple-800/50 hover:to-blue-800/50"
-              ]}
-            >
-              {plan.title}
-              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div class="absolute inset-0 animate-pulse-slow bg-gradient-to-t from-purple-500/20 to-transparent">
-                </div>
-                <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent">
-                </div>
-                <div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-400/50 to-transparent">
-                </div>
-              </div>
-            </div>
-          </div>
-        <% else %>
-          <div class="text-center mt-4">
-            <p class="font-bold text-lg text-white/80">
-              Calm before the storm...
-            </p>
-            <p class="text-sm text-white/60 mt-1">
-              Let's brew some plans!
-            </p>
-            <.icon name="hero-arrow-long-down" class="mt-2" />
-          </div>
-        <% end %>
-
-        <div class="flex justify-center mt-4 gap-4">
-          <.button
-            class="bg-blue-700 hover:bg-blue-600 text-white"
-            phx-click={JS.patch(~p"/sensicality/#{@sensical.id}/plans/new")}
-          >
-            <span class="mr-2">✊</span> Create a plan manually
-          </.button>
-
-          <.button class="bg-blue-700 hover:bg-blue-600 text-white" phx-click="do-ai-stuff">
-            <span class="mr-2">⚡</span> Let the AI create a plan for you
-          </.button>
-        </div>
-      <% end %>
-    </div>
   </div>
-
-  <.modal
-    :if={@live_action == :new_plan}
-    id="new-plan-modal"
-    show
-    on_cancel={JS.patch(~p"/sensicality/#{@sensical.id}")}
-  >
-    <.live_component
-      module={StormfulWeb.Sensicality.Plans.FormComponent}
-      id={:new_plan}
-      title="New plan"
-      sensical_id={@sensical.id}
-      action={@live_action}
-      current_user={@current_user}
-      patch={~p"/sensicality/#{@sensical.id}"}
-    />
-  </.modal>
 </div>

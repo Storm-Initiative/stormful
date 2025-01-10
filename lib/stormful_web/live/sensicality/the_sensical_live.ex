@@ -1,10 +1,8 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
+  alias StormfulWeb.Layouts
   alias Stormful.FlowingThoughts
   alias Stormful.TaskManagement
   alias Stormful.Planning
-  alias Stormful.Brainstorming.Thought
-  alias StormfulWeb.Sensicality.Plans.PlanContainerLive
-  alias Stormful.Brainstorming
 
   alias Stormful.Sensicality
   # alias Stormful.Sensicality.Sensical
@@ -27,7 +25,7 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
      |> assign_controlful()
      |> assign(sensical: sensical)
      |> stream(:winds, winds)
-     |> stream(:plans, plans)}
+     |> stream(:plans, plans), layout: {Layouts, :sensicality}}
   end
 
   @impl true

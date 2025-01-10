@@ -1,0 +1,33 @@
+<div inert class="relative flex w-full">
+  <div inert class="absolute top-0 flex w-full justify-center">
+    <.controlful_panel controlful={assigns[:controlful]} keyboarder={assigns[:keyboarder]} />
+  </div>
+</div>
+
+<header class="flex flex-col justify-center font-extrabold px-4 sm:px-6 lg:px-8 bg-gradient-to-br py-4 border-b-2 sticky top-0 left-0 right-0 bg-indigo-800 z-[1]">
+  <div class="flex items-start">
+    <span class="text-4xl flex justify-center items-center gap-2">
+      <.link
+        navigate={~p"/into-the-storm"}
+        class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
+      >
+        <span>
+          Stormful
+        </span>
+      </.link>
+      <span>
+        |
+      </span>
+      <div class="flex justify-center items-center">
+        <.cool_header big_name={@sensical.title} link={~p'/sensicality/#{@sensical.id}'} />
+      </div>
+    </span>
+  </div>
+</header>
+
+<main class="px-4 py-8 sm:px-6 lg:px-0">
+  <div class="mx-auto max-w-2xl lg:max-w-none lg:w-screen lg:px-16 lg:mx-auto">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </div>
+</main>

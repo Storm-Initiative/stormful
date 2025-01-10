@@ -417,7 +417,7 @@ defmodule StormfulWeb.CoreComponents do
           <label
             for={@id}
             class={[
-              "flex font-semibold text-lg underline",
+              "flex font-semibold underline",
               @label_centered && "flex justify-center mb-4",
               @label_centered || "mt-4"
             ]}
@@ -869,9 +869,11 @@ defmodule StormfulWeb.CoreComponents do
     ~H"""
     <div class="flex flex-col items-center space-y-2 py-3">
       <!-- Little name with subtle pulse -->
-      <p class="text-base font-bold text-zinc-300 animate-[pulse_4s_ease-in-out_infinite]">
-        {@little_name}
-      </p>
+      <%= if assigns[:little_name]  do %>
+        <p class="text-base font-bold text-zinc-300 animate-[pulse_4s_ease-in-out_infinite]">
+          {@little_name}
+        </p>
+      <% end %>
       <span class="flex gap-2 items-center">
         <!-- Big name with clean lightning effect -->
         <h2 class="relative text-3xl font-bold">

@@ -90,7 +90,7 @@ defmodule StormfulWeb.IntoTheStorm.IndexLive do
               <h4 class="text-xl font-semibold relative transition-all duration-300 
       group-hover:text-white 
       group-hover:scale-[1.02]">
-                <%= sensicality.title %>
+                {sensicality.title}
               </h4>
             </div>
           </.link>
