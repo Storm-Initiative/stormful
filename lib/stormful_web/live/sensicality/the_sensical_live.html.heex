@@ -6,13 +6,22 @@
     current_user={@current_user}
   />
 
-  <div class="flex flex-col gap-4">
-    <div class="p-4">
-      <div class="p-4 flex flex-col gap-4" id="winds" phx-hook="WindScroller" phx-update="stream">
-        <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
-          <!-- todo => make in this wind context -->
-          <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
-        </div>
+  <.sensicality_tab_bar current_tab={@current_tab} />
+
+  <div class="flex flex-col gap-4 pl-16 mt-14">
+    <div class="ml-8 mt-4">
+      <.cool_header little_name="Currently @" big_name={@current_tab_title} />
+    </div>
+
+    <div
+      class="p-8 pt-0 flex flex-col gap-4"
+      id="winds"
+      phx-hook="WindScroller"
+      phx-update="stream"
+    >
+      <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
+        <!-- todo => make in this wind context -->
+        <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
       </div>
     </div>
   </div>

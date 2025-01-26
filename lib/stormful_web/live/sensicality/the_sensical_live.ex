@@ -1,7 +1,6 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
   alias StormfulWeb.Layouts
   alias Stormful.FlowingThoughts
-  alias Stormful.TaskManagement
   alias Stormful.Planning
 
   alias Stormful.Sensicality
@@ -9,6 +8,7 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
 
   use StormfulWeb, :live_view
   use StormfulWeb.BaseUtil.Controlful
+  import StormfulWeb.SensicalityComponents.TabComponents
 
   @impl true
   def mount(params, _session, socket) do
@@ -33,20 +33,15 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     {:noreply, socket |> apply_action(socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :new_plan, _params) do
+  defp apply_action(socket, action, _params) do
+    representable_action_name = Atom.to_string(action) |> String.replace("_", "-")
+
+    current_tab_title =
+      representable_action_name |> String.replace("-", " ") |> String.capitalize()
+
     socket
-  end
-
-  defp apply_action(socket, :with_plan, params) do
-    current_user = socket.assigns.current_user
-
-    plan = Planning.get_plan_from_sensical!(current_user.id, params["plan_id"])
-
-    socket |> assign(selected_plan: plan)
-  end
-
-  defp apply_action(socket, _, _params) do
-    socket
+    |> assign(:current_tab, representable_action_name)
+    |> assign(:current_tab_title, current_tab_title)
   end
 
   @impl true
@@ -59,17 +54,14 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     {:noreply, socket |> stream_insert(:plans, plan)}
   end
 
-  @impl true
-  def handle_event("do-ai-stuff", _, socket) do
-    current_user = socket.assigns.current_user
+  def handle_event("select_tab", %{"tab" => tab}, socket) do
+    sensical = socket.assigns.sensical
 
-    {:ok, the_glorious_plan} =
-      TaskManagement.create_plan_from_thoughts_in_a_sensical(
-        current_user.id,
-        socket.assigns.sensical.id
-      )
-
-    {:noreply, socket |> stream_insert(:plans, the_glorious_plan)}
+    if tab == "thoughts" do
+      {:noreply, socket |> push_patch(to: ~p"/sensicality/#{sensical.id}")}
+    else
+      {:noreply, socket |> push_patch(to: "/sensicality/#{sensical.id}/#{tab}")}
+    end
   end
 
   use StormfulWeb.BaseUtil.KeyboardSupport
