@@ -3,6 +3,7 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
   import StormfulWeb.CoreComponents
 
   attr :current_tab, :string, required: true
+  attr :current_action, :atom, required: true
 
   attr :tabs, :list,
     default: [
@@ -13,8 +14,32 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
         to_gradient: "to-pink-400"
       },
       %{
+        id: "todos",
+        icon: "hero-check-circle",
+        from_gradient: "from-cyan-400",
+        to_gradient: "to-blue-400"
+      },
+      %{
+        id: "heads-ups",
+        icon: "hero-exclamation-circle",
+        from_gradient: "from-cyan-400",
+        to_gradient: "to-blue-400"
+      },
+      %{
         id: "ai-related",
         icon: "hero-bolt",
+        from_gradient: "from-cyan-400",
+        to_gradient: "to-blue-400"
+      },
+      %{
+        id: "resources",
+        icon: "hero-building-storefront",
+        from_gradient: "from-cyan-400",
+        to_gradient: "to-blue-400"
+      },
+      %{
+        id: "archive",
+        icon: "hero-archive-box",
         from_gradient: "from-cyan-400",
         to_gradient: "to-blue-400"
       },
@@ -108,4 +133,3 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
     """
   end
 end
-

@@ -1,7 +1,7 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
-  alias StormfulWeb.Layouts
   alias Stormful.FlowingThoughts
-  alias Stormful.Planning
+  alias StormfulWeb.Sensicality.LiveComponents.Thoughts
+  alias StormfulWeb.Layouts
 
   alias Stormful.Sensicality
   # alias Stormful.Sensicality.Sensical
@@ -15,16 +15,15 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     current_user = socket.assigns.current_user
 
     sensical = Sensicality.get_sensical!(current_user.id, params["sensical_id"])
-    winds = sensical.winds
     plans = sensical.plans
 
-    FlowingThoughts.subscribe_to_sensical(sensical)
+    # We unsub from any
+    FlowingThoughts.unsubscribe_from_sensical(sensical)
 
     {:ok,
      socket
      |> assign_controlful()
      |> assign(sensical: sensical)
-     |> stream(:winds, winds)
      |> stream(:plans, plans), layout: {Layouts, :sensicality}}
   end
 
@@ -40,18 +39,28 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
       representable_action_name |> String.replace("-", " ") |> String.capitalize()
 
     socket
+    |> assign_neededs_for_action(action)
+    |> assign(:current_action, action)
     |> assign(:current_tab, representable_action_name)
     |> assign(:current_tab_title, current_tab_title)
   end
 
-  @impl true
-  def handle_info({:new_wind, wind}, socket) do
-    {:noreply, stream_insert(socket, :winds, wind) |> push_event("scroll-to-latest-wind", %{})}
+  defp assign_neededs_for_action(socket, :thoughts) do
+    # subscribe to thoughts, this is managed from the center, and not encapsulated for performance
+    FlowingThoughts.subscribe_to_sensical(socket.assigns.sensical)
+
+    socket
+  end
+
+  defp assign_neededs_for_action(socket, _) do
+    socket
   end
 
   @impl true
-  def handle_info({StormfulWeb.Sensicality.Plans.FormComponent, {:plan_created, plan}}, socket) do
-    {:noreply, socket |> stream_insert(:plans, plan)}
+  def handle_info({:new_wind, wind}, socket) do
+    # Send the update to the Thoughts component
+    send_update(Thoughts, id: "thoughts-general", wind: wind)
+    {:noreply, socket}
   end
 
   def handle_event("select_tab", %{"tab" => tab}, socket) do
