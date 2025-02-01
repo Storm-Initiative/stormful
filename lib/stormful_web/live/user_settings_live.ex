@@ -84,7 +84,7 @@ defmodule StormfulWeb.UserSettingsLive do
           put_flash(socket, :error, "Email change link is invalid or it has expired.")
       end
 
-    {:ok, push_navigate(socket, to: ~p"/users/settings")}
+    {:ok, push_navigate(socket, to: ~p"/users/settings") |> assign_controlful()}
   end
 
   def mount(_params, _session, socket) do
@@ -100,6 +100,7 @@ defmodule StormfulWeb.UserSettingsLive do
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
+      |> assign_controlful()
 
     {:ok, socket}
   end

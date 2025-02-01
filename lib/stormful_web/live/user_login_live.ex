@@ -36,6 +36,15 @@ defmodule StormfulWeb.UserLoginLive do
             Log in <span aria-hidden="true">→</span>
           </.button>
         </:actions>
+
+        <:actions>
+          <.link
+            href={~p"/users/rerequest_confirmation_mail"}
+            class="w-full flex justify-center text-sm font-semibold text-white"
+          >
+            Receive confirmation instructions again
+          </.link>
+        </:actions>
       </.simple_form>
     </div>
     """

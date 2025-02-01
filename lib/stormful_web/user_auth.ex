@@ -213,6 +213,25 @@ defmodule StormfulWeb.UserAuth do
     end
   end
 
+  @doc """
+  Used for routes that require the user to be authenticated and confirmed, should be used all by itself.
+  """
+  def require_confirmed_user(conn, opts) do
+    conn = require_authenticated_user(conn, opts)
+
+    if !conn.assigns[:current_user].confirmed_at do
+      conn
+      |> put_flash(
+        :error,
+        "Please confirm your e-mail address in order to have access to this service."
+      )
+      |> log_out_user
+      |> halt()
+    else
+      conn
+    end
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)

@@ -54,6 +54,7 @@ defmodule StormfulWeb.Router do
       on_mount: [{StormfulWeb.UserAuth, :redirect_if_user_is_authenticated}] do
       live "/users/register", UserRegistrationLive, :new
       live "/users/log_in", UserLoginLive, :new
+      live "/users/rerequest_confirmation_mail", UserConfirmationInstructionsLive
       live "/users/reset_password", UserForgotPasswordLive, :new
       live "/users/reset_password/:token", UserResetPasswordLive, :edit
     end
@@ -62,7 +63,7 @@ defmodule StormfulWeb.Router do
   end
 
   scope "/", StormfulWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :require_authenticated_user, :require_confirmed_user]
 
     live_session :require_authenticated_user,
       on_mount: [{StormfulWeb.UserAuth, :ensure_authenticated}] do
