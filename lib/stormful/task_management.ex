@@ -77,6 +77,30 @@ defmodule Stormful.TaskManagement do
   end
 
   @doc """
+  Creates a todo for a sensical's preferred plan, authenticates by user_id.
+
+  ## Examples
+
+      iex> create_todo_for_sensicals_preferred_plan(1, 2, "buy some bread")
+      {:ok, %Todo{}}
+
+      iex> create_todo_for_sensicals_preferred_plan(5, 2, "dont buy some bread")
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_todo_for_sensicals_preferred_plan(user_id, sensical_id, title) do
+    plan = Planning.get_preferred_plan_of_sensical!(user_id, sensical_id)
+
+    %Todo{}
+    |> Todo.changeset(%{
+      title: title,
+      user_id: user_id,
+      plan_id: plan.id
+    })
+    |> Repo.insert()
+  end
+
+  @doc """
   Creates many todos, at once, for a user/plan
 
   ## Examples

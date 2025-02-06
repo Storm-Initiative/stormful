@@ -1,6 +1,7 @@
 defmodule StormfulWeb.StormInput do
   use Phoenix.LiveComponent
   import StormfulWeb.CoreComponents
+  alias Stormful.TaskManagement
   alias Stormful.FlowingThoughts
   alias Stormful.FlowingThoughts.Wind
 
@@ -23,6 +24,7 @@ defmodule StormfulWeb.StormInput do
               label="The glorious thought input"
               label_centered={true}
             />
+            <input type="hidden" name="resource_type" value={@resource_type} />
           </div>
           <.button
             type="submit"
@@ -46,7 +48,11 @@ defmodule StormfulWeb.StormInput do
     {:noreply, socket |> assign_wind_form(FlowingThoughts.change_wind(%Wind{words: words}))}
   end
 
-  def handle_event("save", %{"wind" => %{"words" => words}}, socket) do
+  def handle_event(
+        "save",
+        %{"resource_type" => "wind", "wind" => %{"words" => words}},
+        socket
+      ) do
     sensical = socket.assigns.sensical
 
     with {:ok, _wind} <-
@@ -55,6 +61,25 @@ defmodule StormfulWeb.StormInput do
              words: words,
              user_id: socket.assigns.current_user.id
            }) do
+      {:noreply, socket |> assign_clear_wind_form()}
+    else
+      {:error, changeset} -> {:noreply, socket |> assign_wind_form(changeset)}
+    end
+  end
+
+  def handle_event(
+        "save",
+        %{"resource_type" => "todo", "wind" => %{"words" => words}},
+        socket
+      ) do
+    sensical = socket.assigns.sensical
+
+    with {:ok, _wind} <-
+           TaskManagement.create_todo_for_sensicals_preferred_plan(
+             sensical.id,
+             socket.assigns.current_user.id,
+             words
+           ) do
       {:noreply, socket |> assign_clear_wind_form()}
     else
       {:error, changeset} -> {:noreply, socket |> assign_wind_form(changeset)}

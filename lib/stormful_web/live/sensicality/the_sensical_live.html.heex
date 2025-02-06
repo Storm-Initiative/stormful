@@ -19,6 +19,24 @@
         id="storm-input"
         sensical={@sensical}
         current_user={@current_user}
+        resource_type="wind"
+      />
+    <% end %>
+
+    <%= if @current_action == :todos do %>
+      <.live_component
+        module={StormfulWeb.Sensicality.LiveComponents.Todos}
+        id="todos-general"
+        sensical={@sensical}
+        current_user={@current_user}
+      />
+
+      <.live_component
+        module={StormfulWeb.StormInput}
+        id="storm-input"
+        sensical={@sensical}
+        current_user={@current_user}
+        resource_type="todo"
       />
     <% end %>
   </div>

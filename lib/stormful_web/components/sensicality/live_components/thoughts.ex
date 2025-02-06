@@ -27,13 +27,7 @@ defmodule StormfulWeb.Sensicality.LiveComponents.Thoughts do
   @impl true
   def render(assigns) do
     ~H"""
-    <div
-      class="p-8 pt-0 flex flex-col gap-4"
-      id="winds"
-      phx-hook="WindScroller"
-      phx-update="stream"
-      phx-target={@myself}
-    >
+    <div class="p-8 pt-0 flex flex-col gap-4" id="winds" phx-hook="WindScroller" phx-update="stream">
       <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
         <!-- todo => make in this wind context -->
         <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
