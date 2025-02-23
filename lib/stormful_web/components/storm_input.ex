@@ -1,12 +1,15 @@
 defmodule StormfulWeb.StormInput do
+  @moduledoc false
+
   use Phoenix.LiveComponent
   import StormfulWeb.CoreComponents
+  alias Stormful.TaskManagement
   alias Stormful.FlowingThoughts
   alias Stormful.FlowingThoughts.Wind
 
   def render(assigns) do
     ~H"""
-    <div class="fixed bottom-0 left-0 right-0 bg-indigo-900 z-[0] border-t border-indigo-700 p-4 text-xl">
+    <div class="fixed bottom-0 left-0 right-0 bg-indigo-900 z-[1] border-t border-indigo-700 p-4 text-xl">
       <div class="max-w-7xl mx-auto">
         <.form
           phx-target={@myself}
@@ -46,18 +49,48 @@ defmodule StormfulWeb.StormInput do
     {:noreply, socket |> assign_wind_form(FlowingThoughts.change_wind(%Wind{words: words}))}
   end
 
-  def handle_event("save", %{"wind" => %{"words" => words}}, socket) do
+  def handle_event(
+        "save",
+        %{"wind" => %{"words" => words}},
+        socket
+      ) do
     sensical = socket.assigns.sensical
 
-    with {:ok, _wind} <-
-           FlowingThoughts.create_wind(%{
-             sensical_id: sensical.id,
-             words: words,
-             user_id: socket.assigns.current_user.id
-           }) do
-      {:noreply, socket |> assign_clear_wind_form()}
-    else
-      {:error, changeset} -> {:noreply, socket |> assign_wind_form(changeset)}
+    first_of_words = String.first(words)
+
+    case first_of_words do
+      "?" ->
+        [_head | tail] = String.split(words, "", trim: true)
+        meaty_part = tail |> Enum.join("")
+
+        case TaskManagement.create_todo_for_sensicals_preferred_plan(
+               socket.assigns.current_user.id,
+               sensical.id,
+               meaty_part
+             ) do
+          {:ok, _todo} ->
+            {:noreply, socket |> assign_clear_wind_form()}
+
+          {:error, changeset} ->
+            {:noreply, socket |> assign_wind_form(changeset)}
+        end
+
+      "!" ->
+        # TODO we create headsup
+        ""
+
+      _ ->
+        case FlowingThoughts.create_wind(%{
+               sensical_id: sensical.id,
+               words: words,
+               user_id: socket.assigns.current_user.id
+             }) do
+          {:ok, _wind} ->
+            {:noreply, socket |> assign_clear_wind_form()}
+
+          {:error, changeset} ->
+            {:noreply, socket |> assign_wind_form(changeset)}
+        end
     end
   end
 

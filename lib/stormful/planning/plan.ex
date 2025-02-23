@@ -8,6 +8,7 @@ defmodule Stormful.Planning.Plan do
 
   schema "plans" do
     field :title, :string
+    field :preferred, :boolean
     belongs_to :sensical, Sensical
     belongs_to :user, User
     has_many :todos, Todo
@@ -18,7 +19,7 @@ defmodule Stormful.Planning.Plan do
   @doc false
   def changeset(plan, attrs) do
     plan
-    |> cast(attrs, [:title, :sensical_id, :user_id])
+    |> cast(attrs, [:title, :preferred, :sensical_id, :user_id])
     |> validate_required([:title, :sensical_id, :user_id])
   end
 end

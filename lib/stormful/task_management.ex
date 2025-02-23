@@ -11,6 +11,7 @@ defmodule Stormful.TaskManagement do
   alias Stormful.Repo
 
   alias Stormful.TaskManagement.Todo
+  @pubsub Stormful.PubSub
 
   @doc """
   Returns the list of todos.
@@ -74,6 +75,37 @@ defmodule Stormful.TaskManagement do
     %Todo{}
     |> Todo.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Creates a todo for a sensical's preferred plan, authenticates by user_id.
+
+  ## Examples
+
+      iex> create_todo_for_sensicals_preferred_plan(1, 2, "buy some bread")
+      {:ok, %Todo{}}
+
+      iex> create_todo_for_sensicals_preferred_plan(5, 2, "dont buy some bread")
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_todo_for_sensicals_preferred_plan(user_id, sensical_id, title) do
+    plan = Planning.get_preferred_plan_of_sensical!(user_id, sensical_id)
+
+    case %Todo{}
+         |> Todo.changeset(%{
+           title: title,
+           user_id: user_id,
+           plan_id: plan.id
+         })
+         |> Repo.insert() do
+      {:ok, todo} ->
+        Phoenix.PubSub.broadcast!(@pubsub, topic(plan.id), {:new_todo, todo})
+        {:ok, todo}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -198,6 +230,10 @@ defmodule Stormful.TaskManagement do
       false ->
         update_todo(todo, %{completed_at: nil})
     end
+
+    todo = get_todo_with_user_id!(user_id, todo_id)
+
+    Phoenix.PubSub.broadcast!(@pubsub, topic(todo.plan_id), {:marked_todo, todo})
   end
 
   def create_plan_from_thoughts_in_a_sensical(user_id, sensical_id) do
@@ -251,5 +287,9 @@ defmodule Stormful.TaskManagement do
     create_todos_for_plan(user_id, new_plan.id, todos_to_be_created)
 
     {:ok, new_plan}
+  end
+
+  defp topic(plan_id) do
+    "plan_room:#{plan_id}"
   end
 end
