@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Sensicality.LiveComponents.Todos do
+  @moduledoc false
   import StormfulWeb.CoreComponents
 
   alias Stormful.TaskManagement.Todo
@@ -25,13 +26,7 @@ defmodule StormfulWeb.Sensicality.LiveComponents.Todos do
 
     plan = Planning.get_preferred_plan_of_sensical!(current_user.id, sensical.id)
 
-    if !plan do
-      plan = Planning.create_plan_for_a_sensical(current_user.id, sensical.id, true)
-
-      {:ok, socket |> assign(:current_user, plan) |> stream(:todos, [])}
-    else
-      {:ok, socket |> assign(:current_plan, plan) |> stream(:todos, plan.todos)}
-    end
+    {:ok, socket |> assign(:current_plan, plan) |> stream(:todos, plan.todos)}
   end
 
   attr :todo, Todo

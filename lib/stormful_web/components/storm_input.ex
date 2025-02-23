@@ -1,4 +1,6 @@
 defmodule StormfulWeb.StormInput do
+  @moduledoc false
+
   use Phoenix.LiveComponent
   import StormfulWeb.CoreComponents
   alias Stormful.TaskManagement
@@ -24,7 +26,6 @@ defmodule StormfulWeb.StormInput do
               label="The glorious thought input"
               label_centered={true}
             />
-            <input type="hidden" name="resource_type" value={@resource_type} />
           </div>
           <.button
             type="submit"
@@ -50,39 +51,46 @@ defmodule StormfulWeb.StormInput do
 
   def handle_event(
         "save",
-        %{"resource_type" => "wind", "wind" => %{"words" => words}},
+        %{"wind" => %{"words" => words}},
         socket
       ) do
     sensical = socket.assigns.sensical
 
-    with {:ok, _wind} <-
-           FlowingThoughts.create_wind(%{
-             sensical_id: sensical.id,
-             words: words,
-             user_id: socket.assigns.current_user.id
-           }) do
-      {:noreply, socket |> assign_clear_wind_form()}
-    else
-      {:error, changeset} -> {:noreply, socket |> assign_wind_form(changeset)}
-    end
-  end
+    first_of_words = String.first(words)
 
-  def handle_event(
-        "save",
-        %{"resource_type" => "todo", "wind" => %{"words" => words}},
-        socket
-      ) do
-    sensical = socket.assigns.sensical
+    case first_of_words do
+      "?" ->
+        [_head | tail] = String.split(words, "", trim: true)
+        meaty_part = tail |> Enum.join("")
 
-    with {:ok, _wind} <-
-           TaskManagement.create_todo_for_sensicals_preferred_plan(
-             sensical.id,
-             socket.assigns.current_user.id,
-             words
-           ) do
-      {:noreply, socket |> assign_clear_wind_form()}
-    else
-      {:error, changeset} -> {:noreply, socket |> assign_wind_form(changeset)}
+        case TaskManagement.create_todo_for_sensicals_preferred_plan(
+               socket.assigns.current_user.id,
+               sensical.id,
+               meaty_part
+             ) do
+          {:ok, _todo} ->
+            {:noreply, socket |> assign_clear_wind_form()}
+
+          {:error, changeset} ->
+            {:noreply, socket |> assign_wind_form(changeset)}
+        end
+
+      "!" ->
+        # TODO we create headsup
+        ""
+
+      _ ->
+        case FlowingThoughts.create_wind(%{
+               sensical_id: sensical.id,
+               words: words,
+               user_id: socket.assigns.current_user.id
+             }) do
+          {:ok, _wind} ->
+            {:noreply, socket |> assign_clear_wind_form()}
+
+          {:error, changeset} ->
+            {:noreply, socket |> assign_wind_form(changeset)}
+        end
     end
   end
 

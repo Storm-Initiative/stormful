@@ -1,4 +1,4 @@
-<div class={[@current_action == :thoughts && "pb-28"]}>
+<div class="pb-28">
   <.sensicality_tab_bar current_tab={@current_tab} current_action={@current_action} />
 
   <div class="flex flex-col gap-4 pl-16 mt-14">
@@ -6,20 +6,18 @@
       <.cool_header little_name="Currently @" big_name={@current_tab_title} />
     </div>
 
+    <.live_component
+      module={StormfulWeb.StormInput}
+      id="storm-input"
+      sensical={@sensical}
+      current_user={@current_user}
+    />
     <%= if @current_action == :thoughts do %>
       <.live_component
         module={StormfulWeb.Sensicality.LiveComponents.Thoughts}
         id="thoughts-general"
         sensical={@sensical}
         current_user={@current_user}
-      />
-
-      <.live_component
-        module={StormfulWeb.StormInput}
-        id="storm-input"
-        sensical={@sensical}
-        current_user={@current_user}
-        resource_type="wind"
       />
     <% end %>
 
@@ -29,14 +27,6 @@
         id="todos-general"
         sensical={@sensical}
         current_user={@current_user}
-      />
-
-      <.live_component
-        module={StormfulWeb.StormInput}
-        id="storm-input"
-        sensical={@sensical}
-        current_user={@current_user}
-        resource_type="todo"
       />
     <% end %>
   </div>

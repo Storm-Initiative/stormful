@@ -44,6 +44,8 @@ defmodule Stormful.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:credo, "~> 1.7", runtime: Mix.env() == :dev},
+      {:dogma, "~> 0.1.16", runtime: Mix.env() == :dev},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.5",

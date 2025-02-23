@@ -11,6 +11,7 @@ defmodule Stormful.TaskManagement do
   alias Stormful.Repo
 
   alias Stormful.TaskManagement.Todo
+  @pubsub Stormful.PubSub
 
   @doc """
   Returns the list of todos.
@@ -91,13 +92,20 @@ defmodule Stormful.TaskManagement do
   def create_todo_for_sensicals_preferred_plan(user_id, sensical_id, title) do
     plan = Planning.get_preferred_plan_of_sensical!(user_id, sensical_id)
 
-    %Todo{}
-    |> Todo.changeset(%{
-      title: title,
-      user_id: user_id,
-      plan_id: plan.id
-    })
-    |> Repo.insert()
+    case %Todo{}
+         |> Todo.changeset(%{
+           title: title,
+           user_id: user_id,
+           plan_id: plan.id
+         })
+         |> Repo.insert() do
+      {:ok, todo} ->
+        Phoenix.PubSub.broadcast!(@pubsub, topic(plan.id), {:new_todo, todo})
+        {:ok, todo}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -275,5 +283,9 @@ defmodule Stormful.TaskManagement do
     create_todos_for_plan(user_id, new_plan.id, todos_to_be_created)
 
     {:ok, new_plan}
+  end
+
+  defp topic(plan_id) do
+    "plan_room:#{plan_id}"
   end
 end

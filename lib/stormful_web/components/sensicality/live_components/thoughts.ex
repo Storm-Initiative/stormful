@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Sensicality.LiveComponents.Thoughts do
+  @moduledoc false
   alias Stormful.FlowingThoughts
   use Phoenix.LiveComponent
 
