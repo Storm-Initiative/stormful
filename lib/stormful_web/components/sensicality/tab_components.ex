@@ -65,7 +65,7 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
 
   def sensicality_tab_bar(assigns) do
     ~H"""
-    <div class="fixed left-0 top-0 h-screen w-16 bg-slate-800/90 backdrop-blur-lg z-[1] hover:w-20 transition-all duration-300 ease-out-expo group border-r border-white/5">
+    <div class="fixed left-0 top-0 h-screen w-16 bg-slate-800/90 backdrop-blur-lg z-[2] hover:w-20 transition-all duration-300 ease-out-expo group border-r border-white/5">
       <div class="h-full flex flex-col items-center py-10 space-y-4 overflow-y-auto">
         <!-- Go-to-top button -->
         <div

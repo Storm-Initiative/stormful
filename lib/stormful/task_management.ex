@@ -230,6 +230,10 @@ defmodule Stormful.TaskManagement do
       false ->
         update_todo(todo, %{completed_at: nil})
     end
+
+    todo = get_todo_with_user_id!(user_id, todo_id)
+
+    Phoenix.PubSub.broadcast!(@pubsub, topic(todo.plan_id), {:marked_todo, todo})
   end
 
   def create_plan_from_thoughts_in_a_sensical(user_id, sensical_id) do

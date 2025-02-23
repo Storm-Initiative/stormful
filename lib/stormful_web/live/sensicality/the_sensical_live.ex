@@ -69,6 +69,13 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
   end
 
   @impl true
+  def handle_info({:marked_todo, todo}, socket) do
+    # Send the update to the Thoughts component
+    send_update(Todos, id: "todos-general", marked_todo: todo)
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:new_todo, todo}, socket) do
     # Send the update to the Thoughts component
     send_update(Todos, id: "todos-general", todo: todo)
