@@ -1,4 +1,5 @@
 defmodule StormfulWeb.UserAuth do
+  @moduledoc false
   use StormfulWeb, :verified_routes
 
   import Plug.Conn
@@ -219,7 +220,9 @@ defmodule StormfulWeb.UserAuth do
   def require_confirmed_user(conn, opts) do
     conn = require_authenticated_user(conn, opts)
 
-    if !conn.assigns[:current_user].confirmed_at do
+    if conn.assigns[:current_user].confirmed_at do
+      conn
+    else
       conn
       |> put_flash(
         :error,
@@ -227,8 +230,6 @@ defmodule StormfulWeb.UserAuth do
       )
       |> log_out_user
       |> halt()
-    else
-      conn
     end
   end
 
