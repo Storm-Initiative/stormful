@@ -7,45 +7,6 @@ defmodule StormfulWeb.Keyboarder do
 
   def controlful_panel(assigns) do
     ~H"""
-    <div
-      inert
-      class={[
-        "fixed hidden flex-col lg:flex gap-2 lg:items-center w-full max-w-2xl top-0 bg-black text-white px-8 py-0 text-xl z-[51] opacity-0",
-        @controlful && "opacity-90",
-        @keyboarder && "opacity-95 bg-inherit"
-      ]}
-      phx-window-keydown="keydown"
-      phx-window-keyup="keyup"
-    >
-      <div>
-        <p>
-          <%= case {@controlful, @keyboarder} do %>
-            <% {false, false} -> %>
-              <p class="py-4">
-                To activate Keyboarder, press CTRL then TAB!
-              </p>
-            <% {true, false} -> %>
-              <p class="py-4">
-                Press TAB to activate Keyboarder!
-              </p>
-            <% {_, true} -> %>
-              <div class="relative w-screen h-screen" inert>
-                <div class="bg-indigo-900 absolute flex w-full h-full pt-8 flex-col items-center gap-4">
-                  <p class="font-bold text-2xl underline">
-                    Keyboarder is active!
-                    Press ESC or CTRL to cancel Keyboarder
-                  </p>
-                  <div class="underline extrabold">
-                    Current context related shortcuts <.icon name="hero-arrow-turn-right-down" />
-                  </div>
-                </div>
-              </div>
-            <% {nil, nil} -> %>
-              To activate Keyboarder, press CTRL then TAB!
-          <% end %>
-        </p>
-      </div>
-    </div>
     """
   end
 
@@ -55,7 +16,7 @@ defmodule StormfulWeb.Keyboarder do
   def controlful_indicator_span(assigns) do
     ~H"""
     <span class={["hidden lg:block text-xs font-normal", @keyboarder && "animate-icondance text-lg"]}>
-      (<%= @char %>)
+      ({@char})
     </span>
     """
   end
@@ -67,7 +28,7 @@ defmodule StormfulWeb.Keyboarder do
   def controlful_indicator_powered_paragraph(assigns) do
     ~H"""
     <p class="flex flex-col items-center">
-      <%= @name %><.controlful_indicator_span char={@char} keyboarder={@keyboarder} />
+      {@name}<.controlful_indicator_span char={@char} keyboarder={@keyboarder} />
     </p>
     """
   end
@@ -79,10 +40,10 @@ defmodule StormfulWeb.Keyboarder do
     ~H"""
     <div class="p-2 border-2 border-black">
       <h4 class="text-lg underline font-bold mb-2 text-center">
-        <%= render_slot(@title) %>
+        {render_slot(@title)}
       </h4>
 
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -112,7 +73,7 @@ defmodule StormfulWeb.Keyboarder do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -142,7 +103,7 @@ defmodule StormfulWeb.Keyboarder do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end

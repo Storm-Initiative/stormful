@@ -3,9 +3,9 @@ defmodule StormfulWeb.BaseUtil.KeyboardSupport do
 
   defmacro __using__(_opts) do
     quote do
-      def handle_event("keydown", _, socket) do
-        {:noreply, socket}
-      end
+      # def handle_event("keydown", _, socket) do
+      #   {:noreply, socket}
+      # end
     end
   end
 end

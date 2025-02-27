@@ -36,21 +36,21 @@ defmodule StormfulWeb.BaseUtil.Controlful do
         end
       end
 
-      def handle_event("keyup", %{"key" => "Control"}, socket) do
-        {:noreply, socket |> controlfulness}
-      end
+      # def handle_event("keyup", %{"key" => "Control"}, socket) do
+      #   {:noreply, socket |> controlfulness}
+      # end
 
-      def handle_event("keyup", %{"key" => "Tab"}, socket) do
-        {:noreply, socket |> activate_keyboarder_for_real}
-      end
+      # def handle_event("keyup", %{"key" => "Tab"}, socket) do
+      #   {:noreply, socket |> activate_keyboarder_for_real}
+      # end
 
-      def handle_event("keyup", %{"key" => "Escape"}, socket) do
-        {:noreply, socket |> escape_controlful_and_keyboarder}
-      end
+      # def handle_event("keyup", %{"key" => "Escape"}, socket) do
+      #   {:noreply, socket |> escape_controlful_and_keyboarder}
+      # end
 
-      def handle_event("keyup", _, socket) do
-        {:noreply, socket |> escape_controlful_and_keyboarder}
-      end
+      # def handle_event("keyup", _, socket) do
+      #   {:noreply, socket |> escape_controlful_and_keyboarder}
+      # end
     end
   end
 end

@@ -89,6 +89,7 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("select_tab", %{"tab" => tab}, socket) do
     sensical = socket.assigns.sensical
 
