@@ -1,4 +1,6 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
+  alias StormfulWeb.Sensicality.LiveComponents.Headsups
+  alias Stormful.Attention
   alias StormfulWeb.Sensicality.LiveComponents.Todos
   alias Stormful.Planning
   alias Stormful.FlowingThoughts
@@ -22,6 +24,7 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     # We unsub from any
     FlowingThoughts.unsubscribe_from_sensical(sensical)
     Planning.unsubscribe_from_preferred_plan(current_user, sensical)
+    Attention.unsubscribe_from_sensical(sensical)
 
     {:ok,
      socket
@@ -64,6 +67,13 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     socket
   end
 
+  defp assign_neededs_for_action(socket, :heads_ups) do
+    # subscribe to thoughts, this is managed from the center, and not encapsulated for performance
+    Attention.subscribe_to_sensical(socket.assigns.sensical)
+
+    socket
+  end
+
   defp assign_neededs_for_action(socket, _) do
     socket
   end
@@ -77,7 +87,7 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
 
   @impl true
   def handle_info({:new_todo, todo}, socket) do
-    # Send the update to the Thoughts component
+    # Send the update to the Todos component
     send_update(Todos, id: "todos-general", todo: todo)
     {:noreply, socket}
   end
@@ -86,6 +96,13 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
   def handle_info({:new_wind, wind}, socket) do
     # Send the update to the Thoughts component
     send_update(Thoughts, id: "thoughts-general", wind: wind)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:new_headsup, headsup}, socket) do
+    # Send the update to the Headsups component
+    send_update(Headsups, id: "headsups-general", headsup: headsup)
     {:noreply, socket}
   end
 

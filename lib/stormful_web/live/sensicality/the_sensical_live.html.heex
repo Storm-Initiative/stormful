@@ -29,5 +29,14 @@
         current_user={@current_user}
       />
     <% end %>
+
+    <%= if @current_action == :heads_ups do %>
+      <.live_component
+        module={StormfulWeb.Sensicality.LiveComponents.Headsups}
+        id="headsups-general"
+        sensical={@sensical}
+        current_user={@current_user}
+      />
+    <% end %>
   </div>
 </div>

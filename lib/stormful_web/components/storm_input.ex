@@ -3,6 +3,7 @@ defmodule StormfulWeb.StormInput do
 
   use Phoenix.LiveComponent
   import StormfulWeb.CoreComponents
+  alias Stormful.Attention
   alias Stormful.TaskManagement
   alias Stormful.FlowingThoughts
   alias Stormful.FlowingThoughts.Wind
@@ -76,8 +77,20 @@ defmodule StormfulWeb.StormInput do
         end
 
       "!" ->
-        # TODO we create headsup
-        ""
+        [_head | tail] = String.split(words, "", trim: true)
+        meaty_part = tail |> Enum.join("")
+
+        case Attention.create_headsup(
+               socket.assigns.current_user.id,
+               sensical.id,
+               meaty_part
+             ) do
+          {:ok, _headsup} ->
+            {:noreply, socket |> assign_clear_wind_form()}
+
+          {:error, changeset} ->
+            {:noreply, socket |> assign_wind_form(changeset)}
+        end
 
       _ ->
         case FlowingThoughts.create_wind(%{

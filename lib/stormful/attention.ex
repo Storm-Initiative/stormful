@@ -7,9 +7,10 @@ defmodule Stormful.Attention do
   alias Stormful.Repo
 
   alias Stormful.Attention.Headsup
+  @pubsub Stormful.PubSub
 
   @doc """
-  Returns the list of headsups.
+  Returns the list of headsups. by sensical id, authorized by user_id
 
   ## Examples
 
@@ -17,8 +18,8 @@ defmodule Stormful.Attention do
       [%Headsup{}, ...]
 
   """
-  def list_headsups do
-    Repo.all(Headsup)
+  def list_headsups_for_sensical(user_id, sensical_id) do
+    Repo.all(from q in Headsup, where: q.user_id == ^user_id and q.sensical_id == ^sensical_id)
   end
 
   @doc """
@@ -38,21 +39,25 @@ defmodule Stormful.Attention do
   def get_headsup!(id), do: Repo.get!(Headsup, id)
 
   @doc """
-  Creates a headsup.
+  Creates a headsup. with userid and sensical id
 
   ## Examples
 
-      iex> create_headsup(%{field: value})
+      iex> create_headsup(1,2,"hey")
       {:ok, %Headsup{}}
 
-      iex> create_headsup(%{field: bad_value})
+      iex> create_headsup(1,2,"nay")
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_headsup(attrs \\ %{}) do
-    %Headsup{}
-    |> Headsup.changeset(attrs)
-    |> Repo.insert()
+  def create_headsup(user_id, sensical_id, title) do
+    with {:ok, headsup} <-
+           %Headsup{}
+           |> Headsup.changeset(%{user_id: user_id, sensical_id: sensical_id, title: title})
+           |> Repo.insert() do
+      Phoenix.PubSub.broadcast!(@pubsub, topic(headsup.sensical_id), {:new_headsup, headsup})
+      {:ok, headsup}
+    end
   end
 
   @doc """
@@ -101,4 +106,14 @@ defmodule Stormful.Attention do
   def change_headsup(%Headsup{} = headsup, attrs \\ %{}) do
     Headsup.changeset(headsup, attrs)
   end
+
+  def subscribe_to_sensical(sensical) do
+    Phoenix.PubSub.subscribe(@pubsub, topic(sensical.id))
+  end
+
+  def unsubscribe_from_sensical(sensical) do
+    Phoenix.PubSub.unsubscribe(@pubsub, topic(sensical.id))
+  end
+
+  defp topic(sensical_id), do: "sensical_attentioooons:#{sensical_id}"
 end
