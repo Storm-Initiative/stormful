@@ -23,8 +23,8 @@ defmodule StormfulWeb.StormInput do
             <.input
               type="message_area"
               field={@wind_form[:words]}
-              placeholder="What do you mean, 'placeholder'?"
-              label="The glorious thought input"
+              placeholder="write your thoughts, or prepend a '!' to create a headsup, '?' to create a todo"
+              label="The glorious Storm Input"
               label_centered={true}
             />
           </div>

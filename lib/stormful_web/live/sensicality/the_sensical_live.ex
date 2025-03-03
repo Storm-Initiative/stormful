@@ -44,11 +44,29 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     current_tab_title =
       representable_action_name |> String.replace("-", " ") |> String.capitalize()
 
+    little_title_label =
+      Enum.random([
+        "currently @",
+        "@",
+        "right @",
+        "now you are @",
+        "you are viewing the",
+        "you seem to be hangin out @",
+        "hey, this is",
+        "how's the weather at",
+        "no way, you are at",
+        "you know your stuff if you are @",
+        "hi from",
+        "this is",
+        "hmm, you seem to be @"
+      ])
+
     socket
     |> assign_neededs_for_action(action)
     |> assign(:current_action, action)
     |> assign(:current_tab, representable_action_name)
     |> assign(:current_tab_title, current_tab_title)
+    |> assign(:little_title_label, little_title_label)
   end
 
   defp assign_neededs_for_action(socket, :thoughts) do
