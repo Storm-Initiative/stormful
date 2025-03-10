@@ -86,6 +86,8 @@ defmodule StormfulWeb.Router do
       live "/sensicality/:sensical_id/statistics", Sensicality.TheSensicalLive, :statistics
       live "/sensicality/:sensical_id/settings", Sensicality.TheSensicalLive, :settings
 
+      get "/my_winds/:wind_id", WindController, :singular_wind
+
       # live "/sensicality/:sensical_id/plans/:plan_id/immersive/brainstorm",
       #      StormfulWeb.Immersive.ImmerseSensicalLive,
       #      :brainstorm
