@@ -30,14 +30,16 @@ defmodule Stormful.FlowingThoughts do
 
   ## Examples
 
-      iex> get_wind!(123)
+      iex> get_wind!(1, 123)
       %Wind{}
 
-      iex> get_wind!(456)
+      iex> get_wind!(2, 456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_wind!(id), do: Repo.get!(Wind, id)
+  def get_wind!(user_id, id) do
+    Repo.one!(from w in Wind, where: w.user_id == ^user_id and w.id == ^id)
+  end
 
   @doc """
   Creates a wind.
