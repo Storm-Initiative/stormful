@@ -206,7 +206,7 @@ defmodule Stormful.Sensicality do
           }
         ],
         "",
-        5
+        10_000
       )
 
     content = response_from_ai.body["content"]
