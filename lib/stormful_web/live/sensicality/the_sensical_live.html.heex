@@ -42,5 +42,14 @@
         current_user={@current_user}
       />
     <% end %>
+
+    <%= if @current_action == :ai_stuff do %>
+      <.live_component
+        module={StormfulWeb.Sensicality.LiveComponents.AiStuff}
+        id="ai-stuff-general"
+        sensical={@sensical}
+        current_user={@current_user}
+      />
+    <% end %>
   </div>
 </div>

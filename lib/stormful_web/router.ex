@@ -77,7 +77,7 @@ defmodule StormfulWeb.Router do
       live "/sensicality/:sensical_id/thoughts", Sensicality.TheSensicalLive, :thoughts
       live "/sensicality/:sensical_id/todos", Sensicality.TheSensicalLive, :todos
       live "/sensicality/:sensical_id/heads-ups", Sensicality.TheSensicalLive, :heads_ups
-      live "/sensicality/:sensical_id/ai-related", Sensicality.TheSensicalLive, :ai_related
+      live "/sensicality/:sensical_id/ai-stuff", Sensicality.TheSensicalLive, :ai_stuff
 
       live "/sensicality/:sensical_id/command-center",
            Sensicality.TheSensicalLive,
