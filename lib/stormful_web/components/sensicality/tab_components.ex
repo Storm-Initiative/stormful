@@ -1,4 +1,6 @@
 defmodule StormfulWeb.SensicalityComponents.TabComponents do
+  @moduledoc false
+
   use Phoenix.Component
   import StormfulWeb.CoreComponents
 
@@ -26,7 +28,7 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
         to_gradient: "to-blue-400"
       },
       %{
-        id: "ai-related",
+        id: "ai-stuff",
         icon: "hero-bolt",
         from_gradient: "from-cyan-400",
         to_gradient: "to-blue-400"

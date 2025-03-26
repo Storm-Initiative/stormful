@@ -8,6 +8,7 @@ defmodule Stormful.Sensicality.Sensical do
 
   schema "sensicals" do
     field :title, :string
+    field :summary, :string, default: ""
     belongs_to :user, User
     has_many :winds, Wind
     has_many :plans, Plan
@@ -18,7 +19,7 @@ defmodule Stormful.Sensicality.Sensical do
   @doc false
   def changeset(sensical, attrs) do
     sensical
-    |> cast(attrs, [:title, :user_id])
+    |> cast(attrs, [:title, :user_id, :summary])
     |> validate_required([:title])
   end
 end
