@@ -65,7 +65,8 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base,
-    email_from: email_from
+    email_from: email_from,
+    anthropic_api_key: System.get_env("ANTHROPIC_API_KEY") || ""
 
   # ## SSL Support
   #

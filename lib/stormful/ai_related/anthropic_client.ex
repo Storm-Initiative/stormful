@@ -38,9 +38,8 @@ defmodule Stormful.AiRelated.AnthropicClient do
           }
   end
 
-  @anthropic_api_key System.get_env("ANTHROPIC_API_KEY") || ""
   def config(:anthropic_api_key) do
-    @anthropic_api_key
+    StormfulWeb.Endpoint.config(:anthropic_api_key)
   end
 
   @base_url "https://api.anthropic.com/v1"
@@ -80,6 +79,6 @@ defmodule Stormful.AiRelated.AnthropicClient do
         "messages" => messages
       }
     )
-    |> Req.post!(url: "/messages")
+    |> Req.post!(url: "/messages", receive_timeout: 120_000)
   end
 end
