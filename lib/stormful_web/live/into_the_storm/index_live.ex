@@ -1,4 +1,5 @@
 defmodule StormfulWeb.IntoTheStorm.IndexLive do
+  alias Stormful.Starring
   alias Stormful.Sensicality
   use StormfulWeb, :live_view
   use StormfulWeb.BaseUtil.Controlful
@@ -7,8 +8,13 @@ defmodule StormfulWeb.IntoTheStorm.IndexLive do
 
   def mount(_params, _session, socket) do
     sensicalities = Sensicality.list_sensicals(socket.assigns.current_user.id)
+    starred_sensicalities = Starring.list_starred_sensicals(socket.assigns.current_user.id)
 
-    {:ok, socket |> assign(sensicalities: sensicalities) |> assign_controlful()}
+    {:ok,
+     socket
+     |> assign(sensicalities: sensicalities)
+     |> assign(starred_sensicalities: starred_sensicalities)
+     |> assign_controlful()}
   end
 
   def render(assigns) do
@@ -47,6 +53,55 @@ defmodule StormfulWeb.IntoTheStorm.IndexLive do
           </div>
         </button>
       </.link>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="mb-4">
+        <.cool_header little_name="very shiny" big_name="The starred ones" />
+      </h2>
+      <div class="border-t-2">
+        <div class="flex flex-wrap gap-4 mt-4">
+          <.link
+            :for={starred_sensicality <- @starred_sensicalities}
+            navigate={~p"/sensicality/#{starred_sensicality.sensical.id}"}
+            class="group relative overflow-hidden bg-black px-8 py-4 rounded-xl border-2 border-zinc-800 transition-all duration-300 
+    hover:border-white/80 
+    hover:-translate-y-0.5 
+    hover:shadow-lg 
+    hover:shadow-yellow-500/20 
+    active:translate-y-0 
+    active:scale-[0.98]
+    hover:bg-zinc-900"
+          >
+            <!-- Enhanced gradient hover effect -->
+            <div class="absolute inset-0 bg-gradient-to-r from-yellow-900/0 via-blue-500/5 to-yellow-900/0 opacity-0 group-hover:opacity-100 transition-transform duration-700 group-hover:translate-x-full">
+            </div>
+            <!-- Lightning bolt icon with reversed color transition -->
+            <div class="flex items-center gap-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 text-blue-400 transition-colors duration-300 group-hover:text-yellow-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              <!-- Title with enhanced hover effect -->
+              <h4 class="text-xl font-semibold relative transition-all duration-300 
+      group-hover:text-white 
+      group-hover:scale-[1.02]">
+                {starred_sensicality.sensical.title}
+              </h4>
+            </div>
+          </.link>
+        </div>
+      </div>
     </div>
 
     <div class="mt-8">

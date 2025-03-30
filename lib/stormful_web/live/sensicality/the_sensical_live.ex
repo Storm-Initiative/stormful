@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Sensicality.TheSensicalLive do
+  alias Stormful.Starring
   alias StormfulWeb.Sensicality.LiveComponents.Headsups
   alias Stormful.Attention
   alias StormfulWeb.Sensicality.LiveComponents.Todos
@@ -21,6 +22,8 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     sensical = Sensicality.get_sensical!(current_user.id, params["sensical_id"])
     plans = sensical.plans
 
+    starred_sensicality = Starring.get_starred_sensical(current_user.id, sensical.id)
+
     # We unsub from any
     FlowingThoughts.unsubscribe_from_sensical(sensical)
     Planning.unsubscribe_from_preferred_plan(current_user, sensical)
@@ -30,6 +33,7 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
      socket
      |> assign_controlful()
      |> assign(sensical: sensical)
+     |> assign(is_starred: starred_sensicality != nil)
      |> stream(:plans, plans), layout: {Layouts, :sensicality}}
   end
 
@@ -133,6 +137,28 @@ defmodule StormfulWeb.Sensicality.TheSensicalLive do
     else
       {:noreply, socket |> push_patch(to: "/sensicality/#{sensical.id}/#{tab}")}
     end
+  end
+
+  @impl true
+  def handle_event("star_the_sensical", _, socket) do
+    current_user = socket.assigns.current_user
+    sensical = socket.assigns.sensical
+
+    {:ok, _} = Starring.star_the_sensical(current_user.id, sensical.id)
+
+    {:noreply,
+     socket |> assign(is_starred: true) |> put_flash(:info, "Sensical starred successfully!")}
+  end
+
+  @impl true
+  def handle_event("unstar_the_sensical", _, socket) do
+    current_user = socket.assigns.current_user
+    sensical = socket.assigns.sensical
+
+    {:ok, _} = Starring.unstar_the_sensical(current_user.id, sensical.id)
+
+    {:noreply,
+     socket |> assign(is_starred: false) |> put_flash(:info, "Sensical unstarred successfully!")}
   end
 
   use StormfulWeb.BaseUtil.KeyboardSupport
