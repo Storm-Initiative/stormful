@@ -1,4 +1,6 @@
 defmodule Stormful.FlowingThoughts.Wind do
+  @moduledoc false
+
   alias Stormful.Sensicality.Sensical
   alias Stormful.Accounts.User
   use Ecto.Schema

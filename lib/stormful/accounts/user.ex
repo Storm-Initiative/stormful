@@ -1,12 +1,17 @@
 defmodule Stormful.Accounts.User do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
+  alias Stormful.Starring.StarredSensical
 
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+
+    has_one :starred_sensicals, StarredSensical
 
     timestamps(type: :utc_datetime)
   end

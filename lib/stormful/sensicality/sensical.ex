@@ -1,7 +1,10 @@
 defmodule Stormful.Sensicality.Sensical do
+  @moduledoc false
+
   alias Stormful.FlowingThoughts.Wind
   alias Stormful.Planning.Plan
   alias Stormful.Accounts.User
+  alias Stormful.Starring.StarredSensical
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -9,9 +12,12 @@ defmodule Stormful.Sensicality.Sensical do
   schema "sensicals" do
     field :title, :string
     field :summary, :string, default: ""
+
     belongs_to :user, User
+
     has_many :winds, Wind
     has_many :plans, Plan
+    has_one :starred_sensical, StarredSensical
 
     timestamps(type: :utc_datetime)
   end
