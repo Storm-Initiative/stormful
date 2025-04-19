@@ -133,6 +133,7 @@ defmodule Stormful.Sensicality do
       |> Enum.map(fn wind -> "#{wind.words}\n" end)
 
     user_language = "Whatever language they using > 60%"
+    user_tone = "How they speak 80% of the time"
 
     response_from_ai =
       AnthropicClient.use_messages(
@@ -144,7 +145,7 @@ defmodule Stormful.Sensicality do
               %{
                 type: "text",
                 text: """
-                You are an advanced AI assistant tasked with summarizing a long, concatenated thought chain. Your goal is to create a concise summary that captures the essence of the original thoughts while adapting it to the user's language and tone. This summary should feel as if the user themselves had organized and clarified their own thoughts.
+                You are an AI assistant tasked with summarizing a long, concatenated thought chain. Your goal is to create a single, concise summary that captures the essence of the original thoughts while adapting it to the user's language and tone. This summary should feel as if the user themselves had organized and clarified their own thoughts.
 
                 Here is the thought chain you need to summarize:
 
@@ -152,54 +153,35 @@ defmodule Stormful.Sensicality do
                 #{cumulative_thoughts}
                 </thought_chain>
 
-                <user_language>#{user_language}</user_language>
-                <user_tone>{{USER_TONE}}</user_tone>
+                The user's preferred language is:
+                <user_language>
+                #{user_language}
+                </user_language>
 
-                Before creating the summary, please analyze the thought chain and consider the following aspects:
+                The user's tone is:
+                <user_tone>
+                #{user_tone}
+                </user_tone>
 
-                <thought_analysis>
-                1. Main ideas and key points:
-                [List the primary concepts and important details from the thought chain]
-                [For each main idea, provide a relevant quote from the thought chain]
+                Now, create a single, concise summary based on your analysis. Your summary should:
 
-                2. Overall structure and flow of ideas:
-                [Describe how the thoughts are connected and progress]
+                1. Be significantly shorter than the original thought chain
+                2. Maintain the logical flow of ideas
+                3. Highlight the most important concepts and conclusions
+                4. Use simple language appropriate for the specified user language
+                5. Adopt the specified tone in your writing style
+                6. Feel as if the user themselves had written it, making sense of their own thoughts
+                7. Clarify any unclear points from the original thought chain
+                8. Include important details without being overly verbose
+                9. Demonstrate a complete understanding of the original content without adding new information
 
-                3. Recurring themes or patterns:
-                [Identify any themes or ideas that appear multiple times in the thought chain]
+                Present your summary within <summary> tags. Use only plain HTML, avoiding any Markdown elements. Also, you should make use of regular HTML elements to provide extra attention to details and stuff like that, using inline styling is extra appreciated. Please do remember that the app has bg-indigo-800 TailwindCSS class, this might be important for accessibility. Here's an example of the expected format:
 
-                4. User's language and tone:
-                [Analyze how these factors should influence the summary]
-                [Provide specific examples of words, phrases, or sentence structures that reflect the user's language and tone]
+                [Your concise summary goes here, written in simple language matching the user's tone, as if they had organized their own thoughts. The summary should flow logically, highlight key points, and clarify any original unclear points while maintaining the essence of the original thought chain. If user has some logical writing mistakes, like invalid '.', ','s have them fixed along the way, without butchering the meaning.]
 
-                5. Areas for improvement:
-                [Identify any writing mistakes, unclear thoughts, or areas that need clarification]
+                Remember, your goal is to provide a clear, concise, and accessible summary of the original thought chain that feels authentic to the user's voice and perspective. Aim for a summary that the user would feel comfortable presenting as their own organized thoughts.
 
-                6. Synthesis:
-                [Explain how you plan to combine the main ideas into a cohesive summary]
-                [Outline a brief structure for the summary]
-                </thought_analysis>
-
-                Now, create a concise summary based on your analysis. Your summary should:
-
-                1. Be significantly shorter than the original thought chain.
-                2. Maintain the logical flow of ideas.
-                3. Highlight the most important concepts and conclusions.
-                4. Use language and expressions appropriate for the specified user language.
-                5. Adopt the specified tone in your writing style.
-                6. Feel as if the user themselves had written it, making sense of their own thoughts.
-                7. Correct any writing mistakes from the original thought chain.
-                8. Demonstrate a complete understanding of the original content without adding new information.
-
-                Present your summary within <summary> tags. Here's an example of the expected format:
-
-                <summary>
-                [Your concise summary goes here, written in the user's language and tone, as if they had organized their own thoughts. The summary should flow logically, highlight key points, and correct any original mistakes while maintaining the essence of the original thought chain.]
-                </summary>
-
-                Remember, your goal is to provide a clear, concise, and accessible summary of the original thought chain that feels authentic to the user's voice and perspective.
-                You will be given a long, concatenated thought chain. Your task is to summarize this thought chain concisely while maintaining the essence of the ideas presented. You should adapt your summary to match the user's language and tone.
-
+                Never ever give me acknowledgement; remember, you are talking like the user, as the user.
                 """
               }
             ]

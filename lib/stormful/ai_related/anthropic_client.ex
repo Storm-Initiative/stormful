@@ -39,7 +39,7 @@ defmodule Stormful.AiRelated.AnthropicClient do
   end
 
   def config(:anthropic_api_key) do
-    StormfulWeb.Endpoint.config(:anthropic_api_key)
+    StormfulWeb.Endpoint.config(:anthropic_api_key) || System.get_env("ANTHROPIC_API_KEY")
   end
 
   @base_url "https://api.anthropic.com/v1"

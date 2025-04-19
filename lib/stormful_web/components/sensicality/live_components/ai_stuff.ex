@@ -26,13 +26,15 @@ defmodule StormfulWeb.Sensicality.LiveComponents.AiStuff do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-8">
+    <div class="p-8">
       <.button phx-click="summarize" phx-target={@myself}>
         Get a nice summary
       </.button>
-      <div class="mt-8 flex flex-col gap-4">
+      <div class="mt-8 flex flex-col gap-8">
         <h2 class="text-2xl">The summary</h2>
-        {@raw_summary}
+        <div class="text-lg font-medium">
+          {@raw_summary}
+        </div>
       </div>
     </div>
     """
