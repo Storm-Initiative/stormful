@@ -27,6 +27,11 @@ defmodule StormfulWeb.Sensicality.LiveComponents.AiStuff do
   def render(assigns) do
     ~H"""
     <div class="p-8">
+      <style>
+        summary {
+          list-style: none;
+        }
+      </style>
       <.button phx-click="summarize" phx-target={@myself}>
         Get a nice summary
       </.button>
