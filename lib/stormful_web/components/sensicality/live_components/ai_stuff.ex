@@ -30,7 +30,7 @@ defmodule StormfulWeb.Sensicality.LiveComponents.AiStuff do
       <.button phx-click="summarize" phx-target={@myself}>
         Get a nice summary
       </.button>
-      <div class="mt-8 flex flex-col gap-8">
+      <div class="mt-8 flex flex-col gap-8 p-4 bg-black border-2 border-white">
         <h2 class="text-2xl">The summary</h2>
         <div class="text-lg font-medium">
           {@raw_summary}

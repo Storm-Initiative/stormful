@@ -132,9 +132,6 @@ defmodule Stormful.Sensicality do
       winds
       |> Enum.map(fn wind -> "#{wind.words}\n" end)
 
-    user_language = "Whatever language they using > 60%"
-    user_tone = "How they speak 80% of the time"
-
     response_from_ai =
       AnthropicClient.use_messages(
         "claude-3-7-sonnet-20250219",
@@ -145,31 +142,11 @@ defmodule Stormful.Sensicality do
               %{
                 type: "text",
                 text: """
-                You are an AI assistant specialized in summarizing and clarifying complex thought chains. Your task is to create a concise, well-organized summary that captures the essence of a user's thoughts while adapting to their preferred language and tone. The summary should feel as if the user themselves had organized and clarified their own ideas.
+                You are an expert in analyzing complex thought processes and presenting them in a visually structured format. Your task is to generate a summary of a thought chain using semantic HTML with inline styling, optimized for readability on a dark background.
 
 
-                Here are the key inputs for this task:
+                First, carefully read through the following thought chain:
 
-
-                1. User's preferred language:
-
-                <user_language>
-
-                #{user_language}
-
-                </user_language>
-
-
-                2. User's tone:
-
-                <user_tone>
-
-                #{user_tone}
-
-                </user_tone>
-
-
-                3. The thought chain to be summarized:
 
                 <thought_chain>
 
@@ -178,100 +155,80 @@ defmodule Stormful.Sensicality do
                 </thought_chain>
 
 
-                Your goal is to create a summary that meets the following criteria:
-
-                1. Significantly shorter than the original thought chain
-
-                2. Maintains the logical flow of ideas
-
-                3. Highlights the most important concepts and conclusions
-
-                4. Uses simple language appropriate for the specified user language
-
-                5. Adopts the specified tone in the writing style
-
-                6. Feels as if the user themselves had written it
-
-                7. Clarifies any unclear points from the original thought chain
-
-                8. Includes important details without being overly verbose
-
-                9. Demonstrates a complete understanding of the original content without adding new information
+                Before creating the final summary, break down the thought chain in <thought_chain_breakdown> tags. Consider the following points:
 
 
-                Before creating the final summary, organize your approach inside <summary_planning> tags:
+                1. List out the main topics or themes present in the thought chain.
 
-                1. Identify and list key themes or topics from the thought chain
+                2. Identify key relationships or connections between these topics.
 
-                2. Identify the main ideas and supporting details for each theme
+                3. Create a hierarchical outline of the thought chain's structure.
 
-                3. Write down relevant quotes that capture the essence of each main point
+                4. Note any recurring patterns or ideas throughout the thought chain.
 
-                4. Identify connections and relationships between different concepts
+                5. Suggest appropriate semantic HTML elements for each level of the hierarchy.
 
-                5. Consider potential misunderstandings or ambiguities in the original thought chain
-
-                6. Plan how to address these ambiguities in the summary
-
-                7. Plan how to adapt the language and tone to match the user's preferences while maintaining the original meaning
-
-                8. Consider the most effective way to structure the summary using HTML
-
-                9. Brainstorm potential HTML structures that could enhance the summary's readability and blend well with a bg-indigo-800 background
+                6. Consider inline styling choices that will enhance readability on a dark background.
 
 
-                When writing the final summary:
-
-                1. Use HTML formatting extensively to enhance readability and structure
-
-                2. Apply emphasis tags (<em>) logically to highlight key points
-
-                3. Use paragraph tags (<p>) to group related ideas together
-
-                4. Incorporate inline styling to improve the visual presentation of the summary, considering the indigo background
-
-                5. Use appropriate color contrasts and font styles that work well with bg-indigo-800
+                After your breakdown, generate a coherent and concise summary that captures the essence of the thought process. Use semantic HTML5 elements to structure your summary, and apply inline styling to enhance readability and highlight important points. Ensure that your color choices work well on a dark background.
 
 
-                Remember, you are writing as if you are the user. Do not acknowledge yourself as an AI or give any indication that you are separate from the user. The summary should be in the user's voice and perspective.
+                Requirements for your HTML summary:
+
+                1. Use semantic HTML5 elements such as <header>, <main>, <section>, <article>, <p>, <ul>, <ol>, <li>, <strong>, <em>, etc.
+
+                2. Apply inline styles using the style attribute. Focus on colors, fonts, margins, and other visual enhancements that work well on a dark background.
+
+                3. Ensure the HTML structure reflects the logical flow of ideas in the thought chain.
+
+                4. The summary should be concise yet comprehensive, capturing the key points and relationships between ideas.
 
 
-                After your summary planning, provide the final summary directly, without any additional explanation or commentary. Wrap the summary in <summary> tags.
-
-
-                Example output structure (replace with actual content):
-
-
-                <summary_planning>
-
-                [Your detailed analysis and planning]
-
-                </summary_planning>
+                Present your final summary within <summary> tags. Here's an example of the expected structure (note that this is just a structural example and does not reflect the content of your specific thought chain):
 
 
                 <summary>
 
-                <h1 style="color: #ffffff; font-size: 24px;">Main Idea</h1>
+                <header style="color: #e0e0e0; font-family: Arial, sans-serif;">
 
-                <p style="color: #e0e0e0; font-size: 16px;">Explanation of the main idea...</p>
+                <h1 style="font-size: 24px; margin-bottom: 10px;">Thought Chain Summary</h1>
 
-                <h2 style="color: #ffffff; font-size: 20px;">Supporting Point 1</h2>
+                </header>
 
-                <ul style="color: #e0e0e0; font-size: 14px;">
 
-                <li>Detail 1</li>
+                <main style="color: #cccccc;">
 
-                <li>Detail 2</li>
+                <section>
+
+                <h2 style="color: #66ccff; font-size: 20px;">Key Insights</h2>
+
+                <ul style="list-style-type: circle; margin-left: 20px;">
+
+                <li style="margin-bottom: 5px;">Important point 1</li>
+
+                <li style="margin-bottom: 5px;">Important point 2</li>
 
                 </ul>
 
-                <h2 style="color: #ffffff; font-size: 20px;">Supporting Point 2</h2>
+                </section>
 
-                <p style="color: #e0e0e0; font-size: 16px;">Explanation of supporting point 2...</p>
 
-                <em style="color: #ffd700; font-size: 18px;">Key takeaway or conclusion</em>
+
+                <article>
+
+                <h3 style="color: #66ff99; font-size: 18px;">Main Idea</h3>
+
+                <p style="line-height: 1.5; margin-bottom: 15px;">Explanation of the main idea...</p>
+
+                </article>
+
+                </main>
 
                 </summary>
+
+
+                Now, proceed with your breakdown and summary of the provided thought chain.
                 """
               }
             ]
