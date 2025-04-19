@@ -134,7 +134,7 @@ defmodule Stormful.Sensicality do
 
     response_from_ai =
       AnthropicClient.use_messages(
-        "claude-3-5-haiku-20241022",
+        "claude-3-7-sonnet-20250219",
         [
           %{
             role: "user",
