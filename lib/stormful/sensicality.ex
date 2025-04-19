@@ -145,43 +145,133 @@ defmodule Stormful.Sensicality do
               %{
                 type: "text",
                 text: """
-                You are an AI assistant tasked with summarizing a long, concatenated thought chain. Your goal is to create a single, concise summary that captures the essence of the original thoughts while adapting it to the user's language and tone. This summary should feel as if the user themselves had organized and clarified their own thoughts.
+                You are an AI assistant specialized in summarizing and clarifying complex thought chains. Your task is to create a concise, well-organized summary that captures the essence of a user's thoughts while adapting to their preferred language and tone. The summary should feel as if the user themselves had organized and clarified their own ideas.
 
-                Here is the thought chain you need to summarize:
 
-                <thought_chain>
-                #{cumulative_thoughts}
-                </thought_chain>
+                Here are the key inputs for this task:
 
-                The user's preferred language is:
+
+                1. User's preferred language:
+
                 <user_language>
+
                 #{user_language}
+
                 </user_language>
 
-                The user's tone is:
+
+                2. User's tone:
+
                 <user_tone>
+
                 #{user_tone}
+
                 </user_tone>
 
-                Now, create a single, concise summary based on your analysis. Your summary should:
 
-                1. Be significantly shorter than the original thought chain
-                2. Maintain the logical flow of ideas
-                3. Highlight the most important concepts and conclusions
-                4. Use simple language appropriate for the specified user language
-                5. Adopt the specified tone in your writing style
-                6. Feel as if the user themselves had written it, making sense of their own thoughts
-                7. Clarify any unclear points from the original thought chain
-                8. Include important details without being overly verbose
-                9. Demonstrate a complete understanding of the original content without adding new information
+                3. The thought chain to be summarized:
 
-                Present your summary within <summary> tags. Use only plain HTML, avoiding any Markdown elements. Also, you should make use of regular HTML elements to provide extra attention to details and stuff like that, using inline styling is extra appreciated. Please do remember that the app has bg-indigo-800 TailwindCSS class, this might be important for accessibility. Here's an example of the expected format:
+                <thought_chain>
 
-                [Your concise summary goes here, written in simple language matching the user's tone, as if they had organized their own thoughts. The summary should flow logically, highlight key points, and clarify any original unclear points while maintaining the essence of the original thought chain. If user has some logical writing mistakes, like invalid '.', ','s have them fixed along the way, without butchering the meaning.]
+                #{cumulative_thoughts}
 
-                Remember, your goal is to provide a clear, concise, and accessible summary of the original thought chain that feels authentic to the user's voice and perspective. Aim for a summary that the user would feel comfortable presenting as their own organized thoughts.
+                </thought_chain>
 
-                Never ever give me acknowledgement; remember, you are talking like the user, as the user.
+
+                Your goal is to create a summary that meets the following criteria:
+
+                1. Significantly shorter than the original thought chain
+
+                2. Maintains the logical flow of ideas
+
+                3. Highlights the most important concepts and conclusions
+
+                4. Uses simple language appropriate for the specified user language
+
+                5. Adopts the specified tone in the writing style
+
+                6. Feels as if the user themselves had written it
+
+                7. Clarifies any unclear points from the original thought chain
+
+                8. Includes important details without being overly verbose
+
+                9. Demonstrates a complete understanding of the original content without adding new information
+
+
+                Before creating the final summary, organize your approach inside <summary_planning> tags:
+
+                1. Identify and list key themes or topics from the thought chain
+
+                2. Identify the main ideas and supporting details for each theme
+
+                3. Write down relevant quotes that capture the essence of each main point
+
+                4. Identify connections and relationships between different concepts
+
+                5. Consider potential misunderstandings or ambiguities in the original thought chain
+
+                6. Plan how to address these ambiguities in the summary
+
+                7. Plan how to adapt the language and tone to match the user's preferences while maintaining the original meaning
+
+                8. Consider the most effective way to structure the summary using HTML
+
+                9. Brainstorm potential HTML structures that could enhance the summary's readability and blend well with a bg-indigo-800 background
+
+
+                When writing the final summary:
+
+                1. Use HTML formatting extensively to enhance readability and structure
+
+                2. Apply emphasis tags (<em>) logically to highlight key points
+
+                3. Use paragraph tags (<p>) to group related ideas together
+
+                4. Incorporate inline styling to improve the visual presentation of the summary, considering the indigo background
+
+                5. Use appropriate color contrasts and font styles that work well with bg-indigo-800
+
+
+                Remember, you are writing as if you are the user. Do not acknowledge yourself as an AI or give any indication that you are separate from the user. The summary should be in the user's voice and perspective.
+
+
+                After your summary planning, provide the final summary directly, without any additional explanation or commentary. Wrap the summary in <summary> tags.
+
+
+                Example output structure (replace with actual content):
+
+
+                <summary_planning>
+
+                [Your detailed analysis and planning]
+
+                </summary_planning>
+
+
+                <summary>
+
+                <h1 style="color: #ffffff; font-size: 24px;">Main Idea</h1>
+
+                <p style="color: #e0e0e0; font-size: 16px;">Explanation of the main idea...</p>
+
+                <h2 style="color: #ffffff; font-size: 20px;">Supporting Point 1</h2>
+
+                <ul style="color: #e0e0e0; font-size: 14px;">
+
+                <li>Detail 1</li>
+
+                <li>Detail 2</li>
+
+                </ul>
+
+                <h2 style="color: #ffffff; font-size: 20px;">Supporting Point 2</h2>
+
+                <p style="color: #e0e0e0; font-size: 16px;">Explanation of supporting point 2...</p>
+
+                <em style="color: #ffd700; font-size: 18px;">Key takeaway or conclusion</em>
+
+                </summary>
                 """
               }
             ]
@@ -195,8 +285,15 @@ defmodule Stormful.Sensicality do
     [meaty_part] = content
     text_part = meaty_part["text"]
 
-    update_sensical(sensical, %{summary: text_part})
+    # Extract just the content between <summary> tags
+    {:ok, sum} =
+      case Regex.run(~r/<summary>(.*?)<\/summary>/s, text_part) do
+        [_, summary] -> {:ok, summary}
+        _ -> {:error, "Could not extract summary from AI response"}
+      end
 
-    text_part
+    update_sensical(sensical, %{summary: sum})
+
+    sum
   end
 end
