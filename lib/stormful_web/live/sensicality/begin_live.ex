@@ -15,25 +15,40 @@ defmodule StormfulWeb.Sensicality.BeginLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="text-center flex flex-col items-center gap-2">
-        <.back navigate={~p"/into-the-storm"}>
+      <div class="text-center flex flex-col items-center gap-4 animate-fade-in">
+        <.back navigate={~p"/into-the-storm"} class="hover:scale-105 transition-transform">
           Go back
         </.back>
 
-        <div class="mt-6">
-          <.cool_header little_name="It all starts with" big_name="A new Sensical ⛈" />
+        <div class="mt-8 transform hover:scale-102 transition-all">
+          <.cool_header
+            little_name="It all starts with"
+            big_name="A new Sensical ⛈"
+            class="animate-shine bg-gradient-to-r from-yellow-400 via-indigo-500 to-yellow-400 bg-[length:200%] bg-clip-text text-transparent"
+          />
         </div>
       </div>
-      <.form for={@sensical_form} phx-submit="create-sensical" phx-change="change-sensical">
+
+      <.form
+        for={@sensical_form}
+        phx-submit="create-sensical"
+        phx-change="change-sensical"
+        class="mt-8 max-w-lg mx-auto bg-indigo-900/10 backdrop-blur-sm rounded-lg p-6 shadow-xl border border-indigo-500/20"
+      >
         <div class="text-lg">
           <.input
             type="message_area"
             field={@sensical_form[:title]}
             label="Let's start by naming it, shall we?"
+            class="transition-all focus:ring-2 focus:ring-yellow-400/50"
           />
         </div>
         <div class="flex w-full justify-center">
-          <.button class="mt-4 px-6 bg-indigo-700">Yea[enter]</.button>
+          <.button class="mt-6 px-8 py-3 bg-indigo-700 hover:bg-indigo-600 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-indigo-500/30">
+            <span class="flex items-center gap-2">
+              Yea <.icon name="hero-sparkles" class="w-5 h-5 text-yellow-400 animate-pulse" />
+            </span>
+          </.button>
         </div>
       </.form>
     </div>
