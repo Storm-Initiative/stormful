@@ -173,7 +173,8 @@ defmodule Stormful.Sensicality do
     - Add inline styles: readable colors (grays, cool blues), spacing, smooth fonts.
     - Make it beautiful on a dark UI.
     - Summary must be tight, not bloated.
-    - Use theme emotionally — stormy metaphors, crashing ideas, flashes of insight.
+    - Use theme emotionally, but do not overdo it — little metaphors, a bit of ideas from roundabouts, flashes of insights, maybe jokes and icons?
+    - Do not overdo the theme, it shouldn't kill the idea, it should be a nice annotation that'd make the reader stay and continue
 
     Deliver your output wrapped in <summary>...</summary>
     """
