@@ -5,18 +5,43 @@ defmodule StormfulWeb.Sensicality.BeginLive do
   use StormfulWeb, :live_view
   use StormfulWeb.BaseUtil.Controlful
 
+  @playful_descriptions [
+    "Ready to unleash a storm of ideas? Give your Sensical a name worthy of legend—or at least something you’ll remember after a coffee break ☕️.",
+    "Every great storm starts with a single cloud. Name your Sensical and let the thunder roll! ⚡️",
+    "Don’t worry, you can’t break the weather. But you can make it memorable! Name your Sensical.",
+    "This is where the magic happens. Or at least where the naming happens. ✨",
+    "Give your Sensical a name. Bonus points if it makes you giggle in a meeting.",
+    "Naming things is hard. But at least it’s not raining… yet! 🌧️",
+    "Your Sensical’s name could be legendary. Or totally random. We won’t judge.",
+    "The forecast calls for creativity. Name your Sensical and let’s get breezy! 🌬️",
+    "Go on, give it a name. Even if it’s just ‘Untitled Storm #42’.",
+    "If you name it, it will storm. Probably. Maybe. Give it a try!",
+    "Don’t overthink it. Unless you want to. Then overthink away!",
+    "This is your moment. Make it punny, make it sunny, just make it Sensical!",
+    "A Sensical by any other name would storm as sweet. Shakespeare probably. 🌩️",
+    "Give your Sensical a name that would make the weather jealous.",
+    "Let’s get this brainstorm started—with a name!",
+    "You’re one name away from greatness. Or at least a cool new Sensical.",
+    "The only wrong name is no name at all. Unless it’s ‘No Name’. That’s fine too.",
+    "Your Sensical’s adventure begins with a name. Choose wisely—or wildly!",
+    "Make it mysterious. Make it hilarious. Just make it yours.",
+    "If you can’t think of a name, just mash your keyboard. We support creative chaos!"
+  ]
+
   def mount(_params, _session, socket) do
+    description = Enum.random(@playful_descriptions)
     {:ok,
      socket
      |> assign_sensical_form(Sensicality.change_sensical(%Sensical{}))
-     |> assign_controlful()}
+     |> assign_controlful()
+     |> assign(:playful_description, description)}
   end
 
   def render(assigns) do
     ~H"""
     <div>
-      <div class="text-center flex flex-col items-center gap-4 animate-fade-in">
-        <.back navigate={~p"/into-the-storm"} class="hover:scale-105 transition-transform">
+      <div class="text-center flex flex-col items-center gap-4 animate-fade-in w-full">
+        <.back navigate={~p"/into-the-storm"}>
           Go back
         </.back>
 
@@ -26,6 +51,9 @@ defmodule StormfulWeb.Sensicality.BeginLive do
             big_name="A new Sensical ⛈"
             class="animate-shine bg-gradient-to-r from-yellow-400 via-indigo-500 to-yellow-400 bg-[length:200%] bg-clip-text text-transparent"
           />
+        </div>
+        <div class="mt-2 max-w-md text-indigo-300 text-lg italic">
+          {@playful_description}
         </div>
       </div>
 
