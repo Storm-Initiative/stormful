@@ -132,6 +132,53 @@ defmodule Stormful.Sensicality do
       winds
       |> Enum.map(fn wind -> "#{wind.words}\n" end)
 
+    # or you can run a detector on cumulative_thoughts
+    user_language = "auto"
+
+    # or auto-detect via NLP later if you want
+    user_tone = "raw, introspective, chaotic but poetic"
+
+    theme = """
+    Stormy -> moody, kinetic words, metaphors like 'thoughts crashing like thunder', maybe even flashes of tension, use of deep blues/grays in implied tone.
+    """
+
+    prompt = """
+    You are an expert in analyzing complex thought processes and presenting them in a visually structured format. Your task is to generate a summary of a thought chain using semantic HTML with inline styling, optimized for readability on a dark background.
+
+    Carefully analyze the following thought chain:
+
+    <thought_chain>
+    #{cumulative_thoughts}
+    </thought_chain>
+
+    <user_language>#{user_language}</user_language>
+    <user_tone>#{user_tone}</user_tone>
+    <theme>#{theme}</theme>
+
+    <imagery_style>
+    Use imagery and comparisons that match the theme. Don't just tell — make the summary feel like it's from the storm itself.
+    </imagery_style>
+
+    Your task:
+    1. Identify core themes and main ideas.
+    2. Map logical connections.
+    3. Break into hierarchy.
+    4. Pick recurring imagery/metaphors.
+    5. Choose HTML elements and styles for dark-mode readability.
+    6. Use user's tone and speech style authentically.
+    7. Never refer to yourself or the user — just deliver the summary.
+
+    Requirements:
+    - Use HTML5 semantic tags like <header>, <main>, <section>, <article>, <p>, <ul>, <strong>.
+    - Add inline styles: readable colors (grays, cool blues), spacing, smooth fonts.
+    - Make it beautiful on a dark UI.
+    - Summary must be tight, not bloated.
+    - Use theme emotionally, but do not overdo it — little metaphors, a bit of ideas from roundabouts, flashes of insights, maybe jokes and icons?
+    - Do not overdo the theme, it shouldn't kill the idea, it should be a nice annotation that'd make the reader stay and continue
+
+    Deliver your output wrapped in <summary>...</summary>
+    """
+
     response_from_ai =
       AnthropicClient.use_messages(
         "claude-3-7-sonnet-20250219",
@@ -141,62 +188,7 @@ defmodule Stormful.Sensicality do
             content: [
               %{
                 type: "text",
-                text: """
-                You are an expert in analyzing complex thought processes and presenting them in a visually structured format. Your task is to generate a summary of a thought chain using semantic HTML with inline styling, optimized for readability on a dark background.
-
-                First, carefully read through the following thought chain:
-
-                <thought_chain>
-                #{cumulative_thoughts}
-                </thought_chain>
-
-                Before creating the final summary, break down the thought chain, but do not output them, you will use this knowledge for the summarization. Consider the following points:
-
-                1. List out the main topics or themes present in the thought chain.
-                2. Identify key relationships or connections between these topics.
-                3. Create a hierarchical outline of the thought chain's structure.
-                4. Note any recurring patterns or ideas throughout the thought chain.
-                5. Suggest appropriate semantic HTML elements for each level of the hierarchy.
-                6. Consider inline styling choices that will enhance readability on a dark background.
-                7. Acknowledge the user's language & speaking style.
-
-                After your breakdown, generate a coherent and concise summary that captures the essence of the thought process. Use semantic HTML5 elements to structure your summary, and apply inline styling to enhance readability and highlight important points. Ensure that your color choices work well on a dark background.
-
-                Requirements for your HTML summary:
-                1. Use semantic HTML5 elements such as <header>, <main>, <section>, <article>, <p>, <ul>, <ol>, <li>, <strong>, <em>, etc.
-                2. Apply inline styles using the style attribute. Focus on colors, fonts, margins, and other visual enhancements that work well on a dark background.
-                3. Ensure the HTML structure reflects the logical flow of ideas in the thought chain.
-                4. The summary should be concise yet comprehensive, capturing the key points and relationships between ideas.
-                5. Summary shouldn't be very long, it is supposed to be a nice read.
-                6. Summary should use the language & speaking style of the thought chain.
-                7. Summary should be written like the user themselves wrote it.
-                8. You never acknowledge user of your presence, never give anything more than the summary.
-
-                Present your final summary within <summary> tags. Here's an example of the expected structure (note that this is just a structural example and does not reflect the content of your specific thought chain):
-
-                <summary>
-                <header style="color: #e0e0e0; font-family: Arial, sans-serif;">
-                <h1 style="font-size: 24px; margin-bottom: 10px;">Thought Chain Summary</h1>
-                </header>
-
-                <main style="color: #cccccc;">
-                <section>
-                <h2 style="color: #66ccff; font-size: 20px;">Key Insights</h2>
-                <ul style="list-style-type: circle; margin-left: 20px;">
-                <li style="margin-bottom: 5px;">Important point 1</li>
-                <li style="margin-bottom: 5px;">Important point 2</li>
-                </ul>
-                </section>
-
-                <article>
-                <h3 style="color: #66ff99; font-size: 18px;">Main Idea</h3>
-                <p style="line-height: 1.5; margin-bottom: 15px;">Explanation of the main idea...</p>
-                </article>
-                </main>
-                </summary>
-
-                Now, proceed with your breakdown and summary of the provided thought chain.
-                """
+                text: prompt
               }
             ]
           }
