@@ -167,14 +167,16 @@ defmodule Stormful.Sensicality do
     5. Choose HTML elements and styles for dark-mode readability.
     6. Use user's tone and speech style authentically.
     7. Never refer to yourself or the user — just deliver the summary.
+    8. Make it semantic and accessible.
 
     Requirements:
     - Use HTML5 semantic tags like <header>, <main>, <section>, <article>, <p>, <ul>, <strong>.
     - Add inline styles: readable colors (grays, cool blues), spacing, smooth fonts.
+    - Add nice icons/svgs for eye candy.
     - Make it beautiful on a dark UI.
-    - Summary must be tight, not bloated.
+    - Summary must be tight, not bloated, but the content should be there(maybe expandable) if user wants to go deeper.
     - Use theme emotionally, but do not overdo it — little metaphors, a bit of ideas from roundabouts, flashes of insights, maybe jokes and icons?
-    - Do not overdo the theme, it shouldn't kill the idea, it should be a nice annotation that'd make the reader stay and continue
+    - Do not overdo the theme, it shouldn't kill the idea, it should be a nice annotation that'd make the reader stay and continue.
 
     Deliver your output wrapped in <summary>...</summary>
     """
