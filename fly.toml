@@ -1,16 +1,20 @@
-# fly.toml app configuration file generated for stormful on 2024-10-18T23:19:35+03:00
+# fly.toml app configuration file generated for stormful-empty-grass-4413 on 2025-05-23T18:26:47+03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'stormful'
-primary_region = 'cdg'
+app = 'stormful-empty-grass-4413'
+primary_region = 'fra'
 kill_signal = 'SIGTERM'
 
 [build]
 
 [deploy]
   release_command = '/app/bin/migrate'
+
+[env]
+  PHX_HOST = 'stormful-empty-grass-4413.fly.dev'
+  PORT = '8080'
 
 [http_service]
   internal_port = 8080
