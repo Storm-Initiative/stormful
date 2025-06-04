@@ -13,16 +13,20 @@ defmodule Stormful.Queue.Processor do
   use GenServer
 
   alias Stormful.Queue
-  alias Stormful.Queue.{Job, RateLimiter, Worker}
+  alias Stormful.Queue.Worker
 
   require Logger
 
   # Default configuration
   @default_config %{
-    poll_interval: 5_000,      # Poll for new jobs every 5 seconds
-    batch_size: 10,            # Process up to 10 jobs per batch
-    max_concurrent: 5,         # Maximum concurrent job processing
-    retry_backoff: 30_000      # Wait 30 seconds before retrying failed jobs
+    # Poll for new jobs every 5 seconds
+    poll_interval: 5_000,
+    # Process up to 10 jobs per batch
+    batch_size: 10,
+    # Maximum concurrent job processing
+    max_concurrent: 5,
+    # Wait 30 seconds before retrying failed jobs
+    retry_backoff: 30_000
   }
 
   ## Client API
@@ -86,11 +90,11 @@ defmodule Stormful.Queue.Processor do
 
     state = %{
       config: config,
-      processing_jobs: %{},      # Map of job_id -> task_ref
+      # Map of job_id -> task_ref
+      processing_jobs: %{},
       stats: %{
         jobs_processed: 0,
         jobs_failed: 0,
-        jobs_rate_limited: 0,
         last_processing_time: nil,
         uptime_start: DateTime.utc_now()
       }
@@ -115,8 +119,7 @@ defmodule Stormful.Queue.Processor do
       currently_processing: map_size(state.processing_jobs),
       processing_job_ids: Map.keys(state.processing_jobs),
       stats: state.stats,
-      queue_stats: Queue.get_queue_stats(),
-      rate_limit_statuses: RateLimiter.get_all_rate_limit_statuses()
+      queue_stats: Queue.get_queue_stats()
     }
 
     {:reply, status, state}
@@ -152,6 +155,10 @@ defmodule Stormful.Queue.Processor do
         case reason do
           :normal ->
             Logger.debug("Job #{job_id} process completed normally")
+            # here, we handle job completion
+            new_state = handle_job_completion(state, job_id, {:ok, %{}})
+            {:noreply, new_state}
+
           reason ->
             Logger.error("Job #{job_id} process died unexpectedly: #{inspect(reason)}")
         end
@@ -160,7 +167,10 @@ defmodule Stormful.Queue.Processor do
 
         # Mark job as failed only if it didn't exit normally
         case reason do
-          :normal -> :ok  # Don't mark as failed for normal completion
+          # Don't mark as failed for normal completion
+          :normal ->
+            :ok
+
           _ ->
             case Queue.get_job(job_id) do
               nil -> :ok
@@ -168,10 +178,12 @@ defmodule Stormful.Queue.Processor do
             end
         end
 
-        new_stats = case reason do
-          :normal -> state.stats  # Don't increment failed counter for normal completion
-          _ -> update_stats(state.stats, :jobs_failed)
-        end
+        new_stats =
+          case reason do
+            # Don't increment failed counter for normal completion
+            :normal -> state.stats
+            _ -> update_stats(state.stats, :jobs_failed)
+          end
 
         {:noreply, %{state | processing_jobs: new_processing_jobs, stats: new_stats}}
 
@@ -190,7 +202,10 @@ defmodule Stormful.Queue.Processor do
       new_state = Enum.reduce(jobs_to_process, state, &start_job_processing/2)
       update_last_processing_time(new_state)
     else
-      Logger.debug("At maximum concurrent jobs (#{map_size(state.processing_jobs)}/#{state.config.max_concurrent})")
+      Logger.debug(
+        "At maximum concurrent jobs (#{map_size(state.processing_jobs)}/#{state.config.max_concurrent})"
+      )
+
       state
     end
   end
@@ -203,15 +218,8 @@ defmodule Stormful.Queue.Processor do
     available_slots = state.config.max_concurrent - map_size(state.processing_jobs)
     batch_size = min(available_slots, state.config.batch_size)
 
+    # Queue module now handles all rate limiting at the fetch level
     Queue.get_ready_jobs(limit: batch_size)
-    |> Enum.filter(&can_process_job?/1)
-  end
-
-  defp can_process_job?(job) do
-    case job.rate_limit_key do
-      nil -> true
-      rate_limit_key -> RateLimiter.can_process?(rate_limit_key)
-    end
   end
 
   defp start_job_processing(job, state) do
@@ -220,10 +228,13 @@ defmodule Stormful.Queue.Processor do
         Logger.info("Starting processing of job #{job.id} (#{job.task_type})")
 
         # Start async task to process the job
-        task_ref = Process.monitor(spawn_link(fn ->
-          result = Worker.process_job(updated_job)
-          send(self(), {:job_completed, job.id, result})
-        end))
+        task_ref =
+          Process.monitor(
+            spawn_link(fn ->
+              result = Worker.process_job(updated_job)
+              send(self(), {:job_completed, job.id, result})
+            end)
+          )
 
         new_processing_jobs = Map.put(state.processing_jobs, job.id, task_ref)
         %{state | processing_jobs: new_processing_jobs}
@@ -239,35 +250,32 @@ defmodule Stormful.Queue.Processor do
     {_ref, new_processing_jobs} = Map.pop(state.processing_jobs, job_id)
 
     # Update job status based on result
-    new_stats = case result do
-      {:ok, _data} ->
-        Logger.info("Job #{job_id} completed successfully")
-        case Queue.get_job(job_id) do
-          nil -> state.stats
-          job ->
-            Queue.mark_completed(job)
-            update_stats(state.stats, :jobs_processed)
-        end
+    new_stats =
+      case result do
+        {:ok, _data} ->
+          Logger.info("Job #{job_id} completed successfully")
 
-      {:error, :rate_limited} ->
-        Logger.info("Job #{job_id} skipped due to rate limiting")
-        case Queue.get_job(job_id) do
-          nil -> state.stats
-          job ->
-            Queue.mark_rate_limited(job)
-            RateLimiter.log_rate_limit_violation(job.rate_limit_key, job.id)
-            update_stats(state.stats, :jobs_rate_limited)
-        end
+          case Queue.get_job(job_id) do
+            nil ->
+              state.stats
 
-      {:error, error} ->
-        Logger.error("Job #{job_id} failed: #{inspect(error)}")
-        case Queue.get_job(job_id) do
-          nil -> state.stats
-          job ->
-            Queue.mark_failed(job, inspect(error))
-            update_stats(state.stats, :jobs_failed)
-        end
-    end
+            job ->
+              Queue.mark_completed(job)
+              update_stats(state.stats, :jobs_processed)
+          end
+
+        {:error, error} ->
+          Logger.error("Job #{job_id} failed: #{inspect(error)}")
+
+          case Queue.get_job(job_id) do
+            nil ->
+              state.stats
+
+            job ->
+              Queue.mark_failed(job, inspect(error))
+              update_stats(state.stats, :jobs_failed)
+          end
+      end
 
     %{state | processing_jobs: new_processing_jobs, stats: new_stats}
   end

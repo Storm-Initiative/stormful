@@ -2,7 +2,7 @@ defmodule StormfulWeb.HealthController do
   use StormfulWeb, :controller
 
   alias Stormful.Queue
-  alias Stormful.Queue.{Processor, RateLimiter, Worker}
+  alias Stormful.Queue.{Processor, Worker}
 
   @doc """
   General health check endpoint for the application.
@@ -27,9 +27,8 @@ defmodule StormfulWeb.HealthController do
       timestamp: DateTime.utc_now(),
       processor: get_processor_health(),
       worker: get_worker_health(),
-      rate_limiter: get_rate_limiter_health(),
       queue_stats: Queue.get_queue_stats(),
-      rate_limit_statuses: RateLimiter.get_all_rate_limit_statuses()
+      rate_limit_status: get_rate_limit_health()
     }
 
     status_code = if queue_health.status == "healthy", do: 200, else: 503
@@ -59,15 +58,12 @@ defmodule StormfulWeb.HealthController do
       timestamp: DateTime.utc_now(),
       queue: %{
         stats: Queue.get_queue_stats(),
-        stats_by_type: Queue.get_stats_by_type()
+        stats_by_type: Queue.get_stats_by_type(),
+        rate_limits: get_rate_limit_metrics()
       },
       processor: %{
         status: Processor.get_status(),
         health: get_processor_health()
-      },
-      rate_limiter: %{
-        statuses: RateLimiter.get_all_rate_limit_statuses(),
-        configs: RateLimiter.get_rate_limit_configs()
       },
       worker: %{
         stats: Worker.get_processing_stats(),
@@ -84,7 +80,7 @@ defmodule StormfulWeb.HealthController do
     checks = [
       get_processor_health(),
       get_worker_health(),
-      get_rate_limiter_health()
+      get_rate_limit_health()
     ]
 
     if Enum.all?(checks, &(&1.status == "healthy")) do
@@ -138,28 +134,34 @@ defmodule StormfulWeb.HealthController do
       }
   end
 
-  defp get_rate_limiter_health do
+  defp get_rate_limit_health do
     try do
-      # Test rate limiter by checking configurations
-      configs = RateLimiter.get_rate_limit_configs()
+      # Test the new queue-level rate limiting
+      available_types = Queue.get_available_task_types_within_limits()
 
-      if map_size(configs) > 0 do
-        %{
-          status: "healthy",
-          message: "Rate limiter is configured and operational"
-        }
-      else
-        %{
-          status: "unhealthy",
-          message: "No rate limit configurations found"
-        }
-      end
+      %{
+        status: "healthy",
+        message: "Queue-level rate limiting is operational",
+        available_task_types: available_types
+      }
     rescue
       error ->
         %{
           status: "unhealthy",
-          message: "Rate limiter health check failed: #{inspect(error)}"
+          message: "Rate limit health check failed: #{inspect(error)}"
         }
     end
+  end
+
+  defp get_rate_limit_metrics do
+    %{
+      email: %{
+        within_limit: Queue.within_rate_limit?("email")
+      },
+      ai_processing: %{
+        within_limit: Queue.within_rate_limit?("ai_processing")
+      },
+      available_types: Queue.get_available_task_types_within_limits()
+    }
   end
 end

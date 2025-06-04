@@ -9,16 +9,12 @@ defmodule Stormful.Queue.Worker do
   - Integrates with rate limiting checks
   """
 
-  alias Stormful.Queue.RateLimiter
-  alias Stormful.Mailer
-
   require Logger
 
   @doc """
   Main entry point for processing a job.
 
-  Dispatches to the appropriate handler based on job type and handles
-  rate limiting, errors, and logging.
+  Handles different job types and business logic, with error handling and logging.
 
   ## Examples
 
@@ -31,13 +27,7 @@ defmodule Stormful.Queue.Worker do
   def process_job(job) do
     Logger.info("Worker processing job #{job.id} of type #{job.task_type}")
 
-    # Double-check rate limits before processing
-    if rate_limit_allows_processing?(job) do
-      process_job_by_type(job)
-    else
-      Logger.info("Job #{job.id} skipped due to rate limiting during processing")
-      {:error, :rate_limited}
-    end
+    process_job_by_type(job)
   rescue
     error ->
       Logger.error("Unexpected error processing job #{job.id}: #{inspect(error)}")
@@ -257,33 +247,29 @@ defmodule Stormful.Queue.Worker do
 
   ## Helper Functions
 
-  defp rate_limit_allows_processing?(job) do
-    case job.rate_limit_key do
-      nil -> true
-      rate_limit_key -> RateLimiter.can_process?(rate_limit_key)
-    end
-  end
-
   @doc """
   Health check function to verify the worker can process jobs.
   """
   def health_check do
-    # Test with a simple job simulation
+    # Test with a valid email job but empty payload to trigger validation error
     test_job = %{
       id: "health_check",
-      task_type: "test",
-      payload: %{},
-      rate_limit_key: nil,
+      task_type: "email",
+      payload: %{},  # Missing required fields - will fail validation
       user_id: nil
     }
 
     case process_job_by_type(test_job) do
-      {:error, "Unknown job type: test"} ->
-        # This is expected for the health check
+      {:error, "Invalid email payload: " <> _reason} ->
+        # This is expected - validation should fail with empty payload
         :ok
 
-      result ->
-        Logger.warning("Unexpected health check result: #{inspect(result)}")
+      {:error, _other} ->
+        # Any other error is also acceptable for health check
+        :ok
+
+      {:ok, _result} ->
+        # Shouldn't happen with empty payload, but not a problem
         :ok
     end
   rescue

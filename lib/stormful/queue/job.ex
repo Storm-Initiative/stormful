@@ -16,7 +16,6 @@ defmodule Stormful.Queue.Job do
     field :started_at, :utc_datetime
     field :completed_at, :utc_datetime
     field :error_message, :string
-    field :rate_limit_key, :string
 
     belongs_to :user, Stormful.Accounts.User
 
@@ -37,7 +36,6 @@ defmodule Stormful.Queue.Job do
       :started_at,
       :completed_at,
       :error_message,
-      :rate_limit_key,
       :user_id
     ])
     |> validate_required([:task_type, :payload])
@@ -47,7 +45,6 @@ defmodule Stormful.Queue.Job do
     |> validate_number(:attempts, greater_than_or_equal_to: 0)
     |> validate_number(:max_attempts, greater_than: 0)
     |> validate_payload()
-    |> set_rate_limit_key()
     |> set_scheduled_at()
   end
 
@@ -77,14 +74,6 @@ defmodule Stormful.Queue.Job do
       nil -> changeset
       payload when is_map(payload) -> changeset
       _ -> add_error(changeset, :payload, "must be a valid map")
-    end
-  end
-
-  defp set_rate_limit_key(changeset) do
-    case get_field(changeset, :task_type) do
-      "email" -> put_change(changeset, :rate_limit_key, "email")
-      "ai_processing" -> put_change(changeset, :rate_limit_key, "ai")
-      _ -> changeset
     end
   end
 

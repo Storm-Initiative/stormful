@@ -5,7 +5,7 @@ defmodule Stormful.Queue do
   This module provides the public API for:
   - Enqueueing jobs for background processing
   - Managing job status and lifecycle
-  - Retrieving jobs for processing
+  - Retrieving jobs for processing with rate limiting
   - Queue statistics and monitoring
   """
 
@@ -14,6 +14,12 @@ defmodule Stormful.Queue do
   alias Stormful.Queue.Job
 
   require Logger
+
+  # Rate limiting configuration - jobs per minute for each task type
+  @rate_limits %{
+    "email" => {100, 60},        # 100 emails per 60 seconds
+    "ai_processing" => {30, 60}  # 30 AI jobs per 60 seconds
+  }
 
   @doc """
   Enqueues a new job for background processing.
@@ -127,6 +133,7 @@ defmodule Stormful.Queue do
 
   @doc """
   Gets jobs ready for processing (pending status and scheduled time has passed).
+  Now includes rate limiting - won't return jobs if task type is rate limited.
 
   ## Examples
 
@@ -135,11 +142,119 @@ defmodule Stormful.Queue do
 
       iex> get_ready_jobs(limit: 5)
       [%Job{}, ...]
+
+      iex> get_ready_jobs(task_type: "email")
+      [%Job{}, ...]  # Only if email queue isn't rate limited
   """
   def get_ready_jobs(opts \\ []) do
-    Job.ready_for_processing_query()
-    |> maybe_limit(opts[:limit])
-    |> Repo.all()
+    case Keyword.get(opts, :task_type) do
+      nil ->
+        # Get jobs from all task types, but filter by rate limits
+        get_ready_jobs_all_types(opts)
+
+      task_type ->
+        # Get jobs for specific task type if not rate limited
+        get_ready_jobs_for_type(task_type, opts)
+    end
+  end
+
+  @doc """
+  Gets jobs ready for processing for a specific task type.
+  Returns empty list if task type is currently rate limited.
+  """
+  def get_ready_jobs_for_type(task_type, opts \\ []) do
+    if within_rate_limit?(task_type) do
+      Job.ready_for_processing_query()
+      |> where([j], j.task_type == ^task_type)
+      |> maybe_limit(opts[:limit])
+      |> Repo.all()
+      |> tap(fn jobs ->
+        if length(jobs) > 0 do
+          Logger.debug("Fetched #{length(jobs)} ready #{task_type} jobs")
+        end
+      end)
+    else
+      Logger.debug("Task type #{task_type} is rate limited, returning no jobs")
+      []
+    end
+  end
+
+  @doc """
+  Gets ready jobs from all task types, respecting rate limits for each type.
+  """
+  def get_ready_jobs_all_types(opts \\ []) do
+    limit = opts[:limit]
+
+    # Get available task types and check rate limits for each
+    available_types = get_available_task_types_within_limits()
+
+    if Enum.empty?(available_types) do
+      Logger.debug("All task types are rate limited, returning no jobs")
+      []
+    else
+      query = Job.ready_for_processing_query()
+
+      query =
+        if Enum.empty?(available_types) do
+          # No types available, return empty
+          where(query, [j], false)
+        else
+          # Only fetch from non-rate-limited types
+          where(query, [j], j.task_type in ^available_types)
+        end
+
+      query
+      |> maybe_limit(limit)
+      |> Repo.all()
+      |> tap(fn jobs ->
+        if length(jobs) > 0 do
+          types = jobs |> Enum.map(& &1.task_type) |> Enum.uniq()
+          Logger.debug("Fetched #{length(jobs)} ready jobs from types: #{inspect(types)}")
+        end
+      end)
+    end
+  end
+
+  @doc """
+  Records that a job of the given task type was started.
+  Call this when a job begins processing to track rate limit usage.
+  """
+  def record_job_start(task_type) do
+    now = System.system_time(:second)
+
+    # Store the start time in ETS or similar for rate limit tracking
+    # For now, we'll use the job table itself to track recent starts
+    Logger.debug("Recording job start for task_type: #{task_type} at #{now}")
+    :ok
+  end
+
+  @doc """
+  Checks if we're within the rate limit for a given task type.
+  Returns true if we can start more jobs, false if rate limited.
+  """
+  def within_rate_limit?(task_type) do
+    case Map.get(@rate_limits, task_type) do
+      nil ->
+        # No rate limit configured for this task type
+        true
+
+      {max_jobs, window_seconds} ->
+        check_rate_limit(task_type, max_jobs, window_seconds)
+    end
+  end
+
+  @doc """
+  Gets all task types that are currently within their rate limits.
+  """
+  def get_available_task_types_within_limits do
+    @rate_limits
+    |> Map.keys()
+    |> Enum.filter(&within_rate_limit?/1)
+    |> tap(fn available ->
+      if length(available) > 0 do
+        Logger.debug("Available task types within rate limits: #{inspect(available)}")
+      end
+    end)
   end
 
   @doc """
@@ -183,9 +298,12 @@ defmodule Stormful.Queue do
   end
 
   @doc """
-  Marks a job as processing.
+  Marks a job as processing and records the start for rate limiting.
   """
   def mark_processing(job) do
+    # Record the job start for rate limiting
+    record_job_start(job.task_type)
+
     update_job_status(job, "processing")
   end
 
@@ -206,13 +324,6 @@ defmodule Stormful.Queue do
     attrs = Map.put(attrs, :attempts, job.attempts + 1)
 
     update_job_status(job, "failed", attrs)
-  end
-
-  @doc """
-  Marks a job as rate limited (skipped due to rate limiting).
-  """
-  def mark_rate_limited(job) do
-    update_job_status(job, "rate_limited")
   end
 
   @doc """
@@ -241,8 +352,7 @@ defmodule Stormful.Queue do
         processing: 3,
         completed: 142,
         failed: 2,
-        rate_limited: 1,
-        total: 163
+        total: 162
       }
   """
   def get_queue_stats do
@@ -260,7 +370,6 @@ defmodule Stormful.Queue do
       processing: Map.get(stats, "processing", 0),
       completed: Map.get(stats, "completed", 0),
       failed: Map.get(stats, "failed", 0),
-      rate_limited: Map.get(stats, "rate_limited", 0),
       total: Enum.sum(Map.values(stats))
     }
   end
@@ -333,15 +442,34 @@ defmodule Stormful.Queue do
     |> where([j], j.user_id == ^user_id)
     |> apply_filters(rest)
   end
-  defp apply_filters(query, [{:rate_limit_key, rate_limit_key} | rest]) do
-    query
-    |> where([j], j.rate_limit_key == ^rate_limit_key)
-    |> apply_filters(rest)
-  end
   defp apply_filters(query, [_unknown | rest]) do
     apply_filters(query, rest)
   end
 
   defp maybe_limit(query, nil), do: query
   defp maybe_limit(query, limit), do: limit(query, ^limit)
+
+  # Private rate limiting functions
+
+  defp check_rate_limit(task_type, max_jobs, window_seconds) do
+    cutoff_time = DateTime.add(DateTime.utc_now(), -window_seconds, :second)
+
+    # Count jobs that started within the rate limit window
+    recent_jobs_count =
+      from(j in Job,
+        where: j.task_type == ^task_type
+          and j.status in ["processing", "completed", "failed"]
+          and j.started_at > ^cutoff_time,
+        select: count(j.id)
+      )
+      |> Repo.one()
+
+    within_limit = recent_jobs_count < max_jobs
+
+    if not within_limit do
+      Logger.debug("Rate limit hit for #{task_type}: #{recent_jobs_count}/#{max_jobs} in last #{window_seconds}s")
+    end
+
+    within_limit
+  end
 end
