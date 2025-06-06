@@ -17,9 +17,9 @@ defmodule StormfulWeb.StormInput do
           for={@wind_form}
           phx-submit="save"
           phx-change="change_wind"
-          class="flex flex-col sm:flex-row gap-4 items-center"
+          class="flex flex-col gap-4 items-center"
         >
-          <div class="flex-grow text-2xl">
+          <div class="flex-grow w-full text-2xl">
             <.input
               type="message_area"
               field={@wind_form[:words]}
