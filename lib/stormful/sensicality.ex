@@ -4,6 +4,7 @@ defmodule Stormful.Sensicality do
   """
 
   import Ecto.Query, warn: false
+  alias Stormful.Starring.StarredSensical
   alias Stormful.AiRelated.AnthropicClient
   alias Stormful.FlowingThoughts
   alias Stormful.Planning.Plan
@@ -45,11 +46,12 @@ defmodule Stormful.Sensicality do
 
     if with_plans do
       plans_query = from p in Plan, order_by: p.inserted_at
+      star_query = from(t in StarredSensical)
 
       Repo.one!(
         from s in Sensical,
           where: s.user_id == ^user_id and s.id == ^id,
-          preload: [plans: ^plans_query]
+          preload: [plans: ^plans_query, starred_sensical: ^star_query]
       )
     else
       Repo.one!(

@@ -10,31 +10,31 @@ defmodule StormfulWeb.StormInput do
 
   def render(assigns) do
     ~H"""
-    <div class="fixed bottom-0 left-0 right-0 bg-indigo-900 z-[1] border-t border-indigo-700 p-4 text-xl">
+    <div class="bg-indigo-900 p-4 text-xl m-4">
       <div class="max-w-7xl mx-auto">
         <.form
           phx-target={@myself}
           for={@wind_form}
           phx-submit="save"
           phx-change="change_wind"
-          class="flex gap-4 items-center"
+          class="flex flex-col sm:flex-row gap-4 items-center"
         >
           <div class="flex-grow text-2xl">
             <.input
               type="message_area"
               field={@wind_form[:words]}
-              placeholder="write your thoughts, or prepend a '!' to create a headsup, '?' to create a todo"
-              label="The glorious Storm Input"
+              placeholder="write your thoughts here"
+              label="The Storm Input"
               label_centered={true}
             />
           </div>
           <.button
             type="submit"
-            class="px-6 py-3 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold 
+            class="px-6 py-3 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold
                    rounded-lg transition-colors flex items-center gap-2"
           >
             <span>⚡</span>
-            <span>Strike!</span>
+            <span>Enter</span>
           </.button>
         </.form>
       </div>
