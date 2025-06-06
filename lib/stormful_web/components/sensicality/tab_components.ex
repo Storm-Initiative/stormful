@@ -1,7 +1,8 @@
-defmodule StormfulWeb.SensicalityComponents.TabComponents do
+defmodule StormfulWeb.SensicalityComponents.TabComponent do
   @moduledoc false
 
-  use Phoenix.Component
+  use Phoenix.LiveComponent
+  import Phoenix.Component
   import StormfulWeb.CoreComponents
 
   attr :current_tab, :string, required: true
@@ -15,57 +16,57 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
         from_gradient: "from-purple-400",
         to_gradient: "to-pink-400"
       },
-      %{
-        id: "todos",
-        icon: "hero-check-circle",
-        from_gradient: "from-cyan-400",
-        to_gradient: "to-blue-400"
-      },
-      %{
-        id: "heads-ups",
-        icon: "hero-exclamation-circle",
-        from_gradient: "from-cyan-400",
-        to_gradient: "to-blue-400"
-      },
+      # %{
+      #   id: "todos",
+      #   icon: "hero-check-circle",
+      #   from_gradient: "from-cyan-400",
+      #   to_gradient: "to-blue-400"
+      # },
+      # %{
+      #   id: "heads-ups",
+      #   icon: "hero-exclamation-circle",
+      #   from_gradient: "from-cyan-400",
+      #   to_gradient: "to-blue-400"
+      # },
       %{
         id: "ai-stuff",
         icon: "hero-bolt",
         from_gradient: "from-cyan-400",
         to_gradient: "to-blue-400"
-      },
-      %{
-        id: "resources",
-        icon: "hero-building-storefront",
-        from_gradient: "from-cyan-400",
-        to_gradient: "to-blue-400"
-      },
-      %{
-        id: "archive",
-        icon: "hero-archive-box",
-        from_gradient: "from-cyan-400",
-        to_gradient: "to-blue-400"
-      },
-      %{
-        id: "command-center",
-        icon: "hero-command-line",
-        from_gradient: "from-cyan-400",
-        to_gradient: "to-blue-400"
-      },
-      %{
-        id: "statistics",
-        icon: "hero-chart-bar",
-        from_gradient: "from-cyan-400",
-        to_gradient: "to-blue-400"
-      },
-      %{
-        id: "settings",
-        icon: "hero-cog",
-        from_gradient: "from-cyan-400",
-        to_gradient: "to-blue-400"
       }
+      # %{
+      #   id: "resources",
+      #   icon: "hero-building-storefront",
+      #   from_gradient: "from-cyan-400",
+      #   to_gradient: "to-blue-400"
+      # },
+      # %{
+      #   id: "archive",
+      #   icon: "hero-archive-box",
+      #   from_gradient: "from-cyan-400",
+      #   to_gradient: "to-blue-400"
+      # },
+      # %{
+      #   id: "command-center",
+      #   icon: "hero-command-line",
+      #   from_gradient: "from-cyan-400",
+      #   to_gradient: "to-blue-400"
+      # },
+      # %{
+      #   id: "statistics",
+      #   icon: "hero-chart-bar",
+      #   from_gradient: "from-cyan-400",
+      #   to_gradient: "to-blue-400"
+      # },
+      # %{
+      #   id: "settings",
+      #   icon: "hero-cog",
+      #   from_gradient: "from-cyan-400",
+      #   to_gradient: "to-blue-400"
+      # }
     ]
 
-  def sensicality_tab_bar(assigns) do
+  def render(assigns) do
     ~H"""
     <div class="fixed left-0 top-0 h-screen w-16 bg-slate-800/90 backdrop-blur-lg z-[2] hover:w-20 transition-all duration-300 ease-out-expo group border-r border-white/5">
       <div class="h-full flex flex-col items-center py-10 space-y-4 overflow-y-auto">
@@ -84,7 +85,7 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
         
     <!-- Tab buttons -->
         <%= for tab <- @tabs do %>
-          <.sensicality_tab_button tab={tab} current_tab={@current_tab} />
+          <.sensicality_tab_button tab={tab} current_tab={@current_tab} myself={@myself} />
         <% end %>
       </div>
     </div>
@@ -96,6 +97,7 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
     <button
       class="relative w-full px-2 py-3 group"
       phx-click="select_tab"
+      phx-target={@myself}
       phx-value-tab={@tab.id}
       title={String.replace(@tab.id, "_", " ") |> String.capitalize()}
     >
@@ -133,5 +135,15 @@ defmodule StormfulWeb.SensicalityComponents.TabComponents do
       />
     </button>
     """
+  end
+
+  def handle_event("select_tab", %{"tab" => tab}, socket) do
+    sensical = socket.assigns.sensical
+
+    if tab == "thoughts" do
+      {:noreply, socket |> push_navigate(to: "/sensicality/#{sensical.id}")}
+    else
+      {:noreply, socket |> push_navigate(to: "/sensicality/#{sensical.id}/#{tab}")}
+    end
   end
 end

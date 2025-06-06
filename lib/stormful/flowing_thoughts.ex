@@ -17,10 +17,15 @@ defmodule Stormful.FlowingThoughts do
       iex> list_winds_by_sensical(1, 2)
       [%Wind{}, ...]
 
+      iex> list_winds_by_sensical(1, 2, :desc)
+      [%Wind{}, ...]
+
   """
-  def list_winds_by_sensical(sensical_id, user_id) do
-    query = from(w in Wind, where: w.user_id == ^user_id and w.sensical_id == ^sensical_id)
-    Repo.all(query)
+  def list_winds_by_sensical(sensical_id, user_id, sort_order \\ :asc) do
+    Wind
+    |> where([w], w.user_id == ^user_id and w.sensical_id == ^sensical_id)
+    |> order_by([w], {^sort_order, w.id})
+    |> Repo.all()
   end
 
   @doc """

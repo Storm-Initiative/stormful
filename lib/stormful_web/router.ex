@@ -83,11 +83,11 @@ defmodule StormfulWeb.Router do
       live "/into-the-storm", IntoTheStorm.IndexLive
 
       live "/sensicality/begin", Sensicality.BeginLive
-      live "/sensicality/:sensical_id", Sensicality.TheSensicalLive, :thoughts
-      live "/sensicality/:sensical_id/thoughts", Sensicality.TheSensicalLive, :thoughts
+      live "/sensicality/:sensical_id", Sensicality.ThoughtsLive, :thoughts
+      live "/sensicality/:sensical_id/thoughts", Sensicality.ThoughtsLive, :thoughts
       live "/sensicality/:sensical_id/todos", Sensicality.TheSensicalLive, :todos
       live "/sensicality/:sensical_id/heads-ups", Sensicality.TheSensicalLive, :heads_ups
-      live "/sensicality/:sensical_id/ai-stuff", Sensicality.TheSensicalLive, :ai_stuff
+      live "/sensicality/:sensical_id/ai-stuff", Sensicality.AiStuffLive, :ai_stuff
 
       live "/sensicality/:sensical_id/command-center",
            Sensicality.TheSensicalLive,

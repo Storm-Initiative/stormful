@@ -1,39 +1,67 @@
-<header class="flex justify-between px-4 sm:px-6 lg:px-8 py-4 border-b-2 absolute top-0 left-0 right-0 bg-indigo-800 z-[3]">
-  <div class="flex items-between font-extrabold">
-    <span class="text-4xl flex justify-center items-center gap-2">
+<header class="flex justify-between px-4 sm:px-6 lg:px-8 py-4 border-b-2 bg-indigo-800 z-[3]">
+  <div class="flex w-full items-between font-extrabold">
+    <span class="text-4xl w-full flex flex-col sm:flex-row justify-center items-center gap-2">
       <.link
         navigate={~p"/into-the-storm"}
-        class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
+        class="text-blue-400 hover:text-yellow-400 transition-colors duration-300 mx-auto sm:mx-0"
       >
         <span>
           Stormful
         </span>
       </.link>
-      <span>
+      <span class="hidden sm:block">
         |
       </span>
-      <div class="flex justify-center items-center">
+      <div class="flex justify-between items-center gap-2 text-center">
         <.cool_header big_name={@sensical.title} link={~p'/sensicality/#{@sensical.id}'} />
+        <div>
+          <%= if @sensical.starred_sensical do %>
+            <div class="cursor-pointer" phx-click="unstar_the_sensical">
+              <.icon name="hero-star-solid" class="h-6 w-6" />
+            </div>
+          <% else %>
+            <div class="cursor-pointer" phx-click="star_the_sensical">
+              <.icon name="hero-star" class="h-6 w-6" />
+            </div>
+          <% end %>
+        </div>
       </div>
     </span>
   </div>
 
-  <div class="flex justify-center items-center">
-    <%= if @is_starred do %>
-      <div class="cursor-pointer" phx-click="unstar_the_sensical">
-        <.icon name="hero-star-solid" class="h-6 w-6" />
-      </div>
-    <% else %>
-      <div class="cursor-pointer" phx-click="star_the_sensical">
-        <.icon name="hero-star" class="h-6 w-6" />
-      </div>
-    <% end %>
-  </div>
+  <div class="flex justify-center items-center"></div>
 </header>
 
-<main class="pr-4 py-8 sm:pr-6 lg:px-0">
+<main class="pb-8">
   <div class="mx-auto max-w-2xl lg:max-w-none lg:w-screen lg:mx-auto">
     <.flash_group flash={@flash} />
-    {@inner_content}
+
+    <div>
+      <%!-- <.live_component
+        module={StormfulWeb.SensicalityComponents.TabComponent}
+        id="tab-bar"
+        current_tab={@current_tab}
+        current_action={@live_action}
+        sensical={@sensical}
+      /> --%>
+
+      <div class="flex flex-col gap-4">
+        <div class="ml-8 mt-4">
+          <.cool_header
+            little_name={@little_title_label}
+            big_name={@current_tab_title}
+            link={~p'/sensicality/#{@sensical.id}/#{@current_tab}'}
+          />
+        </div>
+
+        <.live_component
+          module={StormfulWeb.StormInput}
+          id="storm-input"
+          sensical={@sensical}
+          current_user={@current_user}
+        />
+        {@inner_content}
+      </div>
+    </div>
   </div>
 </main>
