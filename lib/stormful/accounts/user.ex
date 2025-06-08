@@ -12,6 +12,7 @@ defmodule Stormful.Accounts.User do
     field :confirmed_at, :naive_datetime
 
     has_one :starred_sensicals, StarredSensical
+    has_one :profile, Stormful.Accounts.Profile
 
     timestamps(type: :utc_datetime)
   end

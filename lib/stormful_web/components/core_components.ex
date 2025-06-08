@@ -207,7 +207,7 @@ defmodule StormfulWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8">
+      <div class="space-y-8">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -246,8 +246,8 @@ defmodule StormfulWeb.CoreComponents do
       {@rest}
     >
       {render_slot(@inner_block)}
-      <span class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent 
-        translate-x-[-100%] group-hover:translate-x-[100%] 
+      <span class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent
+        translate-x-[-100%] group-hover:translate-x-[100%]
         transition-transform duration-500">
       </span>
     </button>
@@ -328,6 +328,7 @@ defmodule StormfulWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :help_text, :string, default: nil, doc: "the help text for the input"
 
   attr :rest, :global,
     include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
@@ -377,13 +378,17 @@ defmodule StormfulWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        class={[
+          "mt-2 block w-full rounded-md border border-gray-300 bg-gray-800 text-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm [&>option]:bg-gray-800 [&>option]:text-white",
+          @errors != [] && "border-rose-400 focus:border-rose-400"
+        ]}
         multiple={@multiple}
         {@rest}
       >
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
+      <p class="mt-2 text-sm text-white/70">{@help_text}</p>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -640,8 +645,8 @@ defmodule StormfulWeb.CoreComponents do
     <div class="flex">
       <.link
         navigate={@navigate}
-        class="group relative overflow-hidden rounded-lg px-4 py-2 
-          bg-black/20 hover:bg-black/40 
+        class="group relative overflow-hidden rounded-lg px-4 py-2
+          bg-black/20 hover:bg-black/40
           border border-white/10 hover:border-white/20
           transition-all duration-300 ease-out
           hover:-translate-y-0.5 hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]
@@ -652,8 +657,8 @@ defmodule StormfulWeb.CoreComponents do
           class="h-4 w-4 text-blue-400 group-hover:text-yellow-400 transition-colors duration-300"
         />
         {render_slot(@inner_block)}
-        <span class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent 
-          translate-x-[-100%] group-hover:translate-x-[100%] 
+        <span class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-transparent
+          translate-x-[-100%] group-hover:translate-x-[100%]
           transition-transform duration-500">
         </span>
       </.link>
