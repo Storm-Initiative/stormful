@@ -161,6 +161,9 @@ defmodule StormfulWeb.HealthController do
       ai_processing: %{
         within_limit: Queue.within_rate_limit?("ai_processing")
       },
+      thought_extraction: %{
+        within_limit: Queue.within_rate_limit?("thought_extraction")
+      },
       available_types: Queue.get_available_task_types_within_limits()
     }
   end

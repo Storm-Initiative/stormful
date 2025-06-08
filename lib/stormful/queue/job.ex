@@ -2,8 +2,8 @@ defmodule Stormful.Queue.Job do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @valid_statuses ~w(pending processing completed failed rate_limited)
-  @valid_task_types ~w(email ai_processing)
+  @valid_statuses ~w(pending processing completed failed)
+  @valid_task_types ~w(email ai_processing thought_extraction)
 
   schema "queue_jobs" do
     field :task_type, :string

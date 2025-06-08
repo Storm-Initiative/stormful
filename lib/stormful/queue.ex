@@ -17,8 +17,9 @@ defmodule Stormful.Queue do
 
   # Rate limiting configuration - jobs per minute for each task type
   @rate_limits %{
-    "email" => {100, 60},        # 100 emails per 60 seconds
-    "ai_processing" => {30, 60}  # 30 AI jobs per 60 seconds
+    "email" => {100, 60},           # 100 emails per 60 seconds
+    "ai_processing" => {30, 60},    # 30 AI jobs per 60 seconds
+    "thought_extraction" => {50, 60} # 50 thought extraction jobs per 60 seconds (generous, can go above)
   }
 
   @doc """
@@ -81,6 +82,22 @@ defmodule Stormful.Queue do
   """
   def enqueue_ai_processing(payload, opts \\ []) do
     enqueue_job("ai_processing", payload, opts)
+  end
+
+  @doc """
+  Convenience function to enqueue a thought extraction job (using OpenRouter).
+  These jobs have generous rate limits (50/minute) and can be delayed.
+
+  ## Examples
+
+      iex> enqueue_thought_extraction(%{model: "openai/gpt-3.5-turbo", prompt: "Hello world"})
+      {:ok, %Job{}}
+
+      iex> enqueue_thought_extraction(%{model: "openai/gpt-3.5-turbo", prompt: "Hello world"}, scheduled_at: DateTime.add(DateTime.utc_now(), 300, :second))
+      {:ok, %Job{}}
+  """
+  def enqueue_thought_extraction(payload, opts \\ []) do
+    enqueue_job("thought_extraction", payload, opts)
   end
 
   @doc """
