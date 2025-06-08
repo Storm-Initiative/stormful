@@ -63,7 +63,8 @@ defmodule Stormful.MixProject do
       {:bandit, "~> 1.2"},
       {:gen_smtp, "~> 1.0"},
       {:req, "~> 0.5.7"},
-      {:ecto_ulid, "~> 0.3.0"}
+      {:ecto_ulid, "~> 0.3.0"},
+      {:timex, "~> 3.7"}
     ]
   end
 

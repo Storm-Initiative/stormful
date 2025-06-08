@@ -79,6 +79,7 @@ defmodule StormfulWeb.Router do
       on_mount: [{StormfulWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/users/profile", UserProfileLive, :edit
 
       live "/into-the-storm", IntoTheStorm.IndexLive
 

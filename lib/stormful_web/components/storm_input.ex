@@ -123,6 +123,25 @@ defmodule StormfulWeb.StormInput do
   end
 
   defp queue_ai_analysis_for_thought(wind, user) do
+    # Check if user has a profile
+    case Stormful.ProfileManagement.get_user_profile(user.id) do
+      nil ->
+        Logger.info("⏭️  Skipping thought extraction for user #{user.id} - no profile found")
+        :skip
+
+      profile ->
+        # Check if thought extraction is enabled
+        if profile.thought_extraction do
+          # Profile exists and thought extraction is enabled, proceed
+          perform_thought_extraction(wind, user)
+        else
+          Logger.info("⏭️  Skipping thought extraction for user #{user.id} - thought extraction disabled in profile")
+          :skip
+        end
+    end
+  end
+
+  defp perform_thought_extraction(wind, user) do
     # Create a prompt to analyze the user's thought
     prompt = """
     The JSON structure should be:
@@ -136,14 +155,14 @@ defmodule StormfulWeb.StormInput do
     }
 
     User generally tells when they need something done by a specific time. We extract date/time in a unique way:
+    - User says today -> relative:day:+0
     - User says tomorrow -> relative:day:+1
-    - User says in 2 hours -> relative:minute:+120
+    - User says in 2 hours -> relative:hour:+2
+    - User says in 30 minutes -> relative:minute:+30
     - User says in 2 days -> relative:day:+2
     - User says in 2 weeks -> relative:week:+2
     - User says in 2 months -> relative:month:+2
     - User says in 2 years -> relative:year:+2
-    - User says in 2 hours -> relative:minute:+120
-    - User says in 2 days -> relative:day:+2
     - User says 2025-06-08 -> absolute:2025-06-08
     - User says 2025-06-08 12:00 -> absolute:2025-06-08 12:00
     - User says 2025-06-08 12:00:00 -> absolute:2025-06-08 12:00:00
@@ -170,7 +189,7 @@ defmodule StormfulWeb.StormInput do
     - I got to go to the dentist tomorrow -> location: null
     - dentist appointment tomorrow at Stonefruit Bakery -> location: "Stonefruit Bakery"
 
-    For example, if the user says "I got to go to the dentist tomorrow", and user timezone is UTC+0, you should respond with:
+    For example, if the user says "I got to go to the dentist tomorrow", you should respond with:
     {
       "type": "reminder",
       "what": "Go to the dentist",
@@ -179,7 +198,16 @@ defmodule StormfulWeb.StormInput do
       "location": null
     }
 
-    Or when user says "I got a dentist appointment in 2 hours at Stonefruit Bakery", and user timezone is UTC+0, you should respond with:
+    Or when user says "remind me today 7:15 pm to close the soup", you should respond with:
+    {
+      "type": "reminder",
+      "what": "close the soup",
+      "when": "relative:day:+0"
+      "the_time_of_the_day_if_day": "19:15"
+      "location": null
+    }
+
+    Or when user says "I got a dentist appointment in 2 hours at Stonefruit Bakery", you should respond with:
     {
       "type": "reminder",
       "what": "Go to the dentist",

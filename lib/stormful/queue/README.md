@@ -123,12 +123,6 @@ Queue.enqueue_job("custom_job", %{"data" => "value"})
 - **Required Fields**: `["model", "prompt"]`
 - **Optional**: `max_tokens`, `temperature`, `top_p`
 
-### 🔗 WebhookHandler (Example)
-- **Job Type**: `"webhook"`
-- **Purpose**: HTTP webhook delivery
-- **Required Fields**: `["url", "payload"]`
-- **Optional**: `method`, `headers`, `timeout`
-
 ## JobHandler Behavior
 
 All handlers must implement this behavior:
@@ -171,13 +165,6 @@ Queue.enqueue_thought_extraction(%{
   "model" => "openai/gpt-3.5-turbo",
   "prompt" => "Extract calendar events from: Meeting tomorrow at 3pm"
 })
-
-# Custom webhook
-Queue.enqueue_job("webhook", %{
-  "url" => "https://api.example.com/webhook",
-  "payload" => %{"event" => "user_signup", "user_id" => 123}
-})
-```
 
 ## Rate Limiting
 

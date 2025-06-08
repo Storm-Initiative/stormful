@@ -8,12 +8,12 @@ defmodule Stormful.Calendar.CalendarNotifier do
 
   require Logger
 
-  @doc """
+    @doc """
   Sends a calendar reminder to user via email.
   """
   def send_reminder_event(user_email, reminder_data, user_id) do
-    # Generate iCal content
-    ical_content = IcalGenerator.create_reminder_event(reminder_data, user_email)
+    # Generate iCal content with timezone adjustment
+    ical_content = IcalGenerator.create_reminder_event(reminder_data, user_email, user_id)
 
     # Create simple email
     title = Map.get(reminder_data, "what", "Reminder")

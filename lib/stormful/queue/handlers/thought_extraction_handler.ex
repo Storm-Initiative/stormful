@@ -133,7 +133,7 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
       {:error, _} -> {:no_json}
     end
   rescue
-    _error -> {:processing_error}
+    error -> {:processing_error, error}
   end
 
   defp get_user_email(user_id) when is_integer(user_id) do
@@ -170,8 +170,8 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
     "ℹ️ Not JSON format"
   end
 
-  defp format_calendar_result({:processing_error}) do
-    "⚠️ Processing Error"
+  defp format_calendar_result({:processing_error, error}) do
+    "⚠️ Processing Error: #{inspect(error)}"
   end
 
   defp format_calendar_result(_) do
