@@ -1,0 +1,150 @@
+<.live_component
+  module={StormfulWeb.JournalHeader}
+  id="journal-header"
+  journal={@journal}
+  journals={@journals}
+/>
+
+<%!-- Main journal content area --%>
+<div class="mx-auto px-3 py-4 sm:px-4 sm:py-8">
+  <div :if={@journal}>
+    <%!-- Storm input for writing winds --%>
+    <.live_component
+      module={StormfulWeb.StormInput}
+      id="journal-storm-input"
+      journal={@journal}
+      current_user={@current_user}
+    />
+
+    <%!-- Stream of journal winds --%>
+    <div class="mt-4 sm:mt-8">
+      <div class="flex flex-col gap-3 sm:gap-4" id="journal-winds" phx-update="stream">
+        <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
+          <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%!-- Welcome state when no journals exist --%>
+  <div :if={!@journal} class="text-center py-8 sm:py-20">
+    <div class="mb-6 sm:mb-8">
+      <.icon
+        name="hero-book-open"
+        class="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 text-white/30"
+      />
+      <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 px-4">
+        Welcome to your Journal
+      </h2>
+      <p class="text-lg sm:text-xl text-white/70 mb-2 px-4">
+        Your space for free-flowing thoughts
+      </p>
+      <p class="text-white/50 text-sm sm:text-base max-w-lg mx-auto px-4">
+        No structure, no rules - just pure expression. Create your first journal to get started.
+      </p>
+    </div>
+
+    <.button
+      phx-click="create_new_journal"
+      class="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base mx-auto
+             transform hover:scale-105 shadow-lg hover:shadow-indigo-500/30
+             touch-manipulation min-h-[48px]"
+    >
+      <.icon name="hero-plus-circle" class="w-5 h-5 sm:w-6 sm:h-6" /> Create Your First Journal
+    </.button>
+  </div>
+</div>
+
+<%!-- Create Journal Modal --%>
+<.modal :if={@show_create_modal} id="create-journal-modal" show on_cancel={JS.push("close_modal")}>
+  <div class="text-white">
+    <h2 class="text-2xl font-bold mb-6 text-center">Create New Journal</h2>
+
+    <.simple_form for={@journal_form} phx-change="validate_journal" phx-submit="create_journal">
+      <.input
+        field={@journal_form[:title]}
+        type="text"
+        label="Journal Title"
+        placeholder="Stormy Winds"
+        required
+      />
+
+      <.input
+        field={@journal_form[:description]}
+        type="textarea"
+        label="Description (optional)"
+        placeholder="There was a wind, and with that wind came a storm. I was there, you know why? Because I was a storm."
+      />
+
+      <:actions>
+        <.button type="button" phx-click="close_modal" class="bg-gray-600 hover:bg-gray-500">
+          Cancel
+        </.button>
+        <.button
+          type="submit"
+          class="bg-indigo-600 hover:bg-indigo-500 flex items-center gap-2 hover:underline"
+        >
+          <.icon name="hero-bolt" class="w-4 h-4" /> Create It
+        </.button>
+      </:actions>
+    </.simple_form>
+  </div>
+</.modal>
+
+<%!-- Edit Journal Modal --%>
+<.modal :if={@show_edit_modal} id="edit-journal-modal" show on_cancel={JS.push("close_modal")}>
+  <div class="text-white">
+    <h2 class="text-2xl font-bold mb-6 text-center">Edit Journal</h2>
+
+    <.simple_form
+      for={@edit_journal_form}
+      phx-change="validate_edit_journal"
+      phx-submit="update_journal"
+    >
+      <.input field={@edit_journal_form[:title]} type="text" label="Journal Title" required />
+
+      <.input
+        field={@edit_journal_form[:description]}
+        type="textarea"
+        label="Description (optional)"
+      />
+
+      <:actions>
+        <.button type="button" phx-click="close_modal" class="bg-gray-600 hover:bg-gray-500">
+          Cancel
+        </.button>
+        <.button
+          type="submit"
+          class="bg-yellow-600 hover:bg-yellow-500 flex items-center gap-2 hover:underline"
+        >
+          <.icon name="hero-pencil" class="w-4 h-4" /> Update Journal
+        </.button>
+      </:actions>
+    </.simple_form>
+  </div>
+</.modal>
+
+<%!-- Delete Journal Modal --%>
+<.modal :if={@show_delete_modal} id="delete-journal-modal" show on_cancel={JS.push("close_modal")}>
+  <div class="text-white">
+    <div class="text-center">
+      <.icon name="hero-exclamation-triangle" class="w-16 h-16 text-red-400 mx-auto mb-4" />
+      <h2 class="text-2xl font-bold mb-4">Delete Journal</h2>
+      <p class="text-lg text-white/80 mb-6">
+        Are you sure you want to delete "<span class="font-semibold">{@journal && @journal.title}</span>"?
+      </p>
+      <p class="text-white/60 mb-8">
+        This action cannot be undone. All thoughts in this journal will be permanently deleted.
+      </p>
+
+      <div class="flex gap-4 justify-center">
+        <.button type="button" phx-click="close_modal" class="bg-gray-600 hover:bg-gray-500">
+          Cancel
+        </.button>
+        <.button phx-click="delete_journal" class="bg-red-600 hover:bg-red-500">
+          <.icon name="hero-trash" class="w-4 h-4" /> Delete Journal
+        </.button>
+      </div>
+    </div>
+  </div>
+</.modal>

@@ -63,12 +63,18 @@ defmodule Stormful.Calendar.IcalGenerator do
           Logger.info("🗓️  Amount of hours to add: #{amount_of_hours_to_add}")
 
           if time_of_day do
-            time =
-              DateTime.add(time, String.to_integer(amount_of_hours_to_add) * -3600, :second)
-              |> DateTime.truncate(:second)
+            if amount_of_hours_to_add == "UTC" do
+              time = time |> DateTime.truncate(:second)
+              Logger.info("🗓️  Time after adding hours: #{time}")
+              time
+            else
+              time =
+                DateTime.add(time, String.to_integer(amount_of_hours_to_add) * -3600, :second)
+                |> DateTime.truncate(:second)
 
-            Logger.info("🗓️  Time after adding hours: #{time}")
-            time
+              Logger.info("🗓️  Time after adding hours: #{time}")
+              time
+            end
           else
             time = time |> DateTime.truncate(:second)
             Logger.info("🗓️  Time after adding hours: #{time}")

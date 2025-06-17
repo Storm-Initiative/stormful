@@ -24,21 +24,22 @@ defmodule StormfulWeb.CoreComponents do
 
   ## Examples
 
-      <.modal id="confirm-modal">
-        This is a modal.
-      </.modal>
+  <.modal id="confirm-modal">
+    This is a modal.
+  </.modal>
 
   JS commands may be passed to the `:on_cancel` to configure
   the closing/cancel event, for example:
 
-      <.modal id="confirm" on_cancel={JS.navigate(~p"/posts")}>
-        This is another modal.
-      </.modal>
-
+  <.modal id="confirm" on_cancel={JS.navigate(~p"/posts")}>
+    This is another modal.
+  </.modal>
   """
+
   attr :id, :string, required: true
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
+  attr :class, :string, default: "max-w-md"
   slot :inner_block, required: true
 
   def modal(assigns) do
@@ -50,11 +51,14 @@ defmodule StormfulWeb.CoreComponents do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class="relative z-50 hidden"
     >
+      <!-- Darker backdrop with blur -->
       <div
         id={"#{@id}-bg"}
-        class="bg-indigo-800/90 fixed inset-0 transition-opacity"
+        class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity duration-300"
         aria-hidden="true"
       />
+      
+    <!-- Modal container -->
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -63,26 +67,29 @@ defmodule StormfulWeb.CoreComponents do
         aria-modal="true"
         tabindex="0"
       >
-        <div class="flex min-h-full items-center justify-center">
-          <div class="w-full max-w-3xl p-4 sm:p-6 lg:py-8">
+        <div class="flex min-h-full items-center justify-center p-4">
+          <div class={"w-full #{@class}"}>
             <.focus_wrap
               id={"#{@id}-container"}
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="shadow-zinc-700/10 ring-zinc-700/10 relative hidden rounded-2xl bg-purple-700 p-14 shadow-lg ring-1 transition"
+              class="relative hidden rounded-lg bg-gray-800 p-6 shadow-2xl ring-1 ring-white/5 transition-all duration-300 ease-out"
+              data-animate-in="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              data-animate-out="opacity-100 translate-y-0 sm:scale-100"
             >
-              <div class="absolute top-6 right-5">
-                <button
-                  phx-click={JS.exec("data-cancel", to: "##{@id}")}
-                  type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
-                  aria-label={gettext("close")}
-                >
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-black" />
-                </button>
-              </div>
-              <div id={"#{@id}-content"}>
+              <!-- Close button -->
+              <button
+                phx-click={JS.exec("data-cancel", to: "##{@id}")}
+                type="button"
+                class="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors"
+                aria-label={gettext("close")}
+              >
+                <.icon name="hero-x-mark-solid" class="h-5 w-5 text-white" />
+              </button>
+              
+    <!-- Content -->
+              <div id={"#{@id}-content"} class="text-gray-100">
                 {render_slot(@inner_block)}
               </div>
             </.focus_wrap>
