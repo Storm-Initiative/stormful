@@ -81,6 +81,10 @@ defmodule StormfulWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       live "/users/profile", UserProfileLive, :edit
 
+      # Journal routes (new default experience)
+      live "/journal", Journaling.JournalLive, :index
+      live "/journal/:journal_id", Journaling.JournalLive, :show
+
       live "/into-the-storm", IntoTheStorm.IndexLive
 
       live "/sensicality/begin", Sensicality.BeginLive
