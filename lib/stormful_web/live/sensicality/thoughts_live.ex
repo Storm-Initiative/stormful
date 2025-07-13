@@ -10,6 +10,8 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
 
   use StormfulWeb, :live_view
 
+  @winds_per_scroll 20
+
   @impl true
   def mount(params, _session, socket) do
     current_user = socket.assigns.current_user
@@ -28,7 +30,7 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
      |> assign(is_starred: starred_sensicality != nil)
      |> assign_pagination_state()
      |> assign(winds_loaded: length(winds))
-     |> assign(has_more: length(winds) >= 20)
+     |> assign(has_more: length(winds) >= @winds_per_scroll)
      |> stream(:plans, plans)
      |> stream(:winds, winds), layout: {Layouts, :sensicality}}
   end
@@ -125,7 +127,7 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
         socket
         |> assign(loading: false)
         |> assign(winds_loaded: current_offset + length(new_winds))
-        |> assign(has_more: length(new_winds) >= 20)
+        |> assign(has_more: length(new_winds) >= @winds_per_scroll)
 
       # Add new winds to the stream
       socket =
@@ -149,7 +151,7 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
   defp get_sensical_winds_paginated(sensical_id, user_id, offset) do
     FlowingThoughts.list_winds_by_sensical_paginated(sensical_id, user_id, 
       sort_order: :desc, 
-      limit: 20, 
+      limit: @winds_per_scroll, 
       offset: offset
     )
   end

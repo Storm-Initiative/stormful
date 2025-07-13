@@ -5,6 +5,8 @@ defmodule StormfulWeb.Journaling.JournalLive do
   alias Stormful.FlowingThoughts
   alias Phoenix.LiveView.JS
 
+  @winds_per_scroll 20
+
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
@@ -39,7 +41,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
          |> assign_modal_state()
          |> assign_pagination_state()
          |> assign(winds_loaded: length(winds))
-         |> assign(has_more: length(winds) >= 20)
+         |> assign(has_more: length(winds) >= @winds_per_scroll)
          |> stream(:winds, winds)}
     end
   end
@@ -159,7 +161,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
         socket
         |> assign(loading: false)
         |> assign(winds_loaded: current_offset + length(new_winds))
-        |> assign(has_more: length(new_winds) >= 20)
+        |> assign(has_more: length(new_winds) >= @winds_per_scroll)
 
       # Add new winds to the stream
       socket =
@@ -214,7 +216,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
   defp get_journal_winds_paginated(journal_id, user_id, offset) do
     FlowingThoughts.list_winds_by_journal_paginated(journal_id, user_id, 
       sort_order: :desc, 
-      limit: 20, 
+      limit: @winds_per_scroll, 
       offset: offset
     )
   end
