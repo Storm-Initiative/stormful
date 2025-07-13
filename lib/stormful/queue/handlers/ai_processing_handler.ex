@@ -55,13 +55,15 @@ defmodule Stormful.Queue.Handlers.AiProcessingHandler do
     case call_ai_service(ai_request) do
       {:ok, response} ->
         Logger.info("AI processing completed for job #{job.id}")
-        {:ok, %{
-          response: response.text,
-          tokens_used: response.tokens_used,
-          model_used: response.model,
-          processing_time_ms: response.processing_time,
-          completed_at: DateTime.utc_now()
-        }}
+
+        {:ok,
+         %{
+           response: response.text,
+           tokens_used: response.tokens_used,
+           model_used: response.model,
+           processing_time_ms: response.processing_time,
+           completed_at: DateTime.utc_now()
+         }}
 
       {:error, reason} ->
         Logger.error("AI processing failed for job #{job.id}: #{inspect(reason)}")
@@ -89,12 +91,13 @@ defmodule Stormful.Queue.Handlers.AiProcessingHandler do
 
       response_text = generate_simulated_response(ai_request.prompt)
 
-      {:ok, %{
-        text: response_text,
-        tokens_used: tokens_used,
-        model: ai_request.model,
-        processing_time: processing_time
-      }}
+      {:ok,
+       %{
+         text: response_text,
+         tokens_used: tokens_used,
+         model: ai_request.model,
+         processing_time: processing_time
+       }}
     rescue
       error ->
         {:error, "AI service call failed: #{inspect(error)}"}
@@ -106,9 +109,14 @@ defmodule Stormful.Queue.Handlers.AiProcessingHandler do
     prompt_words = String.split(prompt) |> length()
 
     cond do
-      prompt_words < 10 -> "This is a brief AI response to your short prompt."
-      prompt_words < 50 -> "This is a medium-length AI response that addresses the key points in your prompt with some detail and analysis."
-      true -> "This is a comprehensive AI response that thoroughly analyzes your detailed prompt, providing insights, recommendations, and detailed explanations across multiple aspects of your query."
+      prompt_words < 10 ->
+        "This is a brief AI response to your short prompt."
+
+      prompt_words < 50 ->
+        "This is a medium-length AI response that addresses the key points in your prompt with some detail and analysis."
+
+      true ->
+        "This is a comprehensive AI response that thoroughly analyzes your detailed prompt, providing insights, recommendations, and detailed explanations across multiple aspects of your query."
     end
   end
 end

@@ -37,7 +37,7 @@ defmodule StormfulWeb.UserSettingsLive do
           </nav>
         </div>
       </div>
-
+      
     <!-- Account Security Content -->
       <div class="space-y-8">
         <div class="bg-white/10 backdrop-blur-sm shadow rounded-lg p-6">

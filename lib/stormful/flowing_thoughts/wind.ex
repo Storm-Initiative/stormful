@@ -35,8 +35,10 @@ defmodule Stormful.FlowingThoughts.Wind do
     case {sensical_id, journal_id} do
       {nil, nil} ->
         add_error(changeset, :base, "Wind must belong to either a sensical or a journal")
+
       {_sensical, _journal} when not is_nil(sensical_id) and not is_nil(journal_id) ->
         add_error(changeset, :base, "Wind cannot belong to both a sensical and a journal")
+
       _ ->
         changeset
     end

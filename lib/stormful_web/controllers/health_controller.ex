@@ -12,7 +12,9 @@ defmodule StormfulWeb.HealthController do
       status: "ok",
       timestamp: DateTime.utc_now(),
       version: Application.spec(:stormful, :vsn) |> to_string(),
-      uptime_seconds: System.system_time(:second) - Application.get_env(:stormful, :start_time, System.system_time(:second))
+      uptime_seconds:
+        System.system_time(:second) -
+          Application.get_env(:stormful, :start_time, System.system_time(:second))
     }
 
     json(conn, health_status)
@@ -45,6 +47,7 @@ defmodule StormfulWeb.HealthController do
     case determine_overall_queue_health() do
       "healthy" ->
         send_resp(conn, 200, "OK")
+
       _ ->
         send_resp(conn, 503, "Service Unavailable")
     end

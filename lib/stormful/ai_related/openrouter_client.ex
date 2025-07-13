@@ -27,11 +27,12 @@ defmodule Stormful.AiRelated.OpenRouterClient do
          {:ok, base_url} <- get_base_url() do
       url = "#{base_url}/completions"
 
-      payload = %{
-        "model" => model,
-        "prompt" => prompt
-      }
-      |> maybe_add_optional_params(opts)
+      payload =
+        %{
+          "model" => model,
+          "prompt" => prompt
+        }
+        |> maybe_add_optional_params(opts)
 
       headers = [
         {"Authorization", "Bearer #{api_key}"},
@@ -81,6 +82,7 @@ defmodule Stormful.AiRelated.OpenRouterClient do
 
   # Private function to add optional parameters to the payload
   defp maybe_add_optional_params(payload, []), do: payload
+
   defp maybe_add_optional_params(payload, opts) do
     Enum.reduce(opts, payload, fn {key, value}, acc ->
       case key do

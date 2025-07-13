@@ -69,12 +69,13 @@ defmodule Stormful.Queue.Worker do
     # Check that the registry can find handlers for known job types
     known_types = ["email", "ai_processing", "thought_extraction"]
 
-    failed_types = Enum.filter(known_types, fn job_type ->
-      case HandlerRegistry.get_handler(job_type) do
-        {:ok, _} -> false
-        {:error, _} -> true
-      end
-    end)
+    failed_types =
+      Enum.filter(known_types, fn job_type ->
+        case HandlerRegistry.get_handler(job_type) do
+          {:ok, _} -> false
+          {:error, _} -> true
+        end
+      end)
 
     if Enum.empty?(failed_types) do
       :ok

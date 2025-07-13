@@ -53,36 +53,40 @@ defmodule Stormful.Accounts.UserNotifier do
     }
 
     # Handle delay_minutes option for scheduling
-    queue_opts = case Keyword.get(opts, :delay_minutes) do
-      nil ->
-        # No delay, send immediately (use existing opts without delay_minutes)
-        Keyword.delete(opts, :delay_minutes)
+    queue_opts =
+      case Keyword.get(opts, :delay_minutes) do
+        nil ->
+          # No delay, send immediately (use existing opts without delay_minutes)
+          Keyword.delete(opts, :delay_minutes)
 
-      minutes when is_integer(minutes) and minutes > 0 ->
-        scheduled_at = DateTime.add(DateTime.utc_now(), minutes * 60, :second)
-        opts
-        |> Keyword.delete(:delay_minutes)
-        |> Keyword.put(:scheduled_at, scheduled_at)
+        minutes when is_integer(minutes) and minutes > 0 ->
+          scheduled_at = DateTime.add(DateTime.utc_now(), minutes * 60, :second)
 
-      _ ->
-        # Invalid delay_minutes, send immediately
-        Keyword.delete(opts, :delay_minutes)
-    end
+          opts
+          |> Keyword.delete(:delay_minutes)
+          |> Keyword.put(:scheduled_at, scheduled_at)
+
+        _ ->
+          # Invalid delay_minutes, send immediately
+          Keyword.delete(opts, :delay_minutes)
+      end
 
     case Queue.enqueue_email(email_payload, queue_opts) do
       {:ok, job} ->
-        delay_info = case Keyword.get(opts, :delay_minutes) do
-          nil -> "immediately"
-          minutes -> "in #{minutes} minutes"
-        end
+        delay_info =
+          case Keyword.get(opts, :delay_minutes) do
+            nil -> "immediately"
+            minutes -> "in #{minutes} minutes"
+          end
 
-        {:ok, %{
-          job_id: job.id,
-          recipient: recipient,
-          subject: subject,
-          scheduled_for: delay_info,
-          scheduled_at: Keyword.get(queue_opts, :scheduled_at)
-        }}
+        {:ok,
+         %{
+           job_id: job.id,
+           recipient: recipient,
+           subject: subject,
+           scheduled_for: delay_info,
+           scheduled_at: Keyword.get(queue_opts, :scheduled_at)
+         }}
 
       {:error, changeset} ->
         # Fallback to direct delivery if queue fails

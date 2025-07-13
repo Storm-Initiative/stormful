@@ -8,7 +8,7 @@ defmodule Stormful.Calendar.CalendarNotifier do
 
   require Logger
 
-    @doc """
+  @doc """
   Sends a calendar reminder to user via email.
   """
   def send_reminder_event(user_email, reminder_data, user_id) do

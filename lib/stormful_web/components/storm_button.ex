@@ -4,9 +4,9 @@ defmodule StormfulWeb.StormButton do
 
   @doc """
   Renders a storm-themed button with consistent styling and animations.
-  
+
   ## Examples
-  
+
       <.storm_button variant="primary" type="submit">
         Save Changes
       </.storm_button>
@@ -65,16 +65,16 @@ defmodule StormfulWeb.StormButton do
         @shine_classes
       ]}>
       </div>
-      
+
       <div class="relative flex items-center justify-center gap-3">
         <%= if @icon && @icon_position == "left" do %>
           <.icon name={@icon} class={["transition-all duration-300", @icon_classes]} />
         <% end %>
-        
+
         <span class={["transition-colors duration-300", @span_classes]}>
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </span>
-        
+
         <%= if @icon && @icon_position == "right" do %>
           <.icon name={@icon} class={["transition-all duration-300", @icon_classes]} />
         <% end %>
@@ -87,7 +87,8 @@ defmodule StormfulWeb.StormButton do
     assigns
     |> assign(
       size_classes: "px-8 py-4 text-xl",
-      bg_classes: "bg-gradient-to-r from-yellow-600/80 to-orange-600/80 hover:from-yellow-500/90 hover:to-orange-500/90",
+      bg_classes:
+        "bg-gradient-to-r from-yellow-600/80 to-orange-600/80 hover:from-yellow-500/90 hover:to-orange-500/90",
       border_classes: "border border-yellow-400/30 hover:border-yellow-300/50",
       shadow_classes: "hover:shadow-[0_10px_30px_rgba(251,191,36,0.3)]",
       text_classes: "text-white/90",
@@ -101,7 +102,8 @@ defmodule StormfulWeb.StormButton do
     assigns
     |> assign(
       size_classes: "px-6 py-3 text-base",
-      bg_classes: "bg-gradient-to-r from-indigo-600/80 to-blue-600/80 hover:from-indigo-500/90 hover:to-blue-500/90",
+      bg_classes:
+        "bg-gradient-to-r from-indigo-600/80 to-blue-600/80 hover:from-indigo-500/90 hover:to-blue-500/90",
       border_classes: "border border-indigo-400/30 hover:border-indigo-300/50",
       shadow_classes: "hover:shadow-[0_8px_25px_rgba(99,102,241,0.3)]",
       text_classes: "text-white/90",
@@ -115,7 +117,8 @@ defmodule StormfulWeb.StormButton do
     assigns
     |> assign(
       size_classes: "px-4 py-2 text-sm",
-      bg_classes: "bg-gradient-to-r from-slate-600/60 to-slate-700/60 hover:from-slate-500/70 hover:to-slate-600/70",
+      bg_classes:
+        "bg-gradient-to-r from-slate-600/60 to-slate-700/60 hover:from-slate-500/70 hover:to-slate-600/70",
       border_classes: "border border-slate-400/20 hover:border-slate-300/30",
       shadow_classes: "hover:shadow-[0_6px_20px_rgba(71,85,105,0.2)]",
       text_classes: "text-white/80",

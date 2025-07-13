@@ -67,8 +67,15 @@ defmodule Stormful.Queue.HandlerRegistry do
   """
   def register_handler(job_type, handler_module) do
     if valid_handler?(handler_module) do
-      :persistent_term.put({__MODULE__, :handlers}, Map.put(registered_handlers(), job_type, handler_module))
-      Logger.info("Registered custom handler for job type '#{job_type}': #{inspect(handler_module)}")
+      :persistent_term.put(
+        {__MODULE__, :handlers},
+        Map.put(registered_handlers(), job_type, handler_module)
+      )
+
+      Logger.info(
+        "Registered custom handler for job type '#{job_type}': #{inspect(handler_module)}"
+      )
+
       :ok
     else
       {:error, "Handler module does not exist or implement JobHandler behavior"}
@@ -152,8 +159,8 @@ defmodule Stormful.Queue.HandlerRegistry do
   defp valid_handler?(handler_module) do
     try do
       # Check if module exists and is loaded
+      # Check if it implements the JobHandler behavior
       Code.ensure_loaded?(handler_module) and
-        # Check if it implements the JobHandler behavior
         Stormful.Queue.JobHandler.implements_behavior?(handler_module)
     rescue
       _ -> false

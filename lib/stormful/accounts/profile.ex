@@ -25,7 +25,9 @@ defmodule Stormful.Accounts.Profile do
 
   defp validate_timezone(changeset) do
     case get_change(changeset, :timezone) do
-      nil -> changeset
+      nil ->
+        changeset
+
       timezone ->
         if timezone in Timex.timezones() do
           changeset

@@ -8,7 +8,7 @@ defmodule Stormful.AiRelated.ThoughtExtractionHelper do
 
   alias Stormful.Queue
 
-    @doc """
+  @doc """
   Enqueue a simple thought extraction task.
 
   ## Examples
@@ -20,11 +20,12 @@ defmodule Stormful.AiRelated.ThoughtExtractionHelper do
       {:ok, %Job{}}
   """
   def complete_async(model, prompt, opts \\ []) do
-    payload = %{
-      "model" => model,
-      "prompt" => prompt
-    }
-    |> maybe_add_ai_options(opts)
+    payload =
+      %{
+        "model" => model,
+        "prompt" => prompt
+      }
+      |> maybe_add_ai_options(opts)
 
     queue_opts = extract_queue_options(opts)
 
@@ -45,16 +46,18 @@ defmodule Stormful.AiRelated.ThoughtExtractionHelper do
       {:ok, %Job{}}
   """
   def complete_delayed(model, prompt, delay_or_datetime, opts \\ []) do
-    scheduled_at = case delay_or_datetime do
-      %DateTime{} = datetime -> datetime
-      seconds when is_integer(seconds) -> DateTime.add(DateTime.utc_now(), seconds, :second)
-    end
+    scheduled_at =
+      case delay_or_datetime do
+        %DateTime{} = datetime -> datetime
+        seconds when is_integer(seconds) -> DateTime.add(DateTime.utc_now(), seconds, :second)
+      end
 
-    payload = %{
-      "model" => model,
-      "prompt" => prompt
-    }
-    |> maybe_add_ai_options(opts)
+    payload =
+      %{
+        "model" => model,
+        "prompt" => prompt
+      }
+      |> maybe_add_ai_options(opts)
 
     queue_opts =
       extract_queue_options(opts)
@@ -68,18 +71,21 @@ defmodule Stormful.AiRelated.ThoughtExtractionHelper do
   """
   def get_job_status(job_id) do
     case Queue.get_job(job_id) do
-      nil -> {:error, :not_found}
+      nil ->
+        {:error, :not_found}
+
       job ->
-        {:ok, %{
-          id: job.id,
-          status: job.status,
-          attempts: job.attempts,
-          error: job.error_message,
-          created_at: job.inserted_at,
-          scheduled_at: job.scheduled_at,
-          started_at: job.started_at,
-          completed_at: job.completed_at
-        }}
+        {:ok,
+         %{
+           id: job.id,
+           status: job.status,
+           attempts: job.attempts,
+           error: job.error_message,
+           created_at: job.inserted_at,
+           scheduled_at: job.scheduled_at,
+           started_at: job.started_at,
+           completed_at: job.completed_at
+         }}
     end
   end
 
