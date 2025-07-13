@@ -48,10 +48,7 @@ defmodule StormfulWeb.Sensicality.BeginLive do
         </.back>
 
         <div class="mt-8 transform hover:scale-102 transition-all">
-          <.cool_header
-            little_name="It all starts with"
-            big_name="A new Sensical ⛈"
-          />
+          <.cool_header little_name="It all starts with" big_name="A new Sensical ⛈" />
         </div>
         <div class="mt-2 max-w-md text-purple-300 text-lg italic">
           {@playful_description}

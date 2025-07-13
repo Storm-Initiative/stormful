@@ -10,9 +10,7 @@ defmodule Stormful.StarringFixtures do
   def starred_sensical_fixture(attrs \\ %{}) do
     {:ok, starred_sensical} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> Stormful.Starring.create_starred_sensical()
 
     starred_sensical

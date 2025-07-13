@@ -307,7 +307,7 @@ defmodule Stormful.Queue do
     |> Job.status_changeset(status, attrs)
     |> Repo.update()
     |> case do
-      {:ok, updated_job} = result ->
+      {:ok, _updated_job} = result ->
         Logger.info("Updated job #{job.id} status to #{status}")
         result
 

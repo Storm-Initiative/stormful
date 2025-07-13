@@ -42,7 +42,7 @@ defmodule Stormful.Accounts.UserNotifier do
 
   # Queues the email for background delivery using our queue system.
   # Now supports scheduling emails to be sent later!
-  defp deliver_via_queue(recipient, subject, body, opts \\ []) do
+  defp deliver_via_queue(recipient, subject, body, opts) do
     email_payload = %{
       "to" => recipient,
       "subject" => subject,
@@ -88,7 +88,7 @@ defmodule Stormful.Accounts.UserNotifier do
            scheduled_at: Keyword.get(queue_opts, :scheduled_at)
          }}
 
-      {:error, changeset} ->
+      {:error, _changeset} ->
         # Fallback to direct delivery if queue fails
         deliver(recipient, subject, body)
     end

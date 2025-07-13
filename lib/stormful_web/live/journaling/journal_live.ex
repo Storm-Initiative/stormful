@@ -207,12 +207,6 @@ defmodule StormfulWeb.Journaling.JournalLive do
     |> assign(:winds_loaded, 0)
   end
 
-  defp get_journal_winds(journal_id, user_id) do
-    # For now, let's get the most recent 50 winds
-    # Later we'll implement proper infinite scroll pagination
-    FlowingThoughts.list_winds_by_journal(journal_id, user_id, :desc, 50)
-  end
-
   defp get_journal_winds_paginated(journal_id, user_id, offset) do
     FlowingThoughts.list_winds_by_journal_paginated(journal_id, user_id,
       sort_order: :desc,
