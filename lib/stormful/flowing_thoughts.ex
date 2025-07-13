@@ -31,6 +31,24 @@ defmodule Stormful.FlowingThoughts do
   end
 
   @doc """
+  Returns paginated winds for a sensical with offset support for infinite scroll.
+  """
+  def list_winds_by_sensical_paginated(sensical_id, user_id, opts \\ []) do
+    sort_order = Keyword.get(opts, :sort_order, :desc)
+    limit = Keyword.get(opts, :limit, 20)
+    offset = Keyword.get(opts, :offset, 0)
+
+    query =
+      Wind
+      |> where([w], w.user_id == ^user_id and w.sensical_id == ^sensical_id)
+      |> order_by([w], {^sort_order, w.id})
+      |> limit(^limit)
+      |> offset(^offset)
+
+    Repo.all(query)
+  end
+
+  @doc """
   Gets a single wind.
 
   Raises `Ecto.NoResultsError` if the Wind does not exist.

@@ -3,4 +3,27 @@
     <!-- todo => make in this wind context -->
     <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
   </div>
+  
+  <%!-- Infinite scroll trigger --%>
+  <div 
+    :if={@has_more && !@loading} 
+    id="infinite-scroll-trigger" 
+    phx-hook="InfiniteScroll"
+    class="h-px opacity-0">
+  </div>
+  
+  <%!-- Loading indicator --%>
+  <div 
+    :if={@loading} 
+    class="py-6 text-center">
+    <div class="animate-spin w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full mx-auto mb-2"></div>
+    <div class="text-white/40 text-sm">Loading more winds...</div>
+  </div>
+  
+  <%!-- End of winds indicator --%>
+  <div 
+    :if={!@has_more && @winds_loaded > 0 && !@loading} 
+    class="py-8 text-center">
+    <div class="text-white/30 text-sm">~ You've reached the beginning of this sensical ~</div>
+  </div>
 </div>
