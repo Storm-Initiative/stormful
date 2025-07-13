@@ -10,12 +10,14 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
 
   use StormfulWeb, :live_view
 
+  @winds_per_scroll 20
+
   @impl true
   def mount(params, _session, socket) do
     current_user = socket.assigns.current_user
 
     sensical = Sensicality.get_sensical!(current_user.id, params["sensical_id"])
-    winds = FlowingThoughts.list_winds_by_sensical(sensical.id, current_user.id, :desc)
+    winds = get_sensical_winds_paginated(sensical.id, current_user.id, 0)
     plans = sensical.plans
 
     starred_sensicality = Starring.get_starred_sensical(current_user.id, sensical.id)
@@ -26,6 +28,9 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
      socket
      |> assign(sensical: sensical)
      |> assign(is_starred: starred_sensicality != nil)
+     |> assign_pagination_state()
+     |> assign(winds_loaded: length(winds))
+     |> assign(has_more: length(winds) >= @winds_per_scroll)
      |> stream(:plans, plans)
      |> stream(:winds, winds), layout: {Layouts, :sensicality}}
   end
@@ -104,5 +109,50 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
 
     {:noreply,
      socket |> assign(sensical: sensical) |> put_flash(:info, "Sensical unstarred successfully!")}
+  end
+
+  @impl true
+  def handle_event("load-more", _, socket) do
+    if socket.assigns.sensical && !socket.assigns.loading && socket.assigns.has_more do
+      # Set loading state first
+      socket = assign(socket, :loading, true)
+      
+      current_offset = socket.assigns.winds_loaded
+      sensical_id = socket.assigns.sensical.id
+      user_id = socket.assigns.current_user.id
+
+      new_winds = get_sensical_winds_paginated(sensical_id, user_id, current_offset)
+
+      socket =
+        socket
+        |> assign(loading: false)
+        |> assign(winds_loaded: current_offset + length(new_winds))
+        |> assign(has_more: length(new_winds) >= @winds_per_scroll)
+
+      # Add new winds to the stream
+      socket =
+        Enum.reduce(new_winds, socket, fn wind, acc ->
+          stream_insert(acc, :winds, wind)
+        end)
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp assign_pagination_state(socket) do
+    socket
+    |> assign(:loading, false)
+    |> assign(:has_more, true)
+    |> assign(:winds_loaded, 0)
+  end
+
+  defp get_sensical_winds_paginated(sensical_id, user_id, offset) do
+    FlowingThoughts.list_winds_by_sensical_paginated(sensical_id, user_id, 
+      sort_order: :desc, 
+      limit: @winds_per_scroll, 
+      offset: offset
+    )
   end
 end
