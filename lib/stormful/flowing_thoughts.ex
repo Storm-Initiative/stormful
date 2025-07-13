@@ -102,88 +102,126 @@ defmodule Stormful.FlowingThoughts do
   end
 
   defp perform_thought_extraction(wind, user) do
+    # Quick pre-filter to check if text might contain reminders
+    case quick_reminder_check(wind.words) do
+      false ->
+        Logger.info("⏭️  Skipping detailed extraction - no reminder indicators found")
+        :skip
+
+      true ->
+        Logger.info("🔍 Reminder indicators found, proceeding with detailed extraction")
+        perform_detailed_extraction(wind, user)
+    end
+  end
+
+  defp quick_reminder_check(text) do
+    # Simple keyword-based check to avoid expensive AI calls
+    reminder_keywords = [
+      # Direct reminders
+      "remind",
+      "reminder",
+      "schedule",
+      "appointment",
+      "meeting",
+      "deadline",
+      # Time indicators
+      "tomorrow",
+      "today",
+      "tonight",
+      "later",
+      "next week",
+      "next month",
+      "at",
+      "on",
+      "by",
+      "before",
+      "after",
+      "in",
+      "minutes",
+      "hours",
+      "days",
+      # Action words
+      "call",
+      "email",
+      "visit",
+      "go to",
+      "pick up",
+      "drop off",
+      "buy",
+      "get",
+      # Obligation words
+      "don't forget",
+      "remember",
+      "need to",
+      "have to",
+      "must",
+      "should",
+      # Casual/slang obligations
+      "gotta",
+      "gonna",
+      "wanna",
+      "lemme",
+      "i'll",
+      "ill",
+      "i will",
+      "i need",
+      "we gotta",
+      "we need",
+      "we should",
+      "im gonna",
+      "i'm gonna",
+      "i gotta",
+      "i'm going to",
+      "im going to",
+      "i'll go",
+      "ill go",
+      "i'll do",
+      "ill do",
+      # Programmer/work speak
+      "fix",
+      "debug",
+      "deploy",
+      "push",
+      "commit",
+      "refactor",
+      "test",
+      "ship",
+      "merge",
+      "review",
+      "update",
+      "patch",
+      "hotfix",
+      "release"
+    ]
+
+    text_lower = String.downcase(text)
+
+    Enum.any?(reminder_keywords, fn keyword ->
+      String.contains?(text_lower, keyword)
+    end)
+  end
+
+  defp perform_detailed_extraction(wind, user) do
     # Create a prompt to analyze the user's thought
     prompt = """
-    The JSON structure should be:
+    Extract reminder from text. Return JSON or null if no reminder.
 
+    Format:
     {
       "type": "reminder",
-      "what": "the reminder that needs to be done/set-up",
-      "when": "a string for the reminder, can be relative or absolute with annotations, like relative:day:+1, absolute:2025-06-08 12:00"
-      "the_time_of_the_day_if_day": "the time of the day if the system provides days"
-      "location": "the location if the user provides it"
+      "what": "task description",
+      "when": "time format",
+      "the_time_of_the_day_if_day": "HH:MM or null",
+      "location": "location or null"
     }
 
-    User generally tells when they need something done by a specific time. We extract date/time in a unique way:
-    - User says today -> relative:day:+0
-    - User says tomorrow -> relative:day:+1
-    - User says in 2 hours -> relative:hour:+2
-    - User says in 30 minutes -> relative:minute:+30
-    - User says in 2 days -> relative:day:+2
-    - User says in 2 weeks -> relative:week:+2
-    - User says in 2 months -> relative:month:+2
-    - User says in 2 years -> relative:year:+2
-    - User says 2025-06-08 -> absolute:2025-06-08
-    - User says 2025-06-08 12:00 -> absolute:2025-06-08 12:00
-    - User says 2025-06-08 12:00:00 -> absolute:2025-06-08 12:00:00
-    - User says 2025-06-08 12:00:00.000 -> absolute:2025-06-08 12:00:00.000
-    - User says 2025-06-08 12:00:00.000+03:00 -> absolute:2025-06-08 12:00:00.000
-    - User says 2025-06-08 12:00:00.000+03:00 -> absolute:2025-06-08 12:00:00.000
+    Time formats:
+    - today/tomorrow → relative:day:+0/+1
+    - in X hours/minutes → relative:hour:+X / relative:minute:+X
+    - in X days/weeks → relative:day:+X / relative:week:+X
+    - specific date → absolute:YYYY-MM-DD
 
-    Beware: if user provides absolute, they might mean in mm/dd/yyyy format, but we need yyyy-mm-dd format. If you ever get confused, leave the field empty:
-    - User says 06/08/2025 -> confused_ask:2025-06-08
-    - User says 06/08/2025 12:00 -> confused_ask:2025-06-08 12:00
-    - User says 06/08/2025 12:00:00 -> confused_ask:2025-06-08 12:00:00
-    - User says 06/08/2025 12:00:00.000 -> confused_ask:2025-06-08 12:00:00.000
-    - User says 06/08/2025 12:00:00.000+03:00 -> confused_ask:2025-06-08 12:00:00.000
-    - User says 06/08/2025 12:00:00.000+03:00 -> confused_ask:2025-06-08 12:00:00.000
-
-    Program will take care of that afterwards, don't worry about it.
-
-    You also might want to provide the_time_of_the_day_if_day, which is the time of the day if the user says a day. You may go logical here, if undecided, leave it null. Should always provide in 24-hour format. But yeah, if user says:
-    - I got to go to school tomorrow -> the_time_of_the_day_if_day: 09:00
-    - I got to go to school in 2 hours -> the_time_of_the_day_if_day: null
-    - I will take a good looking person to dinner tomorrow -> the_time_of_the_day_if_day: 18:00
-
-    User may specify the location too, location is optional, if not provided or not clear, leave it null.
-    - I got to go to the dentist tomorrow -> location: null
-    - dentist appointment tomorrow at Stonefruit Bakery -> location: "Stonefruit Bakery"
-
-    For example, if the user says "I got to go to the dentist tomorrow", you should respond with:
-    {
-      "type": "reminder",
-      "what": "Go to the dentist",
-      "when": "relative:day:+1"
-      "the_time_of_the_day_if_day": "09:00"
-      "location": null
-    }
-
-    Or when user says "remind me today 7:15 pm to close the soup", you should respond with:
-    {
-      "type": "reminder",
-      "what": "close the soup",
-      "when": "relative:day:+0"
-      "the_time_of_the_day_if_day": "19:15"
-      "location": null
-    }
-
-    Or when user says "I got a dentist appointment in 2 hours at Stonefruit Bakery", you should respond with:
-    {
-      "type": "reminder",
-      "what": "Go to the dentist",
-      "when": "relative:minute:+120"
-      "the_time_of_the_day_if_day": null
-      "location": "Stonefruit Bakery"
-    }
-
-
-    Please try to respond in the language of the user.
-
-    If user provides a data that is not a reminder, you should respond with null.
-
-    User will provide a thought, and you need to extract if it has a reminder that needs to be done/set-up. Please be mindful of the user's timezone. Also keep in mind about date/time related stuff as I mentioned above, you need to be extra careful with timezone, it is very important for our user's experience. Please only provide the JSON structure, no other text:
-
-    "#{wind.words}"
+    Text: "#{wind.words}"
     """
 
     # Queue the thought extraction task

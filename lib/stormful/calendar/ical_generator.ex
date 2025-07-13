@@ -58,27 +58,25 @@ defmodule Stormful.Calendar.IcalGenerator do
       case parse_when_string(when_str, time_of_day, utc_now) do
         {:ok, time} ->
           Logger.info("🗓️  Successfully parsed time: #{time}")
-          user_timezone = Stormful.ProfileManagement.get_user_timezone(user_id)
-          amount_of_hours_to_add = Timex.timezone(user_timezone, DateTime.utc_now()).abbreviation
-          Logger.info("🗓️  Amount of hours to add: #{amount_of_hours_to_add}")
-
-          if time_of_day do
-            if amount_of_hours_to_add == "UTC" do
-              time = time |> DateTime.truncate(:second)
-              Logger.info("🗓️  Time after adding hours: #{time}")
-              time
-            else
-              time =
-                DateTime.add(time, String.to_integer(amount_of_hours_to_add) * -3600, :second)
-                |> DateTime.truncate(:second)
-
-              Logger.info("🗓️  Time after adding hours: #{time}")
-              time
+          
+          # Only apply timezone conversion for absolute dates, not relative times
+          if String.starts_with?(when_str, "absolute:") do
+            # Get user timezone and convert properly
+            user_timezone = Stormful.ProfileManagement.get_user_timezone(user_id)
+            
+            case convert_to_user_timezone(time, user_timezone) do
+              {:ok, converted_time} ->
+                Logger.info("🗓️  Converted to user timezone #{user_timezone}: #{converted_time}")
+                converted_time |> DateTime.truncate(:second)
+              
+              {:error, reason} ->
+                Logger.warning("🗓️  Timezone conversion failed (#{reason}), using original time")
+                time |> DateTime.truncate(:second)
             end
           else
-            time = time |> DateTime.truncate(:second)
-            Logger.info("🗓️  Time after adding hours: #{time}")
-            time
+            # For relative times, no timezone conversion needed
+            Logger.info("🗓️  Relative time, no timezone conversion needed")
+            time |> DateTime.truncate(:second)
           end
 
         {:error, reason} ->
@@ -181,10 +179,18 @@ defmodule Stormful.Calendar.IcalGenerator do
     end
   end
 
-  # Keep absolute parsing simple for now
-  defp parse_when_string("absolute:" <> _datetime_str, _, _time_of_interest) do
-    Logger.info("🗓️  Absolute datetime parsing not implemented yet, using fallback")
-    {:error, "Absolute datetime parsing not implemented"}
+  defp parse_when_string("absolute:" <> datetime_str, time_of_day, _time_of_interest) do
+    Logger.info("🗓️  Parsing absolute datetime: #{datetime_str}")
+    
+    case parse_absolute_datetime(datetime_str) do
+      {:ok, datetime} ->
+        Logger.info("🗓️  Successfully parsed absolute datetime: #{datetime}")
+        apply_time_of_day(datetime, time_of_day)
+      
+      {:error, reason} ->
+        Logger.warning("🗓️  Failed to parse absolute datetime '#{datetime_str}': #{reason}")
+        {:error, reason}
+    end
   end
 
   defp parse_when_string(_, _, _), do: {:error, "Unknown when format"}
@@ -232,5 +238,161 @@ defmodule Stormful.Calendar.IcalGenerator do
   defp apply_time_of_day(datetime, other) do
     Logger.info("🗓️  Non-string time value #{inspect(other)}, keeping: #{datetime}")
     {:ok, datetime}
+  end
+
+  defp parse_absolute_datetime(datetime_str) do
+    # Handle various absolute datetime formats
+    case datetime_str do
+      # ISO 8601 formats
+      dt when byte_size(dt) >= 19 ->
+        case DateTime.from_iso8601(dt <> if String.contains?(dt, "Z") or String.contains?(dt, "+") or String.contains?(dt, "-"), do: "", else: "Z") do
+          {:ok, datetime, _} -> {:ok, datetime}
+          {:error, _} -> try_parse_naive_datetime(dt)
+        end
+      
+      # Date only (YYYY-MM-DD)
+      dt when byte_size(dt) == 10 ->
+        case Date.from_iso8601(dt) do
+          {:ok, date} ->
+            # Convert to datetime at midnight UTC
+            {:ok, DateTime.new!(date, ~T[00:00:00], "Etc/UTC")}
+          {:error, _} ->
+            try_parse_alternative_formats(dt)
+        end
+      
+      # Short formats
+      _ ->
+        try_parse_alternative_formats(datetime_str)
+    end
+  end
+
+  defp try_parse_naive_datetime(dt_str) do
+    # Try parsing as naive datetime and convert to UTC
+    case NaiveDateTime.from_iso8601(dt_str) do
+      {:ok, naive_dt} ->
+        {:ok, DateTime.from_naive!(naive_dt, "Etc/UTC")}
+      {:error, _} ->
+        try_parse_alternative_formats(dt_str)
+    end
+  end
+
+  defp try_parse_alternative_formats(dt_str) do
+    # Handle common formats like MM/DD/YYYY, DD/MM/YYYY, etc.
+    cond do
+      # MM/DD/YYYY or MM/DD/YYYY HH:MM
+      Regex.match?(~r/^\d{1,2}\/\d{1,2}\/\d{4}/, dt_str) ->
+        parse_slash_format(dt_str)
+      
+      # DD-MM-YYYY or similar
+      Regex.match?(~r/^\d{1,2}-\d{1,2}-\d{4}/, dt_str) ->
+        parse_dash_format(dt_str)
+      
+      # YYYY/MM/DD
+      Regex.match?(~r/^\d{4}\/\d{1,2}\/\d{1,2}/, dt_str) ->
+        parse_iso_like_format(dt_str)
+      
+      true ->
+        {:error, "Unrecognized datetime format: #{dt_str}"}
+    end
+  end
+
+  defp parse_slash_format(dt_str) do
+    # Parse MM/DD/YYYY or MM/DD/YYYY HH:MM
+    case String.split(dt_str, " ", parts: 2) do
+      [date_part, time_part] ->
+        with {:ok, date} <- parse_mdy_date(date_part),
+             {:ok, time} <- parse_time(time_part) do
+          {:ok, DateTime.new!(date, time, "Etc/UTC")}
+        end
+      
+      [date_part] ->
+        case parse_mdy_date(date_part) do
+          {:ok, date} ->
+            {:ok, DateTime.new!(date, ~T[00:00:00], "Etc/UTC")}
+          error ->
+            error
+        end
+    end
+  end
+
+  defp parse_dash_format(dt_str) do
+    # Similar to slash format but with dashes
+    dt_str
+    |> String.replace("-", "/")
+    |> parse_slash_format()
+  end
+
+  defp parse_iso_like_format(dt_str) do
+    # Convert YYYY/MM/DD to YYYY-MM-DD and parse
+    iso_str = String.replace(dt_str, "/", "-")
+    parse_absolute_datetime(iso_str)
+  end
+
+  defp parse_mdy_date(date_str) do
+    # Parse MM/DD/YYYY format
+    case String.split(date_str, "/") do
+      [month_str, day_str, year_str] ->
+        with {month, _} <- Integer.parse(month_str),
+             {day, _} <- Integer.parse(day_str),
+             {year, _} <- Integer.parse(year_str),
+             {:ok, date} <- Date.new(year, month, day) do
+          {:ok, date}
+        else
+          _ -> {:error, "Invalid date format: #{date_str}"}
+        end
+      
+      _ ->
+        {:error, "Invalid date format: #{date_str}"}
+    end
+  end
+
+  defp parse_time(time_str) do
+    # Parse HH:MM or HH:MM:SS format
+    case String.split(time_str, ":") do
+      [hour_str, minute_str] ->
+        with {hour, _} <- Integer.parse(hour_str),
+             {minute, _} <- Integer.parse(minute_str),
+             {:ok, time} <- Time.new(hour, minute, 0) do
+          {:ok, time}
+        else
+          _ -> {:error, "Invalid time format: #{time_str}"}
+        end
+      
+      [hour_str, minute_str, second_str] ->
+        with {hour, _} <- Integer.parse(hour_str),
+             {minute, _} <- Integer.parse(minute_str),
+             {second, _} <- Integer.parse(second_str),
+             {:ok, time} <- Time.new(hour, minute, second) do
+          {:ok, time}
+        else
+          _ -> {:error, "Invalid time format: #{time_str}"}
+        end
+      
+      _ ->
+        {:error, "Invalid time format: #{time_str}"}
+    end
+  end
+
+  defp convert_to_user_timezone(datetime, user_timezone) do
+    case user_timezone do
+      nil ->
+        {:ok, datetime}
+      
+      "UTC" ->
+        {:ok, datetime}
+      
+      timezone_name ->
+        try do
+          # Convert FROM UTC TO user timezone for interpretation, then back to UTC
+          # User says 11am in their timezone, we need to interpret the time as local time
+          naive_datetime = DateTime.to_naive(datetime)
+          user_datetime = Timex.to_datetime(naive_datetime, timezone_name)
+          utc_datetime = Timex.Timezone.convert(user_datetime, "UTC")
+          {:ok, utc_datetime}
+        rescue
+          _ ->
+            {:error, "Invalid timezone: #{timezone_name}"}
+        end
+    end
   end
 end
