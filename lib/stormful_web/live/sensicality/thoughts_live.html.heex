@@ -1,29 +1,70 @@
-<div class="p-8 pt-0 flex flex-col gap-4" id="winds" phx-hook="WindScroller" phx-update="stream">
-  <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
-    <!-- todo => make in this wind context -->
-    <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
+<div class="flex flex-col gap-4">
+  <%!-- Sensical Header --%>
+  <div class="flex justify-between items-center">
+    <div class="flex items-center gap-4">
+      <.link
+        navigate={~p"/into-the-storm"}
+        class="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 text-white/60 hover:text-white/90"
+      >
+        <.icon name="hero-arrow-left" class="w-5 h-5" />
+      </.link>
+      <.cool_header big_name={@sensical.title} link={~p'/sensicality/#{@sensical.id}'} />
+    </div>
+    <div>
+      <%= if @sensical.starred_sensical do %>
+        <div
+          class="cursor-pointer hover:scale-110 transition-transform duration-200"
+          phx-click="unstar_the_sensical"
+        >
+          <.icon name="hero-star-solid" class="h-6 w-6 text-yellow-400" />
+        </div>
+      <% else %>
+        <div
+          class="cursor-pointer hover:scale-110 transition-transform duration-200"
+          phx-click="star_the_sensical"
+        >
+          <.icon name="hero-star" class="h-6 w-6 text-white/60 hover:text-yellow-400" />
+        </div>
+      <% end %>
+    </div>
   </div>
-  
-  <%!-- Infinite scroll trigger --%>
-  <div 
-    :if={@has_more && !@loading} 
-    id="infinite-scroll-trigger" 
-    phx-hook="InfiniteScroll"
-    class="h-px opacity-0">
+
+  <%!-- Storm Input Component --%>
+  <div>
+    <.live_component
+      module={StormfulWeb.StormInput}
+      id="storm-input"
+      sensical={@sensical}
+      current_user={@current_user}
+    />
   </div>
-  
-  <%!-- Loading indicator --%>
-  <div 
-    :if={@loading} 
-    class="py-6 text-center">
-    <div class="animate-spin w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full mx-auto mb-2"></div>
-    <div class="text-white/40 text-sm">Loading more winds...</div>
-  </div>
-  
-  <%!-- End of winds indicator --%>
-  <div 
-    :if={!@has_more && @winds_loaded > 0 && !@loading} 
-    class="py-8 text-center">
-    <div class="text-white/30 text-sm">~ You've reached the beginning of this sensical ~</div>
+
+  <%!-- Winds Content --%>
+  <div class="flex flex-col gap-4" id="winds" phx-hook="WindScroller" phx-update="stream">
+    <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
+      <!-- todo => make in this wind context -->
+      <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
+    </div>
+
+    <%!-- Infinite scroll trigger --%>
+    <div
+      :if={@has_more && !@loading}
+      id="infinite-scroll-trigger"
+      phx-hook="InfiniteScroll"
+      class="h-px opacity-0"
+    >
+    </div>
+
+    <%!-- Loading indicator --%>
+    <div :if={@loading} class="py-6 text-center">
+      <div class="animate-spin w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full mx-auto mb-2">
+      </div>
+      <div class="text-white/40 text-sm">Loading more winds...</div>
+    </div>
+
+    <%!-- End of winds indicator --%>
+    <div :if={!@has_more && @winds_loaded > 0 && !@loading} class="py-8 text-center">
+      <div class="text-white/30 text-sm">~ You've reached the beginning of this sensical ~</div>
+    </div>
   </div>
 </div>

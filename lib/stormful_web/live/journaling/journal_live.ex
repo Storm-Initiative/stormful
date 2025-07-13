@@ -150,7 +150,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
     if socket.assigns.journal && !socket.assigns.loading && socket.assigns.has_more do
       # Set loading state first
       socket = assign(socket, :loading, true)
-      
+
       current_offset = socket.assigns.winds_loaded
       journal_id = socket.assigns.journal.id
       user_id = socket.assigns.current_user.id
@@ -214,9 +214,9 @@ defmodule StormfulWeb.Journaling.JournalLive do
   end
 
   defp get_journal_winds_paginated(journal_id, user_id, offset) do
-    FlowingThoughts.list_winds_by_journal_paginated(journal_id, user_id, 
-      sort_order: :desc, 
-      limit: @winds_per_scroll, 
+    FlowingThoughts.list_winds_by_journal_paginated(journal_id, user_id,
+      sort_order: :desc,
+      limit: @winds_per_scroll,
       offset: offset
     )
   end

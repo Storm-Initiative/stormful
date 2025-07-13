@@ -10,7 +10,7 @@ defmodule StormfulWeb.StormInput do
 
   def render(assigns) do
     ~H"""
-    <div class="bg-indigo-900 p-4 text-xl m-4">
+    <div class="bg-black/20 backdrop-blur-sm border border-white/10 rounded-lg p-4 text-xl">
       <div class="max-w-7xl mx-auto">
         <.form
           phx-target={@myself}
@@ -30,8 +30,9 @@ defmodule StormfulWeb.StormInput do
           </div>
           <.button
             type="submit"
-            class="px-6 py-3 bg-indigo-500 hover:bg-indigo-400 text-white font-semibold
-                   rounded-lg transition-colors flex items-center gap-2"
+            class="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 
+                   text-white font-semibold rounded-lg transition-all duration-300 
+                   flex items-center gap-2 hover:scale-105"
           >
             <span>⚡</span>
             <span>Enter</span>

@@ -6,11 +6,9 @@ defmodule StormfulWeb.JournalHeader do
 
   def render(assigns) do
     ~H"""
-    <div class="px-3 py-3 sm:px-4 flex items-center justify-between gap-3 sm:gap-4">
+    <div class="flex items-center justify-between gap-3 sm:gap-4">
       <%!-- Journal title, mobile-first responsive design --%>
-      <h1 class="text-lg sm:text-xl font-semibold text-white text-center sm:text-left">
-        {if @journal, do: @journal.title, else: "Journal"}
-      </h1>
+      <.cool_header big_name={@journal.title} />
 
       <%!-- Controls: action buttons --%>
       <div class="flex gap-2 sm:gap-3 justify-end">
