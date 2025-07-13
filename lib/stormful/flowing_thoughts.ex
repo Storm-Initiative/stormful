@@ -327,6 +327,24 @@ defmodule Stormful.FlowingThoughts do
     Repo.all(query)
   end
 
+  @doc """
+  Returns paginated winds for a journal with offset support for infinite scroll.
+  """
+  def list_winds_by_journal_paginated(journal_id, user_id, opts \\ []) do
+    sort_order = Keyword.get(opts, :sort_order, :desc)
+    limit = Keyword.get(opts, :limit, 20)
+    offset = Keyword.get(opts, :offset, 0)
+
+    query =
+      Wind
+      |> where([w], w.user_id == ^user_id and w.journal_id == ^journal_id)
+      |> order_by([w], {^sort_order, w.id})
+      |> limit(^limit)
+      |> offset(^offset)
+
+    Repo.all(query)
+  end
+
   def subscribe_to_journal(journal) do
     Phoenix.PubSub.subscribe(@pubsub, journal_topic(journal.id))
   end

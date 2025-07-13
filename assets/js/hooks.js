@@ -35,6 +35,30 @@ Hooks.SensicalityGeneralScroller = {
   },
 };
 
+Hooks.InfiniteScroll = {
+  mounted() {
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && !this.el.dataset.loading) {
+          this.pushEvent("load-more");
+        }
+      },
+      {
+        rootMargin: "100px",
+      }
+    );
+
+    this.observer.observe(this.el);
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  },
+};
+
 Hooks.Clipboard = {
   mounted() {
     this.el.addEventListener("click", () => {
