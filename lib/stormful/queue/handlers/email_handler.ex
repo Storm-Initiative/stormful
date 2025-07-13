@@ -59,11 +59,13 @@ defmodule Stormful.Queue.Handlers.EmailHandler do
     case deliver_email(email_data) do
       {:ok, delivery_info} ->
         Logger.info("Email sent successfully for job #{job.id}")
-        {:ok, %{
-          delivered_at: DateTime.utc_now(),
-          delivery_info: delivery_info,
-          recipient: payload["to"]
-        }}
+
+        {:ok,
+         %{
+           delivered_at: DateTime.utc_now(),
+           delivery_info: delivery_info,
+           recipient: payload["to"]
+         }}
 
       {:error, reason} ->
         Logger.error("Failed to send email for job #{job.id}: #{inspect(reason)}")
@@ -84,7 +86,10 @@ defmodule Stormful.Queue.Handlers.EmailHandler do
         |> Swoosh.Email.text_body(email_data.body)
 
       # Add HTML body if provided
-      email = if email_data.html_body != "", do: Swoosh.Email.html_body(email, email_data.html_body), else: email
+      email =
+        if email_data.html_body != "",
+          do: Swoosh.Email.html_body(email, email_data.html_body),
+          else: email
 
       # Add attachments if provided
       email = add_attachments(email, email_data.attachments)
@@ -94,12 +99,13 @@ defmodule Stormful.Queue.Handlers.EmailHandler do
       # Deliver using the application's Mailer
       case Stormful.Mailer.deliver(email) do
         {:ok, metadata} ->
-          {:ok, %{
-            message_id: metadata[:id] || "swoosh_delivered",
-            provider: "swoosh_mailer",
-            timestamp: DateTime.utc_now(),
-            metadata: metadata
-          }}
+          {:ok,
+           %{
+             message_id: metadata[:id] || "swoosh_delivered",
+             provider: "swoosh_mailer",
+             timestamp: DateTime.utc_now(),
+             metadata: metadata
+           }}
 
         {:error, reason} ->
           {:error, "Email delivery failed: #{inspect(reason)}"}

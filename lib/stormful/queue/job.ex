@@ -83,7 +83,9 @@ defmodule Stormful.Queue.Job do
         # Truncate microseconds for PostgreSQL compatibility
         now = DateTime.utc_now() |> DateTime.truncate(:second)
         put_change(changeset, :scheduled_at, now)
-      _ -> changeset
+
+      _ ->
+        changeset
     end
   end
 

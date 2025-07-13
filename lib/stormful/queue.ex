@@ -17,9 +17,12 @@ defmodule Stormful.Queue do
 
   # Rate limiting configuration - jobs per minute for each task type
   @rate_limits %{
-    "email" => {100, 60},           # 100 emails per 60 seconds
-    "ai_processing" => {30, 60},    # 30 AI jobs per 60 seconds
-    "thought_extraction" => {50, 60} # 50 thought extraction jobs per 60 seconds (generous, can go above)
+    # 100 emails per 60 seconds
+    "email" => {100, 60},
+    # 30 AI jobs per 60 seconds
+    "ai_processing" => {30, 60},
+    # 50 thought extraction jobs per 60 seconds (generous, can go above)
+    "thought_extraction" => {50, 60}
   }
 
   @doc """
@@ -304,7 +307,7 @@ defmodule Stormful.Queue do
     |> Job.status_changeset(status, attrs)
     |> Repo.update()
     |> case do
-      {:ok, updated_job} = result ->
+      {:ok, _updated_job} = result ->
         Logger.info("Updated job #{job.id} status to #{status}")
         result
 
@@ -373,9 +376,10 @@ defmodule Stormful.Queue do
       }
   """
   def get_queue_stats do
-    stats_query = from j in Job,
-      select: {j.status, count(j.id)},
-      group_by: j.status
+    stats_query =
+      from j in Job,
+        select: {j.status, count(j.id)},
+        group_by: j.status
 
     stats =
       stats_query
@@ -403,9 +407,10 @@ defmodule Stormful.Queue do
       }
   """
   def get_stats_by_type do
-    stats_query = from j in Job,
-      select: {j.task_type, j.status, count(j.id)},
-      group_by: [j.task_type, j.status]
+    stats_query =
+      from j in Job,
+        select: {j.task_type, j.status, count(j.id)},
+        group_by: [j.task_type, j.status]
 
     stats_query
     |> Repo.all()
@@ -444,21 +449,25 @@ defmodule Stormful.Queue do
   end
 
   defp apply_filters(query, []), do: query
+
   defp apply_filters(query, [{:status, status} | rest]) do
     query
     |> where([j], j.status == ^status)
     |> apply_filters(rest)
   end
+
   defp apply_filters(query, [{:task_type, task_type} | rest]) do
     query
     |> where([j], j.task_type == ^task_type)
     |> apply_filters(rest)
   end
+
   defp apply_filters(query, [{:user_id, user_id} | rest]) do
     query
     |> where([j], j.user_id == ^user_id)
     |> apply_filters(rest)
   end
+
   defp apply_filters(query, [_unknown | rest]) do
     apply_filters(query, rest)
   end
@@ -474,9 +483,10 @@ defmodule Stormful.Queue do
     # Count jobs that started within the rate limit window
     recent_jobs_count =
       from(j in Job,
-        where: j.task_type == ^task_type
-          and j.status in ["processing", "completed", "failed"]
-          and j.started_at > ^cutoff_time,
+        where:
+          j.task_type == ^task_type and
+            j.status in ["processing", "completed", "failed"] and
+            j.started_at > ^cutoff_time,
         select: count(j.id)
       )
       |> Repo.one()
@@ -484,7 +494,9 @@ defmodule Stormful.Queue do
     within_limit = recent_jobs_count < max_jobs
 
     if not within_limit do
-      Logger.debug("Rate limit hit for #{task_type}: #{recent_jobs_count}/#{max_jobs} in last #{window_seconds}s")
+      Logger.debug(
+        "Rate limit hit for #{task_type}: #{recent_jobs_count}/#{max_jobs} in last #{window_seconds}s"
+      )
     end
 
     within_limit

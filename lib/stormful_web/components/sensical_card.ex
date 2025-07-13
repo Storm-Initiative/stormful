@@ -4,9 +4,9 @@ defmodule StormfulWeb.SensicalCard do
 
   @doc """
   Renders a sensical card with consistent styling and animations.
-  
+
   ## Examples
-  
+
       <.sensical_card 
         title="My Sensical" 
         href="/sensicality/123" 
@@ -48,14 +48,14 @@ defmodule StormfulWeb.SensicalCard do
         @shine_classes
       ]}>
       </div>
-      
+
       <div class="relative flex items-center gap-3">
-        <.icon 
-          name={@icon_name} 
+        <.icon
+          name={@icon_name}
           class={[
             "w-5 h-5 transition-colors duration-300",
             @icon_classes
-          ]} 
+          ]}
         />
         <h3 class="text-lg font-semibold text-white/90 group-hover:text-white transition-colors duration-300">
           {@title}
@@ -68,7 +68,8 @@ defmodule StormfulWeb.SensicalCard do
   defp assign_variant_classes(%{variant: "starred"} = assigns) do
     assigns
     |> assign(
-      bg_classes: "bg-gradient-to-r from-yellow-600/20 to-orange-600/20 hover:from-yellow-500/30 hover:to-orange-500/30",
+      bg_classes:
+        "bg-gradient-to-r from-yellow-600/20 to-orange-600/20 hover:from-yellow-500/30 hover:to-orange-500/30",
       border_classes: "border border-yellow-400/20 hover:border-yellow-300/40",
       shadow_classes: "hover:shadow-[0_8px_25px_rgba(251,191,36,0.2)]",
       shine_classes: "via-yellow-300/10",
@@ -80,7 +81,8 @@ defmodule StormfulWeb.SensicalCard do
   defp assign_variant_classes(%{variant: "regular"} = assigns) do
     assigns
     |> assign(
-      bg_classes: "bg-gradient-to-r from-indigo-600/20 to-blue-600/20 hover:from-indigo-500/30 hover:to-blue-500/30",
+      bg_classes:
+        "bg-gradient-to-r from-indigo-600/20 to-blue-600/20 hover:from-indigo-500/30 hover:to-blue-500/30",
       border_classes: "border border-indigo-400/20 hover:border-indigo-300/40",
       shadow_classes: "hover:shadow-[0_8px_25px_rgba(99,102,241,0.2)]",
       shine_classes: "via-blue-300/10",

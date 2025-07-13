@@ -1,6 +1,5 @@
 defmodule StormfulWeb.Keyboarder do
   use Phoenix.Component
-  import StormfulWeb.CoreComponents
 
   attr :controlful, :boolean, required: true
   attr :keyboarder, :boolean, required: true

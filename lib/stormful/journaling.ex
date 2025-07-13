@@ -22,8 +22,8 @@ defmodule Stormful.Journaling do
   def list_journals(user_id) do
     Repo.all(
       from j in Journal,
-      where: j.user_id == ^user_id,
-      order_by: [asc: j.inserted_at]
+        where: j.user_id == ^user_id,
+        order_by: [asc: j.inserted_at]
     )
   end
 
@@ -44,12 +44,10 @@ defmodule Stormful.Journaling do
   def get_journal!(user_id, id) do
     Repo.one!(
       from j in Journal,
-      where: j.user_id == ^user_id and j.id == ^id,
-      preload: [winds: ^from(w in Wind, order_by: [desc: w.inserted_at])]
+        where: j.user_id == ^user_id and j.id == ^id,
+        preload: [winds: ^from(w in Wind, order_by: [desc: w.inserted_at])]
     )
   end
-
-
 
   @doc """
   Creates a journal.
@@ -138,6 +136,4 @@ defmodule Stormful.Journaling do
       :count
     )
   end
-
-
 end

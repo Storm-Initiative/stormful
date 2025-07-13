@@ -61,6 +61,7 @@ defmodule StormfulWeb.Sensicality.AiStuffLive do
     socket
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>

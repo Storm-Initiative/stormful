@@ -52,22 +52,24 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
     prompt = payload["prompt"]
 
     # Build options from payload
-    opts = []
-    |> maybe_add_option("max_tokens", payload)
-    |> maybe_add_option("temperature", payload)
-    |> maybe_add_option("top_p", payload)
-    |> maybe_add_option("seed", payload)
-    |> maybe_add_option("user", payload)
+    opts =
+      []
+      |> maybe_add_option("max_tokens", payload)
+      |> maybe_add_option("temperature", payload)
+      |> maybe_add_option("top_p", payload)
+      |> maybe_add_option("seed", payload)
+      |> maybe_add_option("user", payload)
 
     case Stormful.AiRelated.OpenRouterClient.complete(model, prompt, opts) do
       {:ok, response} ->
         Logger.info("OpenRouter processing completed for job #{job.id}")
 
         # Extract text from response
-        text = case response do
-          %{"choices" => [%{"text" => text} | _]} -> text
-          _ -> "No text response available"
-        end
+        text =
+          case response do
+            %{"choices" => [%{"text" => text} | _]} -> text
+            _ -> "No text response available"
+          end
 
         # Clean up the AI response format markers
         text = String.replace(text, ~r/^```(json)?\n?/, "")
@@ -93,14 +95,15 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
 
         """)
 
-        {:ok, %{
-          response: text,
-          full_response: response,
-          model_used: model,
-          prompt_used: prompt,
-          calendar_result: calendar_result,
-          completed_at: DateTime.utc_now()
-        }}
+        {:ok,
+         %{
+           response: text,
+           full_response: response,
+           model_used: model,
+           prompt_used: prompt,
+           calendar_result: calendar_result,
+           completed_at: DateTime.utc_now()
+         }}
 
       {:error, reason} ->
         Logger.error("OpenRouter processing failed for job #{job.id}: #{inspect(reason)}")
@@ -123,14 +126,20 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
             case CalendarNotifier.send_reminder_event(user_email, reminder_data, user_id) do
               {:ok, calendar_job} ->
                 {:calendar_created, calendar_job}
+
               {:error, reason} ->
                 {:calendar_error, reason}
             end
+
           {:error, reason} ->
             {:user_error, reason}
         end
-      {:ok, _} -> {:no_reminder}
-      {:error, _} -> {:no_json}
+
+      {:ok, _} ->
+        {:no_reminder}
+
+      {:error, _} ->
+        {:no_json}
     end
   rescue
     error -> {:processing_error, error}
@@ -143,6 +152,7 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
     rescue
       Ecto.NoResultsError ->
         {:error, "User not found"}
+
       error ->
         {:error, "Error fetching user: #{inspect(error)}"}
     end

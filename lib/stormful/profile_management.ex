@@ -39,7 +39,9 @@ defmodule Stormful.ProfileManagement do
           {:ok, profile} -> profile
           {:error, _changeset} -> nil
         end
-      profile -> profile
+
+      profile ->
+        profile
     end
   end
 
@@ -107,8 +109,10 @@ defmodule Stormful.ProfileManagement do
   """
   def get_user_timezone(user_id) do
     case get_user_profile(user_id) do
-      nil -> "UTC"  # Default to UTC if no profile
-      profile -> profile.timezone || "UTC"  # Use profile timezone or UTC fallback
+      # Default to UTC if no profile
+      nil -> "UTC"
+      # Use profile timezone or UTC fallback
+      profile -> profile.timezone || "UTC"
     end
   end
 end

@@ -58,17 +58,17 @@ defmodule Stormful.Calendar.IcalGenerator do
       case parse_when_string(when_str, time_of_day, utc_now) do
         {:ok, time} ->
           Logger.info("🗓️  Successfully parsed time: #{time}")
-          
+
           # Only apply timezone conversion for absolute dates, not relative times
           if String.starts_with?(when_str, "absolute:") do
             # Get user timezone and convert properly
             user_timezone = Stormful.ProfileManagement.get_user_timezone(user_id)
-            
+
             case convert_to_user_timezone(time, user_timezone) do
               {:ok, converted_time} ->
                 Logger.info("🗓️  Converted to user timezone #{user_timezone}: #{converted_time}")
                 converted_time |> DateTime.truncate(:second)
-              
+
               {:error, reason} ->
                 Logger.warning("🗓️  Timezone conversion failed (#{reason}), using original time")
                 time |> DateTime.truncate(:second)
@@ -181,12 +181,12 @@ defmodule Stormful.Calendar.IcalGenerator do
 
   defp parse_when_string("absolute:" <> datetime_str, time_of_day, _time_of_interest) do
     Logger.info("🗓️  Parsing absolute datetime: #{datetime_str}")
-    
+
     case parse_absolute_datetime(datetime_str) do
       {:ok, datetime} ->
         Logger.info("🗓️  Successfully parsed absolute datetime: #{datetime}")
         apply_time_of_day(datetime, time_of_day)
-      
+
       {:error, reason} ->
         Logger.warning("🗓️  Failed to parse absolute datetime '#{datetime_str}': #{reason}")
         {:error, reason}
@@ -245,21 +245,30 @@ defmodule Stormful.Calendar.IcalGenerator do
     case datetime_str do
       # ISO 8601 formats
       dt when byte_size(dt) >= 19 ->
-        case DateTime.from_iso8601(dt <> if String.contains?(dt, "Z") or String.contains?(dt, "+") or String.contains?(dt, "-"), do: "", else: "Z") do
+        case DateTime.from_iso8601(
+               dt <>
+                 if(
+                   String.contains?(dt, "Z") or String.contains?(dt, "+") or
+                     String.contains?(dt, "-"),
+                   do: "",
+                   else: "Z"
+                 )
+             ) do
           {:ok, datetime, _} -> {:ok, datetime}
           {:error, _} -> try_parse_naive_datetime(dt)
         end
-      
+
       # Date only (YYYY-MM-DD)
       dt when byte_size(dt) == 10 ->
         case Date.from_iso8601(dt) do
           {:ok, date} ->
             # Convert to datetime at midnight UTC
             {:ok, DateTime.new!(date, ~T[00:00:00], "Etc/UTC")}
+
           {:error, _} ->
             try_parse_alternative_formats(dt)
         end
-      
+
       # Short formats
       _ ->
         try_parse_alternative_formats(datetime_str)
@@ -271,6 +280,7 @@ defmodule Stormful.Calendar.IcalGenerator do
     case NaiveDateTime.from_iso8601(dt_str) do
       {:ok, naive_dt} ->
         {:ok, DateTime.from_naive!(naive_dt, "Etc/UTC")}
+
       {:error, _} ->
         try_parse_alternative_formats(dt_str)
     end
@@ -282,15 +292,15 @@ defmodule Stormful.Calendar.IcalGenerator do
       # MM/DD/YYYY or MM/DD/YYYY HH:MM
       Regex.match?(~r/^\d{1,2}\/\d{1,2}\/\d{4}/, dt_str) ->
         parse_slash_format(dt_str)
-      
+
       # DD-MM-YYYY or similar
       Regex.match?(~r/^\d{1,2}-\d{1,2}-\d{4}/, dt_str) ->
         parse_dash_format(dt_str)
-      
+
       # YYYY/MM/DD
       Regex.match?(~r/^\d{4}\/\d{1,2}\/\d{1,2}/, dt_str) ->
         parse_iso_like_format(dt_str)
-      
+
       true ->
         {:error, "Unrecognized datetime format: #{dt_str}"}
     end
@@ -304,11 +314,12 @@ defmodule Stormful.Calendar.IcalGenerator do
              {:ok, time} <- parse_time(time_part) do
           {:ok, DateTime.new!(date, time, "Etc/UTC")}
         end
-      
+
       [date_part] ->
         case parse_mdy_date(date_part) do
           {:ok, date} ->
             {:ok, DateTime.new!(date, ~T[00:00:00], "Etc/UTC")}
+
           error ->
             error
         end
@@ -340,7 +351,7 @@ defmodule Stormful.Calendar.IcalGenerator do
         else
           _ -> {:error, "Invalid date format: #{date_str}"}
         end
-      
+
       _ ->
         {:error, "Invalid date format: #{date_str}"}
     end
@@ -357,7 +368,7 @@ defmodule Stormful.Calendar.IcalGenerator do
         else
           _ -> {:error, "Invalid time format: #{time_str}"}
         end
-      
+
       [hour_str, minute_str, second_str] ->
         with {hour, _} <- Integer.parse(hour_str),
              {minute, _} <- Integer.parse(minute_str),
@@ -367,7 +378,7 @@ defmodule Stormful.Calendar.IcalGenerator do
         else
           _ -> {:error, "Invalid time format: #{time_str}"}
         end
-      
+
       _ ->
         {:error, "Invalid time format: #{time_str}"}
     end
@@ -377,10 +388,10 @@ defmodule Stormful.Calendar.IcalGenerator do
     case user_timezone do
       nil ->
         {:ok, datetime}
-      
+
       "UTC" ->
         {:ok, datetime}
-      
+
       timezone_name ->
         try do
           # Convert FROM UTC TO user timezone for interpretation, then back to UTC

@@ -150,7 +150,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
     if socket.assigns.journal && !socket.assigns.loading && socket.assigns.has_more do
       # Set loading state first
       socket = assign(socket, :loading, true)
-      
+
       current_offset = socket.assigns.winds_loaded
       journal_id = socket.assigns.journal.id
       user_id = socket.assigns.current_user.id
@@ -207,16 +207,10 @@ defmodule StormfulWeb.Journaling.JournalLive do
     |> assign(:winds_loaded, 0)
   end
 
-  defp get_journal_winds(journal_id, user_id) do
-    # For now, let's get the most recent 50 winds
-    # Later we'll implement proper infinite scroll pagination
-    FlowingThoughts.list_winds_by_journal(journal_id, user_id, :desc, 50)
-  end
-
   defp get_journal_winds_paginated(journal_id, user_id, offset) do
-    FlowingThoughts.list_winds_by_journal_paginated(journal_id, user_id, 
-      sort_order: :desc, 
-      limit: @winds_per_scroll, 
+    FlowingThoughts.list_winds_by_journal_paginated(journal_id, user_id,
+      sort_order: :desc,
+      limit: @winds_per_scroll,
       offset: offset
     )
   end

@@ -21,7 +21,12 @@ defmodule Stormful.TaskManagementTest do
     end
 
     test "create_todo/1 with valid data creates a todo" do
-      valid_attrs = %{description: "some description", title: "some title", completed_at: ~N[2024-09-12 20:51:00], loose_thought_link: 42}
+      valid_attrs = %{
+        description: "some description",
+        title: "some title",
+        completed_at: ~N[2024-09-12 20:51:00],
+        loose_thought_link: 42
+      }
 
       assert {:ok, %Todo{} = todo} = TaskManagement.create_todo(valid_attrs)
       assert todo.description == "some description"
@@ -36,7 +41,13 @@ defmodule Stormful.TaskManagementTest do
 
     test "update_todo/2 with valid data updates the todo" do
       todo = todo_fixture()
-      update_attrs = %{description: "some updated description", title: "some updated title", completed_at: ~N[2024-09-13 20:51:00], loose_thought_link: 43}
+
+      update_attrs = %{
+        description: "some updated description",
+        title: "some updated title",
+        completed_at: ~N[2024-09-13 20:51:00],
+        loose_thought_link: 43
+      }
 
       assert {:ok, %Todo{} = todo} = TaskManagement.update_todo(todo, update_attrs)
       assert todo.description == "some updated description"
