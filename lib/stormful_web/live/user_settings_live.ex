@@ -34,6 +34,15 @@ defmodule StormfulWeb.UserSettingsLive do
                 Beta
               </span>
             </.link>
+            <.link
+              navigate={~p"/users/outside"}
+              class="py-4 px-1 border-b-2 border-transparent font-medium text-sm text-white/70 hover:text-white hover:border-white/30 whitespace-nowrap"
+            >
+              Outside
+              <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-400 text-yellow-900">
+                Beta
+              </span>
+            </.link>
           </nav>
         </div>
       </div>

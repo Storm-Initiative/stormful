@@ -351,4 +351,54 @@ defmodule Stormful.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  # NOTE: API authentication for outside uses
+
+  @doc """
+  Creates a new API token for a user.
+
+  Returns the encoded token string that should be shown to the user exactly once.
+  """
+  def create_user_api_token(user) do
+    {encoded_token, user_token} = UserToken.build_email_token(user, "the-outsider")
+    Repo.insert!(user_token)
+    encoded_token
+  end
+
+  @doc """
+  Lists all active API tokens for a user.
+  """
+  def list_user_api_tokens(user) do
+    from(t in UserToken,
+      where: t.user_id == ^user.id and t.context == "the-outsider",
+      order_by: [desc: :inserted_at],
+      select: [:id, :inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Revokes an API token.
+
+  Returns `{:ok, token}` if successful, or `{:error, :not_found}` if the token doesn't exist.
+  """
+  def revoke_api_token(user_id, token_id) do
+    from(t in UserToken,
+      where: t.user_id == ^user_id and t.id == ^token_id
+    )
+    |> Repo.one()
+    |> Repo.delete()
+  end
+
+  @doc """
+  Fetches the user by API token.
+  """
+  def fetch_user_by_api_token(token) do
+    with {:ok, query} <- UserToken.verify_email_token_query(token, "the-outsider"),
+         %User{} = user <- Repo.one(query) do
+      {:ok, user}
+    else
+      _ -> :error
+    end
+  end
 end
