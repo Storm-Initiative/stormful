@@ -119,6 +119,9 @@ defmodule StormfulWeb.UserOutsideLive do
     user = socket.assigns.current_user
     tokens = Accounts.list_user_api_tokens(user)
 
+    if connected?(socket),
+      do: Phoenix.PubSub.subscribe(Stormful.PubSub, "user_api_tokens:#{user.id}")
+
     socket =
       socket
       |> assign(:tokens, tokens)
@@ -126,6 +129,12 @@ defmodule StormfulWeb.UserOutsideLive do
       |> assign_controlful()
 
     {:ok, socket}
+  end
+
+  def handle_info({:new_token}, socket) do
+    # refetch all again
+    tokens = Accounts.list_user_api_tokens(socket.assigns.current_user)
+    {:noreply, assign(socket, tokens: tokens)}
   end
 
   def handle_event("generate_token", _params, socket) do

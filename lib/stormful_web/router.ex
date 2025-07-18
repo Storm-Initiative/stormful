@@ -25,9 +25,15 @@ defmodule StormfulWeb.Router do
     get "/", PageController, :home
   end
 
+  pipeline :api_public do
+    plug :accepts, ["json"]
+  end
+
   # Other scopes may use custom stacks.
-  scope "/api", StormfulWeb do
-    pipe_through :api
+  scope "/api/v1", StormfulWeb.Api do
+    pipe_through :api_public
+
+    post "/login", AuthController, :login
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
