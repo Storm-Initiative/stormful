@@ -12,6 +12,8 @@ defmodule Stormful.Accounts.UserToken do
   @confirm_validity_in_days 7
   @change_email_validity_in_days 7
   @session_validity_in_days 60
+  # we learning/testing, so for now only 10 days would be nice
+  @api_token_validity_in_days 10
 
   schema "users_tokens" do
     field :token, :binary
@@ -126,6 +128,7 @@ defmodule Stormful.Accounts.UserToken do
     end
   end
 
+  defp days_for_context("the-outsider"), do: @api_token_validity_in_days
   defp days_for_context("confirm"), do: @confirm_validity_in_days
   defp days_for_context("reset_password"), do: @reset_password_validity_in_days
 

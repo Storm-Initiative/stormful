@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Router do
+  alias StormfulWeb.UserOutsideSettingsLive
   use StormfulWeb, :router
 
   import StormfulWeb.UserAuth
@@ -15,6 +16,7 @@ defmodule StormfulWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_api_user
   end
 
   scope "/", StormfulWeb do
@@ -23,10 +25,16 @@ defmodule StormfulWeb.Router do
     get "/", PageController, :home
   end
 
+  pipeline :api_public do
+    plug :accepts, ["json"]
+  end
+
   # Other scopes may use custom stacks.
-  # scope "/api", StormfulWeb do
-  #   pipe_through :api
-  # end
+  scope "/api/v1", StormfulWeb.Api do
+    pipe_through :api_public
+
+    post "/login", AuthController, :login
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:stormful, :dev_routes) do
@@ -80,6 +88,7 @@ defmodule StormfulWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       live "/users/profile", UserProfileLive, :edit
+      live "/users/outside", UserOutsideLive, :edit
 
       # Journal routes (new default experience)
       live "/journal", Journaling.JournalLive, :index
