@@ -50,6 +50,28 @@ defmodule Stormful.Journaling do
   end
 
   @doc """
+  Gets the first journal for a user.
+
+  Raises `Ecto.NoResultsError` if the Journal does not exist.
+
+  ## Examples
+
+      iex> get_journal_from_user_id!(user_id)
+      %Journal{}
+
+      iex> get_journal_from_user_id!(invalid_user_id)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_journal_from_user_id!(user_id) do
+    Repo.one!(
+      from j in Journal,
+        where: j.user_id == ^user_id,
+        order_by: [asc: j.inserted_at]
+    )
+  end
+
+  @doc """
   Creates a journal.
 
   ## Examples
