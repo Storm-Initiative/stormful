@@ -66,6 +66,15 @@ defmodule StormfulWeb.MainAppHeader do
               >
                 <.icon name="hero-bolt" class="w-4 h-4 text-purple-300" /> Sensicality Center
               </.link>
+
+              <.link
+                navigate={~p"/agenda"}
+                class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg
+                       bg-red-600/20 border border-red-400/20 text-white/90 font-medium text-sm
+                       transition-all duration-300"
+              >
+                <.icon name="hero-calendar" class="w-4 h-4 text-red-300" /> Agenda
+              </.link>
             </nav>
           <% end %>
         </div>
@@ -107,6 +116,17 @@ defmodule StormfulWeb.MainAppHeader do
                          flex items-center gap-2 text-sm font-medium text-white/90"
                 >
                   <.icon name="hero-bolt" class="w-4 h-4 text-purple-300" /> Sensicality Center
+                </.link>
+
+                <.link
+                  navigate={~p"/agenda"}
+                  class="group relative overflow-hidden rounded-lg px-3 py-1.5
+                         bg-red-600/20 hover:bg-red-500/30
+                         border border-red-400/20 hover:border-red-300/40
+                         transition-all duration-300 ease-out
+                         flex items-center gap-2 text-sm font-medium text-white/90"
+                >
+                  <.icon name="hero-calendar" class="w-4 h-4 text-red-300" /> Agenda
                 </.link>
               </nav>
             <% end %>

@@ -233,11 +233,15 @@ defmodule Stormful.FlowingThoughts do
       "location": "location or null"
     }
 
-    Time formats:
+    Time formats (ALWAYS use UTC):
     - today/tomorrow → relative:day:+0/+1
     - in X hours/minutes → relative:hour:+X / relative:minute:+X
     - in X days/weeks → relative:day:+X / relative:week:+X
-    - specific date → absolute:YYYY-MM-DD
+    - specific date → absolute:YYYY-MM-DD (interpret as UTC)
+
+    NOTE: if user says stuff like tomorrow morning, we should go into the sane defaults like tomorrow morning 8am, or 3pm depending on the highest probability if there's unclearness.
+
+    IMPORTANT: All times must be interpreted and returned in UTC format. Do not convert to local timezones.
 
     Text: "#{wind.words}"
     """

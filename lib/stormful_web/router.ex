@@ -1,5 +1,4 @@
 defmodule StormfulWeb.Router do
-  alias StormfulWeb.UserOutsideSettingsLive
   use StormfulWeb, :router
 
   import StormfulWeb.UserAuth
@@ -116,6 +115,8 @@ defmodule StormfulWeb.Router do
 
       live "/sensicality/:sensical_id/statistics", Sensicality.TheSensicalLive, :statistics
       live "/sensicality/:sensical_id/settings", Sensicality.TheSensicalLive, :settings
+
+      live "/agenda", AgendaLive.Index, :index
 
       get "/my_winds/:wind_id", WindController, :singular_wind
 
