@@ -45,39 +45,20 @@ defmodule Stormful.Calendar.IcalGenerator do
   @doc """
   Creates event from AI reminder data.
   """
-  def create_reminder_event(reminder_data, user_email, user_id) do
+  def create_reminder_event(reminder_data, user_email, _user_id) do
     title = Map.get(reminder_data, "what", "Reminder")
     location = Map.get(reminder_data, "location", "")
     when_str = Map.get(reminder_data, "when", "")
     time_of_day = Map.get(reminder_data, "the_time_of_the_day_if_day")
 
-    # Calculate user's local datetime once
+    # Calculate UTC datetime - no timezone conversion
     utc_now = DateTime.utc_now()
 
     start_time =
       case parse_when_string(when_str, time_of_day, utc_now) do
         {:ok, time} ->
-          Logger.info("🗓️  Successfully parsed time: #{time}")
-
-          # Only apply timezone conversion for absolute dates, not relative times
-          if String.starts_with?(when_str, "absolute:") do
-            # Get user timezone and convert properly
-            user_timezone = Stormful.ProfileManagement.get_user_timezone(user_id)
-
-            case convert_to_user_timezone(time, user_timezone) do
-              {:ok, converted_time} ->
-                Logger.info("🗓️  Converted to user timezone #{user_timezone}: #{converted_time}")
-                converted_time |> DateTime.truncate(:second)
-
-              {:error, reason} ->
-                Logger.warning("🗓️  Timezone conversion failed (#{reason}), using original time")
-                time |> DateTime.truncate(:second)
-            end
-          else
-            # For relative times, no timezone conversion needed
-            Logger.info("🗓️  Relative time, no timezone conversion needed")
-            time |> DateTime.truncate(:second)
-          end
+          Logger.info("🗓️  Successfully parsed time (UTC): #{time}")
+          time |> DateTime.truncate(:second)
 
         {:error, reason} ->
           Logger.warning("🗓️  Failed to parse time (#{reason}), defaulting to tomorrow UTC")
@@ -91,6 +72,35 @@ defmodule Stormful.Calendar.IcalGenerator do
       location: location,
       user_email: user_email
     )
+  end
+
+  @doc """
+  Parses a when string and returns a UTC datetime.
+  This function is public so it can be used by other modules.
+  """
+  def parse_when_string(when_str, time_of_day, time_of_interest) do
+    case when_str do
+      "relative:day:" <> offset_str ->
+        parse_relative_day(offset_str, time_of_day, time_of_interest)
+
+      "relative:minute:" <> offset_str ->
+        parse_relative_minute(offset_str, time_of_interest)
+
+      "relative:hour:" <> offset_str ->
+        parse_relative_hour(offset_str, time_of_interest)
+
+      "relative:week:" <> offset_str ->
+        parse_relative_week(offset_str, time_of_day, time_of_interest)
+
+      "relative:month:" <> offset_str ->
+        parse_relative_month(offset_str, time_of_day, time_of_interest)
+
+      "absolute:" <> datetime_str ->
+        parse_absolute_datetime(datetime_str, time_of_day)
+
+      _ ->
+        {:error, "Unknown when format"}
+    end
   end
 
   # Private functions
@@ -114,7 +124,7 @@ defmodule Stormful.Calendar.IcalGenerator do
 
   defp escape_text(_), do: ""
 
-  defp parse_when_string("relative:day:" <> offset_str, time_of_day, time_of_interest) do
+  defp parse_relative_day(offset_str, time_of_day, time_of_interest) do
     case Integer.parse(offset_str) do
       {offset, _} ->
         # Add the day offset to user's local time
@@ -128,7 +138,7 @@ defmodule Stormful.Calendar.IcalGenerator do
     end
   end
 
-  defp parse_when_string("relative:minute:" <> offset_str, _, time_of_interest) do
+  defp parse_relative_minute(offset_str, time_of_interest) do
     case Integer.parse(offset_str) do
       {offset, _} ->
         # Add minute offset to user's local time
@@ -141,7 +151,7 @@ defmodule Stormful.Calendar.IcalGenerator do
     end
   end
 
-  defp parse_when_string("relative:hour:" <> offset_str, _, time_of_interest) do
+  defp parse_relative_hour(offset_str, time_of_interest) do
     case Integer.parse(offset_str) do
       {offset, _} ->
         # Add hour offset to user's local time
@@ -154,7 +164,7 @@ defmodule Stormful.Calendar.IcalGenerator do
     end
   end
 
-  defp parse_when_string("relative:week:" <> offset_str, time_of_day, time_of_interest) do
+  defp parse_relative_week(offset_str, time_of_day, time_of_interest) do
     case Integer.parse(offset_str) do
       {offset, _} ->
         target_date = DateTime.add(time_of_interest, offset * 7 * 24 * 3600, :second)
@@ -166,7 +176,7 @@ defmodule Stormful.Calendar.IcalGenerator do
     end
   end
 
-  defp parse_when_string("relative:month:" <> offset_str, time_of_day, time_of_interest) do
+  defp parse_relative_month(offset_str, time_of_day, time_of_interest) do
     case Integer.parse(offset_str) do
       {offset, _} ->
         # Approximate months as 30 days for simplicity
@@ -179,10 +189,10 @@ defmodule Stormful.Calendar.IcalGenerator do
     end
   end
 
-  defp parse_when_string("absolute:" <> datetime_str, time_of_day, _time_of_interest) do
+  defp parse_absolute_datetime(datetime_str, time_of_day) do
     Logger.info("🗓️  Parsing absolute datetime: #{datetime_str}")
 
-    case parse_absolute_datetime(datetime_str) do
+    case parse_absolute_datetime_internal(datetime_str) do
       {:ok, datetime} ->
         Logger.info("🗓️  Successfully parsed absolute datetime: #{datetime}")
         apply_time_of_day(datetime, time_of_day)
@@ -192,8 +202,6 @@ defmodule Stormful.Calendar.IcalGenerator do
         {:error, reason}
     end
   end
-
-  defp parse_when_string(_, _, _), do: {:error, "Unknown when format"}
 
   defp apply_time_of_day(datetime, nil) do
     Logger.info("🗓️  No specific time of day provided, keeping: #{datetime}")
@@ -240,7 +248,7 @@ defmodule Stormful.Calendar.IcalGenerator do
     {:ok, datetime}
   end
 
-  defp parse_absolute_datetime(datetime_str) do
+  defp parse_absolute_datetime_internal(datetime_str) do
     # Handle various absolute datetime formats
     case datetime_str do
       # ISO 8601 formats
@@ -336,7 +344,7 @@ defmodule Stormful.Calendar.IcalGenerator do
   defp parse_iso_like_format(dt_str) do
     # Convert YYYY/MM/DD to YYYY-MM-DD and parse
     iso_str = String.replace(dt_str, "/", "-")
-    parse_absolute_datetime(iso_str)
+    parse_absolute_datetime_internal(iso_str)
   end
 
   defp parse_mdy_date(date_str) do
@@ -384,26 +392,5 @@ defmodule Stormful.Calendar.IcalGenerator do
     end
   end
 
-  defp convert_to_user_timezone(datetime, user_timezone) do
-    case user_timezone do
-      nil ->
-        {:ok, datetime}
 
-      "UTC" ->
-        {:ok, datetime}
-
-      timezone_name ->
-        try do
-          # Convert FROM UTC TO user timezone for interpretation, then back to UTC
-          # User says 11am in their timezone, we need to interpret the time as local time
-          naive_datetime = DateTime.to_naive(datetime)
-          user_datetime = Timex.to_datetime(naive_datetime, timezone_name)
-          utc_datetime = Timex.Timezone.convert(user_datetime, "UTC")
-          {:ok, utc_datetime}
-        rescue
-          _ ->
-            {:error, "Invalid timezone: #{timezone_name}"}
-        end
-    end
-  end
 end

@@ -124,8 +124,11 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
         case get_user_email(user_id) do
           {:ok, user_email} ->
             case CalendarNotifier.send_reminder_event(user_email, reminder_data, user_id) do
-              {:ok, calendar_job} ->
-                {:calendar_created, calendar_job}
+              {:ok, %{agenda_event_id: _} = agenda_result} ->
+                {:agenda_created, agenda_result}
+
+              {:ok, %{job_id: _} = email_result} ->
+                {:calendar_created, email_result}
 
               {:error, reason} ->
                 {:calendar_error, reason}
@@ -159,6 +162,10 @@ defmodule Stormful.Queue.Handlers.ThoughtExtractionHandler do
   end
 
   defp get_user_email(_), do: {:error, "Invalid user ID"}
+
+  defp format_calendar_result({:agenda_created, agenda_result}) do
+    "📅 Agenda Event Created: #{agenda_result.event_title} in '#{agenda_result.agenda_name}'"
+  end
 
   defp format_calendar_result({:calendar_created, calendar_job}) do
     "📅 Calendar Event Created: #{calendar_job.event_title}"
