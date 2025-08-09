@@ -55,17 +55,17 @@ defmodule StormfulWeb.IntoTheStorm.IndexLive do
           <.cool_header little_name="Let's get some work done, eh?" big_name="Sensicality Center" />
         </h1>
         <p class="text-lg text-white/70 max-w-md mx-auto">
-          Unleash your ideas contained in a context; so that you may come back, summarize, or do whatever the hell you want /w it!
+          Unleash your ideas contained in a context; so that you may come back, summarize, or do whatever the hell you want w/ it!
         </p>
       </div>
-      
+
     <!-- Main CTA Button -->
       <div class="flex justify-center">
         <.storm_button variant="cta" navigate={~p"/sensicality/begin"} icon="hero-bolt">
           {@button_text}
         </.storm_button>
       </div>
-      
+
     <!-- Starred Sensicals Section -->
       <div class="space-y-6">
         <div>
@@ -82,7 +82,7 @@ defmodule StormfulWeb.IntoTheStorm.IndexLive do
             />
           </div>
         </div>
-        
+
     <!-- Regular Sensicals Section -->
         <div>
           <h2 class="text-2xl font-bold mb-4">

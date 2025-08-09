@@ -8,7 +8,9 @@ defmodule StormfulWeb.JournalHeader do
     ~H"""
     <div class="flex items-center justify-between gap-3 sm:gap-4">
       <%!-- Journal title, mobile-first responsive design --%>
-      <.cool_header big_name={@journal.title} />
+      <%= if @journal do %>
+        <.cool_header big_name={@journal.title} />
+      <% end %>
 
       <%!-- Controls: action buttons --%>
       <div class="flex gap-2 sm:gap-3 justify-end">
