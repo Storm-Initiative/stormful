@@ -23,4 +23,17 @@ defmodule Stormful.Agenda.Agenda do
     |> validate_required([:name, :user_id])
     |> unique_constraint(:name, name: :agendas_user_id_name_index)
   end
+
+  @doc """
+  Converts an agenda struct to a JSON-serializable map.
+  """
+  def to_json(%__MODULE__{} = agenda) do
+    %{
+      id: agenda.id,
+      name: agenda.name,
+      user_id: agenda.user_id,
+      inserted_at: agenda.inserted_at,
+      updated_at: agenda.updated_at
+    }
+  end
 end

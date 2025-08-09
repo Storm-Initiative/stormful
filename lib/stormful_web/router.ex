@@ -40,6 +40,8 @@ defmodule StormfulWeb.Router do
     pipe_through :api
 
     post "/journal", JournalController, :create
+    get "/agenda", AgendaController, :index
+    get "/agenda/events", AgendaController, :events
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
