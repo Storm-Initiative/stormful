@@ -85,6 +85,46 @@ defmodule StormfulWeb.UserProfileLive do
           </div>
         </div>
 
+        <%!-- Greeting Phrase Settings --%>
+        <div class="bg-white/10 border border-white/20 rounded-lg overflow-hidden shadow-lg mb-6">
+          <div class="p-6 border-b border-white/10">
+            <h3 class="text-xl font-semibold text-white">
+              <.icon name="hero-chat-bubble-left-ellipsis" class="h-5 w-5 inline-block mr-2" />
+              Greeting Phrase
+            </h3>
+            <p class="mt-1 text-sm text-white/70">
+              Set a personal greeting that appears in your journal
+            </p>
+          </div>
+          <div class="p-6">
+            <.simple_form
+              for={@profile_form}
+              id="greeting_form"
+              phx-submit="update_profile"
+              phx-change="validate_profile"
+            >
+              <.input
+                field={@profile_form[:greeting_phrase]}
+                type="text"
+                label="Your Greeting Phrase"
+                placeholder="Good morning, ready to storm the day!"
+                help_text="This greeting will appear at the top of your journal. Keep it short and inspiring!"
+                class="bg-white/5 border-white/10 text-white"
+                maxlength="100"
+              />
+
+              <:actions>
+                <p class="text-sm text-white/60">
+                  Your greeting phrase will appear at the top of your journal.
+                </p>
+                <.button phx-disable-with="Saving..." class="mt-4">
+                  <.icon name="hero-check-circle" class="h-5 w-5 mr-2" /> Save Greeting
+                </.button>
+              </:actions>
+            </.simple_form>
+          </div>
+        </div>
+
         <%!-- AI Features --%>
         <div class="bg-white/10 border border-white/20 rounded-lg overflow-hidden shadow-lg mb-6">
           <div class="p-6 border-b border-white/10">

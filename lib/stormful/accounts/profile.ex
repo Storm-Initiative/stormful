@@ -9,6 +9,7 @@ defmodule Stormful.Accounts.Profile do
   schema "profiles" do
     field :thought_extraction, :boolean, default: false
     field :timezone, :string, default: "UTC"
+    field :greeting_phrase, :string
 
     belongs_to :user, Stormful.Accounts.User
 
@@ -18,8 +19,9 @@ defmodule Stormful.Accounts.Profile do
   @doc false
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:thought_extraction, :timezone])
+    |> cast(attrs, [:thought_extraction, :timezone, :greeting_phrase])
     |> validate_required([])
+    |> validate_length(:greeting_phrase, max: 100)
     |> validate_timezone()
   end
 
