@@ -3,6 +3,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
 
   alias Stormful.Journaling
   alias Stormful.FlowingThoughts
+  alias Stormful.ProfileManagement
   alias Phoenix.LiveView.JS
 
   @winds_per_scroll 20
@@ -10,6 +11,9 @@ defmodule StormfulWeb.Journaling.JournalLive do
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
+
+    # Get user's profile for greeting phrase
+    profile = ProfileManagement.get_or_create_user_profile(current_user)
 
     # Get all user's journals
     journals = Journaling.list_journals(current_user.id)
@@ -22,6 +26,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
          |> assign(journal: nil)
          |> assign(journals: [])
          |> assign(current_user: current_user)
+         |> assign(profile: profile)
          |> assign_modal_state()
          |> assign_pagination_state()
          |> stream(:winds, [])}
@@ -38,6 +43,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
          |> assign(journal: journal)
          |> assign(journals: journals)
          |> assign(current_user: current_user)
+         |> assign(profile: profile)
          |> assign_modal_state()
          |> assign_pagination_state()
          |> assign(winds_loaded: length(winds))
