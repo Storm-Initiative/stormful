@@ -68,7 +68,7 @@ defmodule StormfulWeb.UserProfileLive do
                 options={@timezone_options}
                 prompt="Select your timezone"
                 label="Your Timezone"
-                help_text='Set your timezone so that reminders are scheduled at the right time for you. When AI detects a time like "6:00 PM", it will be scheduled for 6:00 PM in your local timezone.'
+                help_text="Set your timezone so that reminders are scheduled at the right time for you"
                 class="bg-white/5 border-white/10 text-white"
               />
 
@@ -118,94 +118,6 @@ defmodule StormfulWeb.UserProfileLive do
                 </p>
                 <.button phx-disable-with="Saving..." class="mt-4">
                   <.icon name="hero-check-circle" class="h-5 w-5 mr-2" /> Save Greeting
-                </.button>
-              </:actions>
-            </.simple_form>
-          </div>
-        </div>
-
-        <%!-- AI Features --%>
-        <div class="bg-white/10 border border-white/20 rounded-lg overflow-hidden shadow-lg mb-6">
-          <div class="p-6 border-b border-white/10">
-            <h3 class="text-xl font-semibold text-white">
-              <.icon name="hero-sparkles" class="h-5 w-5 inline-block mr-2" /> AI-Powered Features
-            </h3>
-            <p class="mt-1 text-sm text-white/70">Configure how AI assists with your workflow</p>
-          </div>
-
-          <%!-- Beta Warning --%>
-          <div class="bg-gradient-to-r from-yellow-400/20 to-orange-400/20 border-l-4 border-yellow-400/50 m-4 p-4 rounded-lg">
-            <div class="flex items-start">
-              <div class="flex-shrink-0">
-                <.icon name="hero-exclamation-triangle" class="h-5 w-5 text-yellow-400" />
-              </div>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-yellow-200">🚀 Experimental AI Features</h3>
-                <div class="mt-2 text-sm text-yellow-200">
-                  <p>
-                    These are cutting-edge AI features still in beta. They're designed to enhance your experience but are experimental.
-                  </p>
-                  <p class="mt-1">Your feedback helps us improve these features!</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-6 pt-0">
-            <.simple_form
-              for={@profile_form}
-              id="profile_form"
-              phx-submit="update_profile"
-              phx-change="validate_profile"
-            >
-              <div class="space-y-6">
-                <%!-- AI Features --%>
-                <div class="border-2 border-white/20 hover:border-white/40 bg-white/5 rounded-lg p-4 mb-4 transition-colors">
-                  <div class="flex items-start">
-                    <div class="flex h-6 items-center">
-                      <.input
-                        field={@profile_form[:thought_extraction]}
-                        type="checkbox"
-                        label=""
-                        class="h-5 w-5 text-indigo-400 border-white/30 rounded focus:ring-2 focus:ring-indigo-400 bg-white/10"
-                      />
-                    </div>
-                    <div class="ml-4 flex-1">
-                      <label
-                        for={@profile_form[:thought_extraction].id}
-                        class="block text-lg font-medium text-white mb-2"
-                      >
-                        <.icon name="hero-light-bulb" class="h-5 w-5 inline-block mr-2" />
-                        Thought Extraction & Smart Reminders
-                      </label>
-                      <p class="text-white/80 text-sm leading-relaxed mb-3">
-                        Enable AI to analyze your thoughts and automatically generate intelligent reminders.
-                        This feature helps you capture important insights and never miss follow-up actions.
-                        System will only try(if you've enabled) to extract thoughts from your journal entries, and never from sensicals.
-                      </p>
-                      <div class="mt-3 p-3 bg-blue-500/20 border border-blue-400/30 rounded-lg text-sm text-blue-100 flex items-start">
-                        <.icon
-                          name="hero-information-circle"
-                          class="h-5 w-5 flex-shrink-0 text-blue-300 mr-2 mt-0.5"
-                        />
-                        <div>
-                          <p>
-                            <strong>How it works:</strong>
-                            Your thoughts are securely processed by AI to identify actionable items, deadlines, and important concepts that become smart reminders.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <:actions>
-                <p class="text-sm text-white/60">
-                  Changes are saved immediately and take effect for new thoughts.
-                </p>
-                <.button phx-disable-with="Saving..." class="mt-4">
-                  <.icon name="hero-check-circle" class="h-5 w-5 mr-2" /> Save Settings
                 </.button>
               </:actions>
             </.simple_form>
