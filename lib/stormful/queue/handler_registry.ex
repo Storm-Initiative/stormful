@@ -22,9 +22,7 @@ defmodule Stormful.Queue.HandlerRegistry do
   require Logger
 
   @default_handlers %{
-    "email" => Stormful.Queue.Handlers.EmailHandler,
-    "ai_processing" => Stormful.Queue.Handlers.AiProcessingHandler,
-    "thought_extraction" => Stormful.Queue.Handlers.ThoughtExtractionHandler
+    "email" => Stormful.Queue.Handlers.EmailHandler
   }
 
   @doc """
