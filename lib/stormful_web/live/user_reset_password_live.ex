@@ -1,6 +1,5 @@
 defmodule StormfulWeb.UserResetPasswordLive do
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
 
@@ -51,7 +50,7 @@ defmodule StormfulWeb.UserResetPasswordLive do
           %{}
       end
 
-    {:ok, assign_form(socket, form_source) |> assign_controlful(), temporary_assigns: [form: nil]}
+    {:ok, assign_form(socket, form_source), temporary_assigns: [form: nil]}
   end
 
   # Do not log in the user after reset password to avoid a
@@ -87,6 +86,4 @@ defmodule StormfulWeb.UserResetPasswordLive do
   defp assign_form(socket, %{} = source) do
     assign(socket, :form, to_form(source, as: "user"))
   end
-
-  use StormfulWeb.BaseUtil.KeyboardSupport
 end

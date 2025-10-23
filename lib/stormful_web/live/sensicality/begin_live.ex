@@ -3,7 +3,6 @@ defmodule StormfulWeb.Sensicality.BeginLive do
   alias Stormful.Sensicality.Sensical
 
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   @playful_descriptions [
     "Ready to unleash a storm of ideas? Give your Sensical a name worthy of legend—or at least something you’ll remember after a coffee break ☕️.",
@@ -34,7 +33,6 @@ defmodule StormfulWeb.Sensicality.BeginLive do
     {:ok,
      socket
      |> assign_sensical_form(Sensicality.change_sensical(%Sensical{}))
-     |> assign_controlful()
      |> assign(:playful_description, description),
      layout: {StormfulWeb.Layouts, :sensicality_center}}
   end
@@ -109,6 +107,4 @@ defmodule StormfulWeb.Sensicality.BeginLive do
   def assign_sensical_form(socket, changeset) do
     socket |> assign(:sensical_form, to_form(changeset))
   end
-
-  use StormfulWeb.BaseUtil.KeyboardSupport
 end

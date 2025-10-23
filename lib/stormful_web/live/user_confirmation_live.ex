@@ -1,6 +1,5 @@
 defmodule StormfulWeb.UserConfirmationLive do
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
 
@@ -26,7 +25,7 @@ defmodule StormfulWeb.UserConfirmationLive do
 
   def mount(%{"token" => token}, _session, socket) do
     form = to_form(%{"token" => token}, as: "user")
-    {:ok, assign(socket, form: form) |> assign_controlful(), temporary_assigns: [form: nil]}
+    {:ok, assign(socket, form: form), temporary_assigns: [form: nil]}
   end
 
   # Do not log in the user after confirmation to avoid a
@@ -56,6 +55,4 @@ defmodule StormfulWeb.UserConfirmationLive do
         end
     end
   end
-
-  use StormfulWeb.BaseUtil.KeyboardSupport
 end

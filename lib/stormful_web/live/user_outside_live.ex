@@ -1,6 +1,5 @@
 defmodule StormfulWeb.UserOutsideLive do
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   import StormfulWeb.CoreComponents
   alias Stormful.Accounts
@@ -126,7 +125,6 @@ defmodule StormfulWeb.UserOutsideLive do
       socket
       |> assign(:tokens, tokens)
       |> assign(:new_token, nil)
-      |> assign_controlful()
 
     {:ok, socket}
   end

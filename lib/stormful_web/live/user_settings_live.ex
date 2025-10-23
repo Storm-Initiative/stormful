@@ -1,6 +1,5 @@
 defmodule StormfulWeb.UserSettingsLive do
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
 
@@ -125,7 +124,7 @@ defmodule StormfulWeb.UserSettingsLive do
           put_flash(socket, :error, "Email change link is invalid or it has expired.")
       end
 
-    {:ok, push_navigate(socket, to: ~p"/users/settings") |> assign_controlful()}
+    {:ok, push_navigate(socket, to: ~p"/users/settings")}
   end
 
   def mount(_params, _session, socket) do
@@ -141,7 +140,6 @@ defmodule StormfulWeb.UserSettingsLive do
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
-      |> assign_controlful()
 
     {:ok, socket}
   end
@@ -207,6 +205,4 @@ defmodule StormfulWeb.UserSettingsLive do
         {:noreply, assign(socket, password_form: to_form(changeset))}
     end
   end
-
-  use StormfulWeb.BaseUtil.KeyboardSupport
 end

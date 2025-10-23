@@ -1,6 +1,5 @@
 defmodule StormfulWeb.UserProfileLive do
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.ProfileManagement
   import StormfulWeb.CoreComponents
@@ -228,7 +227,6 @@ defmodule StormfulWeb.UserProfileLive do
       |> assign(:profile, profile)
       |> assign(:profile_form, to_form(profile_changeset))
       |> assign(:timezone_options, get_timezone_options())
-      |> assign_controlful()
 
     {:ok, socket}
   end
@@ -256,8 +254,6 @@ defmodule StormfulWeb.UserProfileLive do
         {:noreply, assign(socket, :profile_form, to_form(changeset))}
     end
   end
-
-  use StormfulWeb.BaseUtil.KeyboardSupport
 
   defp get_timezone_options do
     # Common timezones that users are likely to need

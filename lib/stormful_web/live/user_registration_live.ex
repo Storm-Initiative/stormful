@@ -1,6 +1,5 @@
 defmodule StormfulWeb.UserRegistrationLive do
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
   alias Stormful.Accounts.User
@@ -52,7 +51,6 @@ defmodule StormfulWeb.UserRegistrationLive do
       socket
       |> assign(trigger_submit: false, check_errors: false)
       |> assign_form(changeset)
-      |> assign_controlful()
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end
@@ -88,6 +86,4 @@ defmodule StormfulWeb.UserRegistrationLive do
       assign(socket, form: form)
     end
   end
-
-  use StormfulWeb.BaseUtil.KeyboardSupport
 end

@@ -1,6 +1,5 @@
 defmodule StormfulWeb.UserConfirmationInstructionsLive do
   use StormfulWeb, :live_view
-  use StormfulWeb.BaseUtil.Controlful
 
   alias Stormful.Accounts
 
@@ -30,7 +29,7 @@ defmodule StormfulWeb.UserConfirmationInstructionsLive do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, form: to_form(%{}, as: "user")) |> assign_controlful()}
+    {:ok, assign(socket, form: to_form(%{}, as: "user"))}
   end
 
   def handle_event("send_instructions", %{"user" => %{"email" => email}}, socket) do
@@ -49,6 +48,4 @@ defmodule StormfulWeb.UserConfirmationInstructionsLive do
      |> put_flash(:info, info)
      |> redirect(to: ~p"/")}
   end
-
-  use StormfulWeb.BaseUtil.KeyboardSupport
 end
