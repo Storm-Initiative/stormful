@@ -1,0 +1,40 @@
+<header class="bg-black/20 backdrop-blur-sm border-b border-white/10">
+  <!-- Stormful Brand -->
+  <div class="flex justify-between items-center p-3 sm:p-4">
+    <span class="text-2xl font-bold">
+      <.link
+        navigate={~p"/journal"}
+        class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
+      >
+        Stormful
+      </.link>
+    </span>
+    <div>
+      <!-- Right side: User menu -->
+      <%= if @current_user do %>
+        <div class="flex items-center gap-3">
+          <.link
+            href={~p"/users/log_out"}
+            method="delete"
+            class="group relative overflow-hidden rounded-lg px-3 py-1.5 text-sm font-semibold text-white/90
+                       bg-black/20 hover:bg-black/40 border border-white/10 hover:border-white/20
+                       transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_15px_rgba(234,179,8,0.2)]
+                       flex items-center gap-2"
+          >
+            <.icon
+              name="hero-arrow-right-on-rectangle"
+              class="w-4 h-4 text-yellow-400 group-hover:text-blue-400 transition-colors duration-300"
+            />
+          </.link>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</header>
+
+<main class="px-0 py-0">
+  <div class="mx-auto lg:max-w-none lg:w-screen lg:px-16 p-4 sm:py-6 lg:mx-auto min-h-screen">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </div>
+</main>

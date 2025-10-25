@@ -3,17 +3,17 @@ defmodule StormfulWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm text-white">
-      <.header class="text-center">
-        Log in to account
-        <:subtitle>
-          Don't have an account?
-          <.link navigate={~p"/users/register"} class="font-semibold text-brand hover:underline">
-            Sign up
+    <div class="flex flex-col gap-12 mx-auto max-w-sm">
+      <div class="flex flex-col items-center gap-4 text-lg text-center">
+        <.cool_header big_name="Log in" />
+        <p>
+          Don't have an account? You can
+          <.link navigate={~p"/users/register"} class="font-semibold text-yellow-400 hover:underline">
+            join us
           </.link>
-          for an account now.
-        </:subtitle>
-      </.header>
+          here.
+        </p>
+      </div>
 
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
         <.input field={@form[:email]} type="email" label="Email" required />
@@ -31,7 +31,7 @@ defmodule StormfulWeb.UserLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full bg-zinc-600">
+          <.button phx-disable-with="Logging in..." class="w-full">
             Log in <span aria-hidden="true">→</span>
           </.button>
         </:actions>

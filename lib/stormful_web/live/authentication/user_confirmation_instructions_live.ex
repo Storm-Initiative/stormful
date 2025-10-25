@@ -5,11 +5,13 @@ defmodule StormfulWeb.UserConfirmationInstructionsLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        No confirmation instructions received?
-        <:subtitle>We'll send a new confirmation link to your inbox</:subtitle>
-      </.header>
+    <div class="flex flex-col gap-12 mx-auto max-w-sm">
+      <div class="flex flex-col items-center gap-4 text-lg text-center">
+        <.cool_header big_name="Resend confirmation" />
+        <p>
+          You didn't receive the e-mail, or it expired, or whatever else? No problem, we'll send a new confirmation link to your inbox
+        </p>
+      </div>
 
       <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
         <.input field={@form[:email]} type="email" placeholder="Email" required />

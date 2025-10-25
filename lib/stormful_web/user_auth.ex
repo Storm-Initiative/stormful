@@ -225,10 +225,10 @@ defmodule StormfulWeb.UserAuth do
     else
       conn
       |> put_flash(
-        :error,
-        "Please confirm your e-mail address in order to have access to this service."
+        :info,
+        "Please confirm your e-mail address before we start!"
       )
-      |> log_out_user
+      |> redirect(to: ~p"/users/awaiting-confirmation")
       |> halt()
     end
   end

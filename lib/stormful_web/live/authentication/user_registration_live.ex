@@ -6,18 +6,17 @@ defmodule StormfulWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        Register for an account
-        <:subtitle>
-          Already registered?
-          <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
-            Log in
+    <div class="flex flex-col gap-12 mx-auto max-w-sm">
+      <div class="flex flex-col items-center gap-4 text-lg text-center">
+        <.cool_header big_name="Join us" />
+        <p>
+          Already in? You can
+          <.link navigate={~p"/users/log_in"} class="font-semibold text-yellow-400 hover:underline">
+            log in
           </.link>
-          to your account now.
-        </:subtitle>
-      </.header>
-
+          to your account here.
+        </p>
+      </div>
       <.simple_form
         for={@form}
         id="registration_form"
@@ -35,7 +34,7 @@ defmodule StormfulWeb.UserRegistrationLive do
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full bg-zinc-600">
+          <.button phx-disable-with="Creating account..." class="w-full">
             Create an account
           </.button>
         </:actions>

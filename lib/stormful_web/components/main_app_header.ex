@@ -15,12 +15,21 @@ defmodule StormfulWeb.MainAppHeader do
           <div class="flex items-center justify-between">
             <!-- Stormful Brand -->
             <span class="text-xl font-bold">
-              <.link
-                navigate={~p"/journal"}
-                class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
-              >
-                Stormful
-              </.link>
+              <%= if @current_user do %>
+                <.link
+                  navigate={~p"/journal"}
+                  class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
+                >
+                  Stormful
+                </.link>
+              <% else %>
+                <.link
+                  navigate={~p"/"}
+                  class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
+                >
+                  Stormful
+                </.link>
+              <% end %>
             </span>
             
     <!-- User menu - mobile -->
@@ -43,6 +52,19 @@ defmodule StormfulWeb.MainAppHeader do
                   <.icon name="hero-arrow-right-on-rectangle" class="w-5 h-5 text-yellow-400" />
                 </.link>
               </div>
+            <% else %>
+              <ul class="flex items-center gap-4">
+                <li>
+                  <.link href={~p"/users/register"} class="text-[0.8125rem] leading-6 font-semibold">
+                    Register
+                  </.link>
+                </li>
+                <li>
+                  <.link href={~p"/users/log_in"} class="text-[0.8125rem] leading-6 font-semibold">
+                    Log in
+                  </.link>
+                </li>
+              </ul>
             <% end %>
           </div>
           
@@ -85,12 +107,21 @@ defmodule StormfulWeb.MainAppHeader do
           <div class="flex items-center gap-6">
             <!-- Stormful Brand -->
             <span class="text-2xl font-bold">
-              <.link
-                navigate={~p"/journal"}
-                class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
-              >
-                Stormful
-              </.link>
+              <%= if @current_user do %>
+                <.link
+                  navigate={~p"/journal"}
+                  class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
+                >
+                  Stormful
+                </.link>
+              <% else %>
+                <.link
+                  navigate={~p"/"}
+                  class="text-blue-400 hover:text-yellow-400 transition-colors duration-300"
+                >
+                  Stormful
+                </.link>
+              <% end %>
             </span>
             
     <!-- Main Navigation -->
@@ -162,6 +193,19 @@ defmodule StormfulWeb.MainAppHeader do
                 />
               </.link>
             </div>
+          <% else %>
+            <ul class="flex items-center gap-6 text-sm leading-6 font-semibold">
+              <li>
+                <.link href={~p"/users/register"}>
+                  Register
+                </.link>
+              </li>
+              <li>
+                <.link href={~p"/users/log_in"}>
+                  Log in
+                </.link>
+              </li>
+            </ul>
           <% end %>
         </div>
       </div>

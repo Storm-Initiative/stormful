@@ -1,54 +1,45 @@
 <.flash_group flash={@flash} />
 
-<div class="flex flex-col items-center gap-4 mt-4">
-  <h1 class="text-4xl underline font-bold">
-    Stormful
-  </h1>
-  <div class="grid grid-cols-2 self-start p-16 grow justify-around w-full">
-    <div class="flex flex-col items-center">
-      <p class="flex flex-col items-center">
-        <h1 class="text-3xl font-extrabold px-16">
-          Into the storm!
-        </h1>
-        <.animated_lightning_svg />
-      </p>
-      <div class="flex flex-col gap-2 mt-4">
-        <p>
-          Welcome, to the heart of the storm!
-        </p>
-        <p>
-          Let your thoughts flow freely, talk to yourself.
-        </p>
-        <p>
-          This part of the site does not look well so that the insides may be better (:
-        </p>
-      </div>
-    </div>
+<div class="flex flex-col gap-12 mt-4 mx-6 sm:mx-24">
+  <div class="text-4xl underline font-bold flex flex-col items-center gap-4">
+    <h1>Stormful</h1>
+    <.animated_lightning_svg />
+  </div>
+  <div class="flex justify-center">
+    <ul class="flex items-center gap-4 text-xl leading-6 font-semibold">
+      <li>
+        <.link href={~p"/users/register"}>
+          Register
+        </.link>
+      </li>
+      <li>
+        <.link href={~p"/users/log_in"}>
+          Log in
+        </.link>
+      </li>
+    </ul>
+  </div>
 
-    <div class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2">
-        <p class="font-bold text-xl underline">
-          What's this?
-        </p>
-        <p class="text-wrap w-full">
-          Stormful is a fully open source software that aims to provide a brand new noting experience. It needs to be as fast as you think, and it needs to be so simple that you wouldn't feel like you're commiting anything while doing this. In other words, you store your thoughts here, and it'll make sure to not get in your way!
-        </p>
-      </div>
-      <div class="flex flex-col gap-2">
-        <p class="font-bold text-xl underline">
-          Wanna get involved?
-        </p>
-        <p class="text-wrap w-full">
-          You may help the project with your valuable contributions through the
-          <a
-            target="_blank"
-            href="https://github.com/spookyorange/stormful"
-            class="underline font-semibold text-black"
-          >
-            official Stormful GitHub repository
-          </a>
-        </p>
-      </div>
+  <div class="flex flex-col gap-4">
+    <h2 class="text-2xl font-semibold">Welcome, welcome to Stormful!</h2>
+
+    <div class="flex flex-col gap-2 text-lg">
+      <p>
+        This is the place where you can unleash your ideas at the speed of your thoughts. You think and you write and that's it.
+      </p>
+      <p>
+        No 1231243234214 interfaces, no lots of buttons; simple, basic and very very powerful.
+      </p>
+      <p>
+        Link to repo:
+        <a
+          class="text-yellow-400 font-semibold"
+          target="_blank"
+          href="https://github.com/Storm-Initiative/stormful"
+        >
+          GitHub: Storm-Initiative/stormful
+        </a>
+      </p>
     </div>
   </div>
 </div>

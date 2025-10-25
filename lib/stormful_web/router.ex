@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Router do
+  alias Authentication.UserAwaitingConfirmation
   use StormfulWeb, :router
 
   import StormfulWeb.UserAuth
@@ -139,6 +140,7 @@ defmodule StormfulWeb.Router do
 
     live_session :current_user,
       on_mount: [{StormfulWeb.UserAuth, :mount_current_user}] do
+      live "/users/awaiting-confirmation", UserAwaitingConfirmation
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end

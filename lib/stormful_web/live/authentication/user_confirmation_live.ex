@@ -5,8 +5,10 @@ defmodule StormfulWeb.UserConfirmationLive do
 
   def render(%{live_action: :edit} = assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">Confirm Account</.header>
+    <div class="flex flex-col gap-12 mx-auto max-w-sm">
+      <div class="flex flex-col items-center gap-4 text-lg text-center">
+        <.cool_header big_name="Confirm Account" />
+      </div>
 
       <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
@@ -25,7 +27,9 @@ defmodule StormfulWeb.UserConfirmationLive do
 
   def mount(%{"token" => token}, _session, socket) do
     form = to_form(%{"token" => token}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: nil]}
+
+    {:ok, assign(socket, form: form),
+     temporary_assigns: [form: nil], layout: {StormfulWeb.Layouts, :awaiting_confirmation}}
   end
 
   # Do not log in the user after confirmation to avoid a

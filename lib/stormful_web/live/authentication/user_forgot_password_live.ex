@@ -5,11 +5,14 @@ defmodule StormfulWeb.UserForgotPasswordLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        Forgot your password?
-        <:subtitle>We'll send a password reset link to your inbox</:subtitle>
-      </.header>
+    <div class="flex flex-col gap-12 mx-auto max-w-sm">
+      <div class="flex flex-col items-center gap-4 text-lg text-center">
+        <.cool_header big_name="Forgot your password?" />
+
+        <p>
+          It happens, no worries, let us recover from this.
+        </p>
+      </div>
 
       <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
         <.input field={@form[:email]} type="email" placeholder="Email" required />
@@ -40,7 +43,7 @@ defmodule StormfulWeb.UserForgotPasswordLive do
     end
 
     info =
-      "If your email is in our system, you will receive instructions to reset your password shortly."
+      "If your email is in our system, we'll send you instructions to reset your password shortly."
 
     {:noreply,
      socket
