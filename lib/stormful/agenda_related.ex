@@ -4,6 +4,9 @@ defmodule Stormful.AgendaRelated do
   """
 
   import Ecto.Query, warn: false
+  alias Stormful.Utils.TimeRelated
+  alias Stormful.ProfileManagement
+  alias Stormful.Accounts
   alias Stormful.Repo
 
   alias Stormful.Agenda.Agenda
@@ -21,8 +24,8 @@ defmodule Stormful.AgendaRelated do
   def list_agendas(user_id) do
     Repo.all(
       from a in Agenda,
-      where: a.user_id == ^user_id,
-      order_by: [desc: a.inserted_at]
+        where: a.user_id == ^user_id,
+        order_by: [desc: a.inserted_at]
     )
   end
 
@@ -43,7 +46,7 @@ defmodule Stormful.AgendaRelated do
   def get_agenda!(user_id, id) do
     Repo.one!(
       from a in Agenda,
-      where: a.user_id == ^user_id and a.id == ^id
+        where: a.user_id == ^user_id and a.id == ^id
     )
   end
 
@@ -63,6 +66,26 @@ defmodule Stormful.AgendaRelated do
     %Agenda{}
     |> Agenda.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  get the user's agenda, if user ain't got one, just create one.
+  we gonna handle timing issues with fucking up the user's agendas and confusing them for now.
+  cuz I don't want to spend my very precious time on this niche case
+  """
+  def get_users_agenda(user_id) do
+    agenda =
+      Repo.one(
+        from a in Agenda,
+          where: a.user_id == ^user_id
+      )
+
+    if agenda do
+      agenda
+    else
+      create_agenda(%{user_id: user_id, name: "Initial"})
+      nil
+    end
   end
 
   @doc """
@@ -123,11 +146,11 @@ defmodule Stormful.AgendaRelated do
       [%AgendaEvent{}, ...]
 
   """
-  def list_agenda_events(agenda_id) do
+  def list_agenda_events(user_id, agenda_id) do
     Repo.all(
       from ae in AgendaEvent,
-      where: ae.agenda_id == ^agenda_id,
-      order_by: [asc: ae.event_date]
+        where: ae.agenda_id == ^agenda_id and ae.user_id == ^user_id,
+        order_by: [asc: ae.event_date]
     )
   end
 
@@ -148,7 +171,7 @@ defmodule Stormful.AgendaRelated do
   def get_agenda_event!(user_id, id) do
     Repo.one!(
       from ae in AgendaEvent,
-      where: ae.user_id == ^user_id and ae.id == ^id
+        where: ae.user_id == ^user_id and ae.id == ^id
     )
   end
 
@@ -164,9 +187,18 @@ defmodule Stormful.AgendaRelated do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_agenda_event(attrs \\ %{}) do
+  def create_agenda_event(user_id, attrs \\ %{}) do
+    user = Accounts.get_user!(user_id)
+    user_timezone = ProfileManagement.get_user_timezone(user)
+
+    event_date = TimeRelated.fix_date_for_timezone(attrs["event_date"], user_timezone)
+
     %AgendaEvent{}
-    |> AgendaEvent.changeset(attrs)
+    |> AgendaEvent.changeset(
+      attrs
+      |> Map.put("user_id", user_id)
+      |> Map.put("event_date", event_date)
+    )
     |> Repo.insert()
   end
 
