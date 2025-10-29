@@ -5,14 +5,20 @@
   <div class="mx-auto">
     <div class="bg-black/30 backdrop-blur-sm rounded-xl p-8 flex flex-col gap-6">
       <div class="flex flex-col items-center gap-6">
-        <p :if={@streams.events == []} class="text-lg opacity-70">
-          Your agenda seems very very empty o_0
-        </p>
         <.button phx-click="show-create-modal" class={@streams.events != [] && "self-end"}>
           let's create an event?
         </.button>
       </div>
       <div id="agenda-events" phx-update="stream" class="flex flex-col gap-4">
+        <div
+          class="only:block hidden text-lg opacity-70 text-center bg-slate-900 p-8"
+          id="events-empty"
+        >
+          <p>Your agenda seems very very empty o_0</p>
+          <.button phx-click="show-create-modal" class="mt-4">
+            let's create an event to start!?
+          </.button>
+        </div>
         <div
           :for={{dom_id, event} <- @streams.events}
           id={dom_id}

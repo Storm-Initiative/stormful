@@ -83,8 +83,8 @@ defmodule Stormful.AgendaRelated do
     if agenda do
       agenda
     else
-      create_agenda(%{user_id: user_id, name: "Initial"})
-      nil
+      {:ok, agenda} = create_agenda(%{user_id: user_id, name: "Initial"})
+      agenda
     end
   end
 
