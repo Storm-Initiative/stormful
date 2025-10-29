@@ -1,7 +1,6 @@
 defmodule StormfulWeb.Sensicality.ThoughtsLive do
   alias Stormful.Starring
   alias Stormful.FlowingThoughts
-  alias StormfulWeb.Layouts
 
   alias Stormful.Sensicality
   # alias Stormful.Sensicality.Sensical
@@ -30,7 +29,7 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
      |> assign(winds_loaded: length(winds))
      |> assign(has_more: length(winds) >= @winds_per_scroll)
      |> stream(:plans, plans)
-     |> stream(:winds, winds), layout: {Layouts, :sensicality_center}}
+     |> stream(:winds, winds)}
   end
 
   @impl true

@@ -41,8 +41,7 @@ defmodule StormfulWeb.IntoTheStorm.IndexLive do
      |> assign(sensicalities: sensicalities)
      |> assign(starred_sensicalities: starred_sensicalities)
      |> assign(button_text: Enum.random(button_texts))
-     |> assign(page_title: "Sensicality Center"),
-     layout: {StormfulWeb.Layouts, :sensicality_center}}
+     |> assign(page_title: "Sensicality Center")}
   end
 
   def render(assigns) do

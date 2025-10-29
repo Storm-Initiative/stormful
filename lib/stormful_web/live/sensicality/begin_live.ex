@@ -33,8 +33,7 @@ defmodule StormfulWeb.Sensicality.BeginLive do
     {:ok,
      socket
      |> assign_sensical_form(Sensicality.change_sensical(%Sensical{}))
-     |> assign(:playful_description, description),
-     layout: {StormfulWeb.Layouts, :sensicality_center}}
+     |> assign(:playful_description, description)}
   end
 
   def render(assigns) do

@@ -82,8 +82,8 @@ defmodule StormfulWeb.SensicalCard do
     assigns
     |> assign(
       bg_classes:
-        "bg-gradient-to-r from-indigo-600/20 to-blue-600/20 hover:from-indigo-500/30 hover:to-blue-500/30",
-      border_classes: "border border-indigo-400/20 hover:border-indigo-300/40",
+        "bg-gradient-to-r from-violet-600/20 to-rose-600/20 hover:from-violet-500/30 hover:to-rose-500/30",
+      border_classes: "border border-violet-400/20 hover:border-violet-300/40",
       shadow_classes: "hover:shadow-[0_8px_25px_rgba(99,102,241,0.2)]",
       shine_classes: "via-blue-300/10",
       icon_name: assigns[:icon] || "hero-bolt",
