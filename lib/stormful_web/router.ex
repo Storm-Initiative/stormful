@@ -120,6 +120,7 @@ defmodule StormfulWeb.Router do
       live "/sensicality/:sensical_id/settings", Sensicality.TheSensicalLive, :settings
 
       live "/agenda", AgendaLive.Index, :index
+      live "/agenda/events/new", AgendaLive.Index, :new_event
 
       get "/my_winds/:wind_id", WindController, :singular_wind
 

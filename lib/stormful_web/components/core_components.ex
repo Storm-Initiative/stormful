@@ -40,6 +40,7 @@ defmodule StormfulWeb.CoreComponents do
   attr :show, :boolean, default: false
   attr :on_cancel, JS, default: %JS{}
   attr :class, :string, default: "max-w-md"
+  attr :action_header, :string, default: "~"
   slot :inner_block, required: true
 
   def modal(assigns) do
@@ -74,19 +75,23 @@ defmodule StormfulWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden rounded-lg bg-gray-800 p-6 shadow-2xl ring-1 ring-white/5 transition-all duration-300 ease-out"
+              class="relative hidden rounded-lg bg-gray-800 p-8 shadow-2xl ring-1 ring-white/5 transition-all duration-300 ease-out"
               data-animate-in="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               data-animate-out="opacity-100 translate-y-0 sm:scale-100"
             >
               <!-- Close button -->
-              <button
-                phx-click={JS.exec("data-cancel", to: "##{@id}")}
-                type="button"
-                class="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors"
-                aria-label={gettext("close")}
-              >
-                <.icon name="hero-x-mark-solid" class="h-5 w-5 text-white" />
-              </button>
+              <div class="flex justify-between items-center -mt-2 mb-6">
+                <h3 class="text-2xl font-semibold">
+                  {@action_header}
+                </h3>
+                <button
+                  phx-click={JS.exec("data-cancel", to: "##{@id}")}
+                  type="button"
+                  aria-label={gettext("close")}
+                >
+                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-white" />
+                </button>
+              </div>
               
     <!-- Content -->
               <div id={"#{@id}-content"} class="text-gray-100">

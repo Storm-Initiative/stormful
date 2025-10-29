@@ -1,119 +1,70 @@
 <div class="space-y-6">
-  <.cool_header big_name="Agenda" little_name="Let's see what we got" />
+  <.cool_header big_name="Agenda" little_name="Plans, events, and/or whatever else" />
+  
+<!-- Agenda Display -->
+  <div class="mx-auto">
+    <div class="bg-black/30 backdrop-blur-sm rounded-xl p-8 flex flex-col gap-6">
+      <div class="flex flex-col items-center gap-6">
+        <.button phx-click="show-create-modal" class="self-end">
+          let's create an event?
+        </.button>
+      </div>
+      <div id="agenda-events" phx-update="stream" class="flex flex-col gap-4">
+        <div
+          class="only:block hidden text-lg opacity-70 text-center bg-slate-900 p-8"
+          id="events-empty"
+        >
+          <p>Your agenda seems very very empty o_0</p>
+          <.button phx-click="show-create-modal" class="mt-4">
+            let's create an event to start!?
+          </.button>
+        </div>
+        <div
+          :for={{dom_id, event} <- @streams.events}
+          id={dom_id}
+          class="p-4 bg-slate-900 text-blue-400 flex flex-col gap-4"
+        >
+          <div>
+            {event.the_event}
+          </div>
+          <div class="flex justify-between items-center">
+            <div class="text-yellow-400 text-lg">
+              {event.event_date
+              |> TimeRelated.fix_date_for_timezone(@user_timezone, true)
+              |> Calendar.strftime("%I:%M:%S %p")}
+            </div>
+            <div>
+              <span class="text-green-400">
+                {Calendar.strftime(event.event_date, "%d of %B")}
+              </span>
+              <span class="text-red-600 italic">{Calendar.strftime(event.event_date, "%Y")}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <!-- Create Agenda Button -->
-  <%= if !@has_agenda do %>
-    <div class="flex justify-center">
-      <.button phx-click="show-create-modal" class="px-6 py-3">
-        <.icon name="hero-plus" class="h-5 w-5 mr-2" />
-        Create New Agenda
+<.modal
+  :if={@show_create_modal}
+  show
+  id="create-agenda-event"
+  on_cancel={JS.patch("/agenda")}
+  action_header="Create Event"
+>
+  <.form for={@new_agenda_event_form} id="new-agenda-event-form" phx-submit="save_event">
+    <div class="flex flex-col gap-6">
+      <.input field={@new_agenda_event_form[:the_event]} label="What's the occasion?" />
+      <.input
+        field={@new_agenda_event_form[:event_date]}
+        type="datetime-local"
+        label="When's it happening?"
+      />
+
+      <.button>
+        Create
       </.button>
     </div>
-  <% end %>
-
-  <!-- Agenda Display -->
-  <div class="max-w-6xl mx-auto">
-    <%= if Enum.empty?(@agendas) do %>
-      <div class="text-center py-12">
-        <div class="text-gray-400 mb-4">
-          <.icon name="hero-calendar" class="h-16 w-16 mx-auto" />
-        </div>
-        <h3 class="text-lg font-semibold text-white mb-2">No agendas yet</h3>
-        <p class="text-gray-400">Create your first agenda to get started with scheduling!</p>
-      </div>
-    <% else %>
-      <%= for agenda <- @agendas do %>
-        <div class="bg-black/30 backdrop-blur-sm border border-red-500/20 rounded-xl p-8 hover:border-red-400/30 transition-all duration-300">
-          <!-- Header Section -->
-          <div class="mb-8">
-            <div class="flex items-center gap-4 mb-2">
-              <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                <.icon name="hero-calendar-days" class="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <h2 class="text-2xl font-bold text-white">
-                  <%= agenda.name %>
-                </h2>
-                <p class="text-gray-400 text-sm">
-                  Created <%= Calendar.strftime(agenda.inserted_at, "%B %d, %Y") %>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Events Section -->
-          <div class="space-y-6">
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold text-white flex items-center gap-2 mb-4">
-                <.icon name="hero-clock" class="h-4 w-4 text-red-400" />
-                Events (<%= length(agenda.events) %>)
-              </h3>
-
-              <%= if Enum.empty?(agenda.events) do %>
-                <div class="text-center py-8 bg-black/20 rounded-lg border border-gray-600/20">
-                  <div class="text-gray-500 mb-3">
-                    <.icon name="hero-calendar" class="h-8 w-8 mx-auto" />
-                  </div>
-                  <p class="text-gray-400">No events scheduled</p>
-                </div>
-              <% else %>
-                <div class="space-y-3">
-                  <%= for event <- agenda.events do %>
-                    <div class="bg-black/20 border border-gray-600/20 rounded-lg p-4">
-                      <h4 class="text-white font-medium mb-1">
-                        <%= event.the_event %>
-                      </h4>
-                      <div class="flex items-center gap-4 text-sm text-gray-400">
-                        <span class="flex items-center gap-1">
-                          <.icon name="hero-calendar" class="h-3 w-3" />
-                          <%= Calendar.strftime(event.event_date, "%B %d, %Y") %>
-                        </span>
-                        <span class="flex items-center gap-1">
-                          <.icon name="hero-clock" class="h-3 w-3" />
-                          <%= Calendar.strftime(event.event_date, "%I:%M %p") %>
-                        </span>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
-  </div>
-
-  <!-- Create Agenda Modal -->
-  <.modal id="create-agenda-modal" :if={@show_create_modal} show on_cancel={JS.push("hide-create-modal")}>
-    <div class="space-y-6 p-4">
-      <div class="text-center p-4">
-        <h2 class="text-2xl font-bold text-white mb-2">Create New Agenda</h2>
-        <p class="text-gray-400">Give your agenda a name to get started</p>
-      </div>
-
-      <.simple_form
-        for={@agenda_form}
-        phx-submit="create-agenda"
-        class="space-y-4"
-      >
-        <.input
-          field={@agenda_form[:name]}
-          type="text"
-          label="Agenda Name"
-          placeholder="e.g., Work Schedule, Personal Events, Team Meetings"
-          required
-        />
-
-        <:actions>
-          <.button type="button" phx-click="hide-create-modal" class="bg-gray-600 hover:bg-gray-500">
-            Cancel
-          </.button>
-          <.button type="submit">
-            Create Agenda
-          </.button>
-        </:actions>
-      </.simple_form>
-    </div>
-  </.modal>
-</div>
+  </.form>
+</.modal>

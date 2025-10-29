@@ -38,7 +38,7 @@ defmodule StormfulWeb.Api.AgendaController do
 
       [agenda | _] ->
         # User has agenda - fetch events (already ordered by event_date at DB level)
-        events = AgendaRelated.list_agenda_events(agenda.id)
+        events = AgendaRelated.list_agenda_events(user.id, agenda.id)
 
         events_data = Enum.map(events, &AgendaEvent.to_json/1)
 

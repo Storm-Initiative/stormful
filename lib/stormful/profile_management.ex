@@ -100,19 +100,15 @@ defmodule Stormful.ProfileManagement do
 
   ## Examples
 
-      iex> get_user_timezone(user_id)
+      iex> get_user_timezone(user)
       "America/New_York"
 
-      iex> get_user_timezone(invalid_user_id)
+      iex> get_user_timezone(invalid_user)
       "UTC"
 
   """
-  def get_user_timezone(user_id) do
-    case get_user_profile(user_id) do
-      # Default to UTC if no profile
-      nil -> "UTC"
-      # Use profile timezone or UTC fallback
-      profile -> profile.timezone || "UTC"
-    end
+  def get_user_timezone(%User{} = user) do
+    profile = get_or_create_user_profile(user)
+    profile.timezone
   end
 end
