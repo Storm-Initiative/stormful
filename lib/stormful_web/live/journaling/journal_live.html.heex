@@ -21,7 +21,7 @@
     <div class="mt-4">
       <div class="flex flex-col gap-4 sm:gap-4" id="journal-winds" phx-update="stream">
         <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
-          <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
+          <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} user_timezone={@user_timezone} />
         </div>
       </div>
 
@@ -63,7 +63,7 @@
         Your space for free-flowing thoughts
       </p>
       <p class="text-white/50 text-sm sm:text-base max-w-lg mx-auto px-4">
-        No structure, no rules - just pure expression. Create your first journal to get started.
+        No structure, no rules - just thoughts. Create your journal and let's write some stuff.
       </p>
     </div>
 

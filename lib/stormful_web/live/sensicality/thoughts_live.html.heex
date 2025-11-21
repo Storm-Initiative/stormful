@@ -43,7 +43,7 @@
   <div class="flex flex-col gap-4" id="winds" phx-hook="WindScroller" phx-update="stream">
     <div :for={{dom_id, wind} <- @streams.winds} dom_id={dom_id} id={dom_id}>
       <!-- todo => make in this wind context -->
-      <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} />
+      <StormfulWeb.Thoughts.ThoughtLive.wind wind={wind} user_timezone={@user_timezone} />
     </div>
 
     <%!-- Infinite scroll trigger --%>

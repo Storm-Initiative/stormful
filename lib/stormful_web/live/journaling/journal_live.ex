@@ -11,6 +11,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
+    user_timezone = ProfileManagement.get_user_timezone(current_user)
 
     # Get user's profile for greeting phrase
     profile = ProfileManagement.get_or_create_user_profile(current_user)
@@ -40,6 +41,7 @@ defmodule StormfulWeb.Journaling.JournalLive do
 
         {:ok,
          socket
+         |> assign(user_timezone: user_timezone)
          |> assign(journal: journal)
          |> assign(journals: journals)
          |> assign(current_user: current_user)

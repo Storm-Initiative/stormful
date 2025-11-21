@@ -1,4 +1,5 @@
 defmodule StormfulWeb.Sensicality.ThoughtsLive do
+  alias Stormful.ProfileManagement
   alias Stormful.Starring
   alias Stormful.FlowingThoughts
 
@@ -12,6 +13,7 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
   @impl true
   def mount(params, _session, socket) do
     current_user = socket.assigns.current_user
+    user_timezone = ProfileManagement.get_user_timezone(current_user)
 
     sensical = Sensicality.get_sensical!(current_user.id, params["sensical_id"])
     winds = get_sensical_winds_paginated(sensical.id, current_user.id, 0)
@@ -23,6 +25,7 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
 
     {:ok,
      socket
+     |> assign(user_timezone: user_timezone)
      |> assign(sensical: sensical)
      |> assign(is_starred: starred_sensicality != nil)
      |> assign_pagination_state()
