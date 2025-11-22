@@ -4,6 +4,7 @@ defmodule Stormful.ProfileManagement do
   """
 
   import Ecto.Query, warn: false
+  alias Stormful.Sensicality
   alias Stormful.Repo
   alias Stormful.Accounts.{User, Profile}
   use Phoenix.VerifiedRoutes, endpoint: StormfulWeb.Endpoint, router: StormfulWeb.Router
@@ -137,5 +138,28 @@ defmodule Stormful.ProfileManagement do
     else
       ~p"/journal"
     end
+  end
+
+  @doc """
+  update the latest_visited_sensical_id of the user
+
+  ## Examples
+
+      iex> update_the_latest_visited_sensical_id_of_the_user(user, 1)
+      nil
+
+      iex> update_the_latest_visited_sensical_id_of_the_user(user, 2)
+      raises Ecto.NoResultsError
+  """
+  def update_the_latest_visited_sensical_id_of_the_user(%User{} = user, sensical_id) do
+    profile = get_or_create_user_profile(user)
+
+    # does the user have access to this sensical
+    sensical = Sensicality.get_sensical!(user.id, sensical_id)
+
+    # if didn't crash now(NoResultsError), we got the authorization right
+    update_user_profile(profile, %{latest_visited_sensical_id: "#{sensical.id}"})
+
+    nil
   end
 end

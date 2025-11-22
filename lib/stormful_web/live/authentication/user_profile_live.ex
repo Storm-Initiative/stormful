@@ -124,9 +124,11 @@ defmodule StormfulWeb.UserProfileLive do
               />
 
               <:actions>
-                <.button phx-disable-with="Saving..." class="mt-4">
-                  <.icon name="hero-check-circle" class="h-5 w-5 mr-2" /> Save Greeting
-                </.button>
+                <div class="w-full flex justify-end">
+                  <.button phx-disable-with="Saving..." class="mt-4">
+                    <.icon name="hero-check-circle" class="h-5 w-5 mr-2" /> Save
+                  </.button>
+                </div>
               </:actions>
             </.simple_form>
           </div>

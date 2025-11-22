@@ -19,6 +19,8 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
     winds = get_sensical_winds_paginated(sensical.id, current_user.id, 0)
     plans = sensical.plans
 
+    ProfileManagement.update_the_latest_visited_sensical_id_of_the_user(current_user, sensical.id)
+
     starred_sensicality = Starring.get_starred_sensical(current_user.id, sensical.id)
 
     FlowingThoughts.subscribe_to_sensical(sensical)
