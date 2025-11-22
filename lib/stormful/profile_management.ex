@@ -6,6 +6,7 @@ defmodule Stormful.ProfileManagement do
   import Ecto.Query, warn: false
   alias Stormful.Repo
   alias Stormful.Accounts.{User, Profile}
+  use Phoenix.VerifiedRoutes, endpoint: StormfulWeb.Endpoint, router: StormfulWeb.Router
 
   @doc """
   Gets a user's profile by user ID.
@@ -110,5 +111,31 @@ defmodule Stormful.ProfileManagement do
   def get_user_timezone(%User{} = user) do
     profile = get_or_create_user_profile(user)
     profile.timezone
+  end
+
+  @doc """
+  get where the user should be landed at, as a ~p sigil-ed str whatever
+
+  ## Examples
+
+      iex> get_the_destination_for_the_user_to_land(user)
+      ~p"/journal"
+
+      iex> get_the_destination_for_the_user_to_land(user)
+      ~p"/sensicality/1"
+  """
+  def get_the_destination_for_the_user_to_land(%User{} = user) do
+    profile = get_or_create_user_profile(user)
+    lands_initially = profile.lands_initially
+    latest_visited_sensical_id = profile.latest_visited_sensical_id
+
+    if(
+      lands_initially == "latest_sensical" &&
+        latest_visited_sensical_id
+    ) do
+      ~p"/sensicality/#{latest_visited_sensical_id}"
+    else
+      ~p"/journal"
+    end
   end
 end
