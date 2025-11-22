@@ -4,8 +4,10 @@ defmodule Stormful.ProfileManagement do
   """
 
   import Ecto.Query, warn: false
+  alias Stormful.Sensicality
   alias Stormful.Repo
   alias Stormful.Accounts.{User, Profile}
+  use Phoenix.VerifiedRoutes, endpoint: StormfulWeb.Endpoint, router: StormfulWeb.Router
 
   @doc """
   Gets a user's profile by user ID.
@@ -110,5 +112,54 @@ defmodule Stormful.ProfileManagement do
   def get_user_timezone(%User{} = user) do
     profile = get_or_create_user_profile(user)
     profile.timezone
+  end
+
+  @doc """
+  get where the user should be landed at, as a ~p sigil-ed str whatever
+
+  ## Examples
+
+      iex> get_the_destination_for_the_user_to_land(user)
+      ~p"/journal"
+
+      iex> get_the_destination_for_the_user_to_land(user)
+      ~p"/sensicality/1"
+  """
+  def get_the_destination_for_the_user_to_land(%User{} = user) do
+    profile = get_or_create_user_profile(user)
+    lands_initially = profile.lands_initially
+    latest_visited_sensical_id = profile.latest_visited_sensical_id
+
+    if(
+      lands_initially == "latest_sensical" &&
+        latest_visited_sensical_id
+    ) do
+      ~p"/sensicality/#{latest_visited_sensical_id}"
+    else
+      ~p"/journal"
+    end
+  end
+
+  @doc """
+  update the latest_visited_sensical_id of the user
+
+  ## Examples
+
+      iex> update_the_latest_visited_sensical_id_of_the_user(user, 1)
+      nil
+
+      iex> update_the_latest_visited_sensical_id_of_the_user(user, 2)
+      raises Ecto.NoResultsError
+  """
+  def update_the_latest_visited_sensical_id_of_the_user(%User{} = user, sensical_id) do
+    profile = get_or_create_user_profile(user)
+
+    # does the user have access to this sensical
+    sensical = Sensicality.get_sensical!(user.id, sensical_id)
+
+    # if didn't crash now(NoResultsError), we got the authorization right
+    update_user_profile(profile, %{latest_visited_sensical_id: "#{sensical.id}"})
+
+    nil
   end
 end

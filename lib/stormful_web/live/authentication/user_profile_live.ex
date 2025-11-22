@@ -89,10 +89,10 @@ defmodule StormfulWeb.UserProfileLive do
           <div class="p-6 border-b border-white/10">
             <h3 class="text-xl font-semibold text-white">
               <.icon name="hero-chat-bubble-left-ellipsis" class="h-5 w-5 inline-block mr-2" />
-              Greeting Phrase
+              General
             </h3>
             <p class="mt-1 text-sm text-white/70">
-              Set a personal greeting that appears in your journal
+              Set a personal greeting that appears in your journal, and the landing to the root logic.
             </p>
           </div>
           <div class="p-6">
@@ -112,13 +112,23 @@ defmodule StormfulWeb.UserProfileLive do
                 maxlength="100"
               />
 
+              <.input
+                field={@profile_form[:lands_initially]}
+                type="select"
+                options={@landing_options}
+                prompt="Select your landing preference"
+                label="Landing initially"
+                help_text="Set where you want to be landed upon going to the root of the app"
+                class="bg-white/5 border-white/10 text-white"
+                required
+              />
+
               <:actions>
-                <p class="text-sm text-white/60">
-                  Your greeting phrase will appear at the top of your journal.
-                </p>
-                <.button phx-disable-with="Saving..." class="mt-4">
-                  <.icon name="hero-check-circle" class="h-5 w-5 mr-2" /> Save Greeting
-                </.button>
+                <div class="w-full flex justify-end">
+                  <.button phx-disable-with="Saving..." class="mt-4">
+                    <.icon name="hero-check-circle" class="h-5 w-5 mr-2" /> Save
+                  </.button>
+                </div>
               </:actions>
             </.simple_form>
           </div>
@@ -134,11 +144,17 @@ defmodule StormfulWeb.UserProfileLive do
 
     profile_changeset = ProfileManagement.change_user_profile(profile)
 
+    landing_options = [
+      Journal: :journal,
+      "Latest Sensical": :latest_sensical
+    ]
+
     socket =
       socket
       |> assign(:profile, profile)
       |> assign(:profile_form, to_form(profile_changeset))
       |> assign(:timezone_options, get_timezone_options())
+      |> assign(:landing_options, landing_options)
 
     {:ok, socket}
   end
