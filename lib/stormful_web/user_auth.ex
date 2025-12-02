@@ -5,6 +5,7 @@ defmodule StormfulWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  alias Stormful.ProfileManagement
   alias Stormful.Accounts
 
   # Make the remember me cookie valid for 60 days.
@@ -152,8 +153,10 @@ defmodule StormfulWeb.UserAuth do
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_current_user(socket, session)
+    socket_assigns = socket.assigns
+    current_user = socket_assigns.current_user
 
-    if socket.assigns.current_user do
+    if current_user do
       {:cont, socket}
     else
       socket =
@@ -196,6 +199,14 @@ defmodule StormfulWeb.UserAuth do
     end
   end
 
+  def assign_thematic_colors_for_profile(conn, profile) do
+    if profile.style == "despair" do
+      conn |> assign(:main_bg_color, "bg-green-900") |> assign(:main_text_color, "text-white")
+    else
+      conn |> assign(:main_bg_color, "bg-indigo-900") |> assign(:main_text_color, "text-white")
+    end
+  end
+
   @doc """
   Used for routes that require the user to be authenticated.
 
@@ -203,8 +214,13 @@ defmodule StormfulWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
-      conn
+    conn_assigns = conn.assigns
+    current_user = conn_assigns[:current_user]
+
+    if current_user do
+      # we can also just create a profile if not already got one here
+      profile = ProfileManagement.get_or_create_user_profile(current_user)
+      conn |> assign(:profile, profile) |> assign_thematic_colors_for_profile(profile)
     else
       conn
       |> put_flash(:error, "You must log in to access this page.")
