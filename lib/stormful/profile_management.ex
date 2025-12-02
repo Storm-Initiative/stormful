@@ -130,10 +130,8 @@ defmodule Stormful.ProfileManagement do
     lands_initially = profile.lands_initially
     latest_visited_sensical_id = profile.latest_visited_sensical_id
 
-    if(
-      lands_initially == "latest_sensical" &&
-        latest_visited_sensical_id
-    ) do
+    if lands_initially == "latest_sensical" &&
+         latest_visited_sensical_id do
       ~p"/sensicality/#{latest_visited_sensical_id}"
     else
       ~p"/journal"

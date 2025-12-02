@@ -123,6 +123,17 @@ defmodule StormfulWeb.UserProfileLive do
                 required
               />
 
+              <.input
+                field={@profile_form[:style]}
+                type="select"
+                options={@style_options}
+                prompt="Select the style for the app"
+                label="Style"
+                help_text="Set the general color theme for the app"
+                class="bg-white/5 border-white/10 text-white"
+                required
+              />
+
               <:actions>
                 <div class="w-full flex justify-end">
                   <.button phx-disable-with="Saving..." class="mt-4">
@@ -149,12 +160,18 @@ defmodule StormfulWeb.UserProfileLive do
       "Latest Sensical": :latest_sensical
     ]
 
+    style_options = [
+      Storm: :storm,
+      Despair: :despair
+    ]
+
     socket =
       socket
       |> assign(:profile, profile)
       |> assign(:profile_form, to_form(profile_changeset))
       |> assign(:timezone_options, get_timezone_options())
       |> assign(:landing_options, landing_options)
+      |> assign(:style_options, style_options)
 
     {:ok, socket}
   end
@@ -171,12 +188,11 @@ defmodule StormfulWeb.UserProfileLive do
 
   def handle_event("update_profile", %{"profile" => profile_params}, socket) do
     case ProfileManagement.update_user_profile(socket.assigns.profile, profile_params) do
-      {:ok, profile} ->
+      {:ok, _profile} ->
         {:noreply,
          socket
          |> put_flash(:info, "Profile settings updated successfully!")
-         |> assign(:profile, profile)
-         |> assign(:profile_form, to_form(ProfileManagement.change_user_profile(profile)))}
+         |> redirect(to: ~p"/users/profile")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :profile_form, to_form(changeset))}
