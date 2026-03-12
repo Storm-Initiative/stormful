@@ -10,13 +10,31 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
 
   @winds_per_scroll 20
 
+  def get_tempest_source_link(tempest_starter_wind) do
+    if is_nil(tempest_starter_wind) do
+      nil
+    else
+      sensical_id = tempest_starter_wind.sensical_id
+
+      if sensical_id do
+        ~p"/sensicality/#{sensical_id}"
+      else
+        ~p"/journal"
+      end
+    end
+  end
+
   @impl true
   def mount(params, _session, socket) do
     current_user = socket.assigns.current_user
     user_timezone = ProfileManagement.get_user_timezone(current_user)
 
     sensical = Sensicality.get_sensical!(current_user.id, params["sensical_id"])
+    is_tempest = not is_nil(sensical.is_tempest_of)
+    tempest_source_link = get_tempest_source_link(sensical.is_tempest_of)
+
     winds = get_sensical_winds_paginated(sensical.id, current_user.id, 0)
+
     plans = sensical.plans
 
     ProfileManagement.update_the_latest_visited_sensical_id_of_the_user(current_user, sensical.id)
@@ -30,6 +48,8 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
      |> assign(user_timezone: user_timezone)
      |> assign(sensical: sensical)
      |> assign(is_starred: starred_sensicality != nil)
+     |> assign(is_tempest: is_tempest)
+     |> assign(tempest_source_link: tempest_source_link)
      |> assign_pagination_state()
      |> assign(winds_loaded: length(winds))
      |> assign(has_more: length(winds) >= @winds_per_scroll)
@@ -84,6 +104,18 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
      |> stream_insert(:winds, wind, at: 0)}
 
     #  |> push_event("scroll-to-latest-wind", %{})}
+  end
+
+  @impl true
+  def handle_event("create-tempest-from-wind", %{"wind-id" => wind_id}, socket) do
+    current_user = socket.assigns.current_user
+
+    {:ok, tempest} = FlowingThoughts.make_wind_into_tempest(current_user.id, wind_id)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Tempest initialized ⚡")
+     |> push_navigate(to: ~p"/sensicality/#{tempest.id}")}
   end
 
   @impl true

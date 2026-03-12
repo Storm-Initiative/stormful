@@ -11,12 +11,25 @@ defmodule StormfulWeb.Thoughts.ThoughtLive do
     <div class="relative group bg-black/70 rounded-lg hover:bg-black/50 transition-all duration-300 px-6 py-6 group">
       <div class="flex items-center gap-3 overflow-x-auto">
         <div class="flex-shrink-0 flex gap-2 items-center">
-          <a target="_blank" href={~p"/my_winds/#{@wind}"}>
-            <.icon
-              name="hero-bolt"
-              class="w-8 h-8 text-blue-400/70 group-hover:text-blue-300 transition-colors"
-            />
-          </a>
+          <%= if @wind.tempest do %>
+            <.link navigate={~p"/sensicality/#{@wind.tempest.id}"}>
+              <.icon
+                name="hero-bolt-solid"
+                class="w-8 h-8 text-blue-400/70 group-hover:text-blue-300 transition-colors"
+              />
+            </.link>
+          <% else %>
+            <div
+              phx-click="create-tempest-from-wind"
+              phx-value-wind-id={@wind.id}
+              class="cursor-pointer"
+            >
+              <.icon
+                name="hero-bolt"
+                class="w-8 h-8 text-blue-400/70 group-hover:text-blue-300 transition-colors"
+              />
+            </div>
+          <% end %>
           <div
             id={"wind-clipboard-#{@wind.id}"}
             phx-hook="Clipboard"

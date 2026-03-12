@@ -12,6 +12,18 @@ defmodule Stormful.Sensicality do
 
   alias Stormful.Sensicality.Sensical
 
+  def base_query_for_listing_for_user(user_id) do
+    Sensical |> where([s], s.user_id == ^user_id)
+  end
+
+  def base_query_for_non_tempests_for_user(user_id) do
+    base_query_for_listing_for_user(user_id) |> where([s], is_nil(s.is_tempest_of_id))
+  end
+
+  def base_query_for_tempests_for_user(user_id) do
+    base_query_for_listing_for_user(user_id) |> where([s], not is_nil(s.is_tempest_of_id))
+  end
+
   @doc """
   Returns the list of sensicals.
 
@@ -22,9 +34,10 @@ defmodule Stormful.Sensicality do
 
   """
   def list_sensicals(user_id) do
-    Repo.all(
-      from s in Sensical, where: s.user_id == ^user_id, order_by: [desc: s.inserted_at], limit: 20
-    )
+    base_query_for_non_tempests_for_user(user_id)
+    |> order_by([s], desc: s.inserted_at)
+    |> limit(20)
+    |> Repo.all()
   end
 
   @doc """
@@ -47,17 +60,21 @@ defmodule Stormful.Sensicality do
     if with_plans do
       plans_query = from p in Plan, order_by: p.inserted_at
       star_query = from(t in StarredSensical)
+      tempest_ofs_query = FlowingThoughts.get_base_query_user_boxed(user_id)
 
-      Repo.one!(
-        from s in Sensical,
-          where: s.user_id == ^user_id and s.id == ^id,
-          preload: [plans: ^plans_query, starred_sensical: ^star_query]
+      base_query_for_listing_for_user(user_id)
+      |> where([w], w.id == ^id)
+      |> preload([w],
+        plans: ^plans_query,
+        starred_sensical: ^star_query,
+        is_tempest_of: ^tempest_ofs_query
       )
+      |> Repo.one!()
     else
-      Repo.one!(
-        from s in Sensical,
-          where: s.user_id == ^user_id and s.id == ^id
-      )
+      base_query_for_listing_for_user(user_id)
+      |> where([w], w.id == ^id)
+      |> preload([w], [:is_tempest_of])
+      |> Repo.one!()
     end
   end
 

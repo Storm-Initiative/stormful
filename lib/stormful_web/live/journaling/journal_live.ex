@@ -74,6 +74,18 @@ defmodule StormfulWeb.Journaling.JournalLive do
   end
 
   @impl true
+  def handle_event("create-tempest-from-wind", %{"wind-id" => wind_id}, socket) do
+    current_user = socket.assigns.current_user
+
+    {:ok, tempest} = FlowingThoughts.make_wind_into_tempest(current_user.id, wind_id)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Tempest initialized ⚡")
+     |> push_navigate(to: ~p"/sensicality/#{tempest.id}")}
+  end
+
+  @impl true
   def handle_event("create_new_journal", _, socket) do
     {:noreply,
      socket

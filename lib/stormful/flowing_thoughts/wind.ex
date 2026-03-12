@@ -11,10 +11,12 @@ defmodule Stormful.FlowingThoughts.Wind do
   schema "winds" do
     field :words, :string
     field :long_words, :string
+
     belongs_to :user, User
     belongs_to :sensical, Sensical
     belongs_to :journal, Journal, type: Ecto.ULID
 
+    has_one :tempest, Sensical, foreign_key: :is_tempest_of_id, references: :id
     timestamps(type: :utc_datetime)
   end
 

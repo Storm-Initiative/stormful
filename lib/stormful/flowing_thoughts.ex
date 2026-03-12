@@ -8,7 +8,18 @@ defmodule Stormful.FlowingThoughts do
   require Logger
 
   alias Stormful.FlowingThoughts.Wind
+  alias Stormful.Sensicality
   @pubsub Stormful.PubSub
+
+  def get_base_query_user_boxed(user_id) do
+    Wind |> where([w], w.user_id == ^user_id)
+  end
+
+  def get_base_query_sensical_boxed(user_id, sensical_id) do
+    get_base_query_user_boxed(user_id)
+    |> where([w], w.sensical_id == ^sensical_id)
+    |> preload([:tempest])
+  end
 
   @doc """
   Returns the list of winds. For a sensical, authorized by user_id
@@ -23,8 +34,7 @@ defmodule Stormful.FlowingThoughts do
 
   """
   def list_winds_by_sensical(sensical_id, user_id, sort_order \\ :asc) do
-    Wind
-    |> where([w], w.user_id == ^user_id and w.sensical_id == ^sensical_id)
+    get_base_query_sensical_boxed(user_id, sensical_id)
     |> order_by([w], {^sort_order, w.id})
     |> Repo.all()
   end
@@ -38,8 +48,7 @@ defmodule Stormful.FlowingThoughts do
     offset = Keyword.get(opts, :offset, 0)
 
     query =
-      Wind
-      |> where([w], w.user_id == ^user_id and w.sensical_id == ^sensical_id)
+      get_base_query_sensical_boxed(user_id, sensical_id)
       |> order_by([w], {^sort_order, w.id})
       |> limit(^limit)
       |> offset(^offset)
@@ -62,7 +71,10 @@ defmodule Stormful.FlowingThoughts do
 
   """
   def get_wind!(user_id, id) do
-    Repo.one!(from w in Wind, where: w.user_id == ^user_id and w.id == ^id)
+    get_base_query_user_boxed(user_id)
+    |> where([w], w.id == ^id)
+    |> preload([w], [:tempest])
+    |> Repo.one!()
   end
 
   @doc """
@@ -78,13 +90,18 @@ defmodule Stormful.FlowingThoughts do
 
   """
   def create_wind(user, attrs \\ %{}) do
-    Map.put(attrs, :user_id, user.id)
+    user_id = user.id
+
+    Map.put(attrs, :user_id, user_id)
 
     with {:ok, wind} <-
            %Wind{}
            |> Wind.changeset(attrs)
            |> Repo.insert() do
       # Broadcast to appropriate channel based on whether it's for a sensical or journal
+
+      wind = get_wind!(user_id, wind.id)
+
       if wind.sensical_id do
         Phoenix.PubSub.broadcast!(@pubsub, topic(wind.sensical_id), {:new_wind, wind})
       end
@@ -152,6 +169,12 @@ defmodule Stormful.FlowingThoughts do
     Phoenix.PubSub.unsubscribe(@pubsub, topic(sensical.id))
   end
 
+  def get_base_query_journal_boxed(user_id, journal_id) do
+    get_base_query_user_boxed(user_id)
+    |> where([w], w.journal_id == ^journal_id)
+    |> preload([:tempest])
+  end
+
   @doc """
   Returns the list of winds for a journal. Authorized by user_id
 
@@ -166,8 +189,7 @@ defmodule Stormful.FlowingThoughts do
   """
   def list_winds_by_journal(journal_id, user_id, sort_order \\ :asc, limit \\ nil) do
     query =
-      Wind
-      |> where([w], w.user_id == ^user_id and w.journal_id == ^journal_id)
+      get_base_query_journal_boxed(user_id, journal_id)
       |> order_by([w], {^sort_order, w.id})
 
     query = if limit, do: limit(query, ^limit), else: query
@@ -184,8 +206,7 @@ defmodule Stormful.FlowingThoughts do
     offset = Keyword.get(opts, :offset, 0)
 
     query =
-      Wind
-      |> where([w], w.user_id == ^user_id and w.journal_id == ^journal_id)
+      get_base_query_journal_boxed(user_id, journal_id)
       |> order_by([w], {^sort_order, w.id})
       |> limit(^limit)
       |> offset(^offset)
@@ -203,4 +224,27 @@ defmodule Stormful.FlowingThoughts do
 
   defp topic(sensical_id), do: "sensical_room:#{sensical_id}"
   defp journal_topic(journal_id), do: "journal_room:#{journal_id}"
+
+  def make_wind_into_tempest(user_id, wind_id) do
+    wind = get_wind!(user_id, wind_id)
+
+    {:ok, sensical} =
+      Sensicality.create_sensical(%{
+        title: wind.words,
+        is_tempest_of_id: wind.id,
+        user_id: user_id
+      })
+
+    wind = get_wind!(user_id, wind_id)
+
+    if wind.sensical_id do
+      Phoenix.PubSub.broadcast!(@pubsub, topic(wind.sensical_id), {:new_wind, wind})
+    end
+
+    if wind.journal_id do
+      Phoenix.PubSub.broadcast!(@pubsub, journal_topic(wind.journal_id), {:new_wind, wind})
+    end
+
+    {:ok, sensical}
+  end
 end
