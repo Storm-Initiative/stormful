@@ -14,6 +14,7 @@ defmodule Stormful.Sensicality.Sensical do
     field :summary, :string, default: ""
 
     belongs_to :user, User
+    belongs_to :is_tempest_of, Wind, type: Ecto.ULID
 
     has_many :winds, Wind
     has_many :plans, Plan
@@ -25,7 +26,7 @@ defmodule Stormful.Sensicality.Sensical do
   @doc false
   def changeset(sensical, attrs) do
     sensical
-    |> cast(attrs, [:title, :user_id, :summary])
+    |> cast(attrs, [:title, :user_id, :summary, :is_tempest_of_id])
     |> validate_required([:title])
   end
 end

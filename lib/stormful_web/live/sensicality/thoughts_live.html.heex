@@ -2,13 +2,33 @@
   <%!-- Sensical Header --%>
   <div class="flex justify-between items-center">
     <div class="flex items-center gap-4">
-      <.link
-        navigate={~p"/into-the-storm"}
-        class="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 text-white/60 hover:text-white/90"
-      >
-        <.icon name="hero-arrow-left" class="w-5 h-5" />
-      </.link>
-      <.cool_header big_name={@sensical.title} link={~p'/sensicality/#{@sensical.id}'} />
+      <%= if not @is_tempest do %>
+        <.link
+          navigate={~p"/into-the-storm"}
+          class="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 text-white/60 hover:text-white/90"
+        >
+          <.icon name="hero-arrow-left" class="w-5 h-5" />
+        </.link>
+      <% end %>
+      <%= if @is_tempest do %>
+        <.link
+          navigate={@tempest_source_link}
+          class="p-2 hover:bg-white/10 rounded-lg transition-all duration-300 text-white/60 hover:text-white/90 flex items-center gap-4"
+          title="This is a tempest. Click to go to the place it was started from"
+        >
+          <.icon name="hero-arrow-left" class="w-5 h-5" />
+          <.icon
+            name="hero-bolt-solid"
+            class="w-8 h-8 text-blue-400/70 group-hover:text-blue-300 transition-colors"
+          />
+        </.link>
+        <.cool_header
+          big_name={@sensical.is_tempest_of.words}
+          link={~p'/sensicality/#{@sensical.id}'}
+        />
+      <% else %>
+        <.cool_header big_name={@sensical.title} link={~p'/sensicality/#{@sensical.id}'} />
+      <% end %>
     </div>
     <div>
       <%= if @sensical.starred_sensical do %>
