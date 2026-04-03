@@ -8,6 +8,13 @@
         <.button phx-click="show-create-modal" class="self-end">
           let's create an event?
         </.button>
+        <.button
+          phx-click="fresh-start"
+          class="self-end"
+          data-confirm="This will archive all current events and clear your agenda. Continue?"
+        >
+          fuck this
+        </.button>
       </div>
       <div id="agenda-events" phx-update="stream" class="flex flex-col gap-4">
         <div

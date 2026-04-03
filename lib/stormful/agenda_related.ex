@@ -149,7 +149,8 @@ defmodule Stormful.AgendaRelated do
   def list_agenda_events(user_id, agenda_id) do
     Repo.all(
       from ae in AgendaEvent,
-        where: ae.agenda_id == ^agenda_id and ae.user_id == ^user_id,
+        where:
+          ae.agenda_id == ^agenda_id and ae.user_id == ^user_id and is_nil(ae.archived_at),
         order_by: [asc: ae.event_date]
     )
   end
@@ -187,11 +188,20 @@ defmodule Stormful.AgendaRelated do
       {:error, %Ecto.Changeset{}}
 
   """
+  def create_agenda_event(%{"user_id" => user_id} = attrs) do
+    create_agenda_event(user_id, Map.delete(attrs, "user_id"))
+  end
+
+  def create_agenda_event(%{user_id: user_id} = attrs) do
+    create_agenda_event(user_id, Map.delete(attrs, :user_id))
+  end
+
   def create_agenda_event(user_id, attrs \\ %{}) do
     user = Accounts.get_user!(user_id)
     user_timezone = ProfileManagement.get_user_timezone(user)
 
-    event_date = TimeRelated.fix_date_for_timezone(attrs["event_date"], user_timezone)
+    event_date = attrs |> Map.get("event_date") || Map.get(attrs, :event_date)
+    event_date = TimeRelated.fix_date_for_timezone(event_date, user_timezone)
 
     %AgendaEvent{}
     |> AgendaEvent.changeset(
@@ -234,6 +244,19 @@ defmodule Stormful.AgendaRelated do
   """
   def delete_agenda_event(%AgendaEvent{} = agenda_event) do
     Repo.delete(agenda_event)
+  end
+
+  @doc """
+  Archives all currently active agenda events for the given user and agenda.
+  """
+  def archive_all_agenda_events(user_id, agenda_id) do
+    now = DateTime.utc_now() |> DateTime.truncate(:second)
+
+    from(ae in AgendaEvent,
+      where:
+        ae.agenda_id == ^agenda_id and ae.user_id == ^user_id and is_nil(ae.archived_at)
+    )
+    |> Repo.update_all(set: [archived_at: now])
   end
 
   @doc """

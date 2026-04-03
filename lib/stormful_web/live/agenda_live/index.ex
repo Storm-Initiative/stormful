@@ -39,6 +39,16 @@ defmodule StormfulWeb.AgendaLive.Index do
   end
 
   @impl true
+  def handle_event("fresh-start", _, socket) do
+    current_user_id = socket.assigns.current_user.id
+    current_agenda_id = socket.assigns.agenda.id
+
+    AgendaRelated.archive_all_agenda_events(current_user_id, current_agenda_id)
+
+    {:noreply, socket |> stream(:events, [], reset: true)}
+  end
+
+  @impl true
   def handle_event("save_event", %{"agenda_event" => agenda_event_params}, socket) do
     current_user = socket.assigns.current_user
     current_user_id = current_user.id

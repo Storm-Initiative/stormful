@@ -13,6 +13,7 @@ defmodule Stormful.Agenda.AgendaEvent do
   schema "agenda_events" do
     field :the_event, :string
     field :event_date, :utc_datetime
+    field :archived_at, :utc_datetime
     belongs_to :agenda, Agenda, type: Ecto.ULID
     belongs_to :user, User
 
