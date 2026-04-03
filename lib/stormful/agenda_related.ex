@@ -200,7 +200,7 @@ defmodule Stormful.AgendaRelated do
     user = Accounts.get_user!(user_id)
     user_timezone = ProfileManagement.get_user_timezone(user)
 
-    event_date = attrs |> Map.get("event_date") || Map.get(attrs, :event_date)
+    event_date = Map.get(attrs, "event_date", Map.get(attrs, :event_date))
     event_date = TimeRelated.fix_date_for_timezone(event_date, user_timezone)
 
     %AgendaEvent{}
