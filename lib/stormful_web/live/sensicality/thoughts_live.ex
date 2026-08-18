@@ -86,6 +86,11 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
     #  |> push_event("scroll-to-latest-wind", %{})}
   end
 
+  # just catch any lol
+  def handle_info(_, socket) do
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_event("create-tempest-from-wind", %{"wind-id" => wind_id}, socket) do
     current_user = socket.assigns.current_user

@@ -61,6 +61,11 @@ defmodule StormfulWeb.Journaling.JournalLive do
      |> stream_insert(:winds, wind, at: 0)}
   end
 
+  # just catch any lol
+  def handle_info(_, socket) do
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_event("edit_current_journal", _, socket) do
     if socket.assigns.journal do
