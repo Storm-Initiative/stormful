@@ -75,13 +75,11 @@ defmodule StormfulWeb.StormInput do
           wind_attrs
       end
 
-    case FlowingThoughts.create_wind(socket.assigns.current_user, wind_attrs) do
-      {:ok, _wind} ->
-        {:noreply, socket |> assign_clear_wind_form()}
+    Task.async(fn -> FlowingThoughts.create_wind(socket.assigns.current_user, wind_attrs) end)
 
-      {:error, changeset} ->
-        {:noreply, socket |> assign_wind_form(changeset)}
-    end
+    {:noreply,
+     socket
+     |> assign_clear_wind_form()}
   end
 
   defp assign_wind_form(socket, changeset) do
