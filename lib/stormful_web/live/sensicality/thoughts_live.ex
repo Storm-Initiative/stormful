@@ -63,38 +63,18 @@ defmodule StormfulWeb.Sensicality.ThoughtsLive do
   end
 
   defp apply_action(socket, action, _params) do
-    representable_action_name = Atom.to_string(action) |> String.replace("_", "-")
+    is_read_mode = action == :read_mode
 
-    current_tab_title =
-      representable_action_name |> String.replace("-", " ") |> String.capitalize()
+    user_id = socket.assigns.current_user.id
+    sensical_id = socket.assigns.sensical.id
 
-    little_title_label =
-      Enum.random([
-        "currently @",
-        "@",
-        "right @",
-        "now you are @",
-        "you are viewing the",
-        "you seem to be hangin out @",
-        "hey, this is",
-        "how's the weather at",
-        "no way, you are at",
-        "you know your stuff if you are @",
-        "hi from",
-        "this is",
-        "hmm, you seem to be @"
-      ])
+    if is_read_mode do
+      winds = FlowingThoughts.list_winds_by_sensical(sensical_id, user_id)
 
-    socket
-    |> assign_neededs_for_action(action)
-    |> assign(:current_action, action)
-    |> assign(:current_tab, representable_action_name)
-    |> assign(:current_tab_title, current_tab_title)
-    |> assign(:little_title_label, little_title_label)
-  end
-
-  defp assign_neededs_for_action(socket, _) do
-    socket
+      socket |> assign(read_mode_on: true) |> assign(winds: winds)
+    else
+      socket |> assign(read_mode_on: false)
+    end
   end
 
   @impl true

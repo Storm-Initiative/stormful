@@ -108,6 +108,7 @@ defmodule StormfulWeb.Router do
       live "/sensicality/begin", Sensicality.BeginLive
       live "/sensicality/:sensical_id", Sensicality.ThoughtsLive, :thoughts
       live "/sensicality/:sensical_id/thoughts", Sensicality.ThoughtsLive, :thoughts
+      live "/sensicality/:sensical_id/read-mode", Sensicality.ThoughtsLive, :read_mode
 
       live "/agenda", AgendaLive.Index, :index
       live "/agenda/events/new", AgendaLive.Index, :new_event

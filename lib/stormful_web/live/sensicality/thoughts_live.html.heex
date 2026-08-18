@@ -30,7 +30,14 @@
         <.cool_header big_name={@sensical.title} link={~p'/sensicality/#{@sensical.id}'} />
       <% end %>
     </div>
-    <div>
+    <div class="flex items-center gap-4">
+      <.link
+        class="cursor-pointer hover:scale-110 transition-transform duration-200"
+        phx-click="read_mode_on"
+        patch={~p"/sensicality/#{@sensical.id}/read-mode"}
+      >
+        <.icon name="hero-book-open" class="h-6 w-6 text-blue-400" />
+      </.link>
       <%= if @sensical.starred_sensical do %>
         <div
           class="cursor-pointer hover:scale-110 transition-transform duration-200"
@@ -83,3 +90,20 @@
     </div>
   </div>
 </div>
+
+<.modal
+  :if={@read_mode_on}
+  show
+  id="read-mode-thing"
+  on_cancel={JS.patch("/sensicality/#{@sensical.id}")}
+  action_header="Read Mode"
+  class="max-w-screen"
+>
+  <div class="flex flex-col gap-3 bg-black p-3">
+    <%= for wind <- @winds do %>
+      <div class="overflow-x-scroll">
+        {wind.words}
+      </div>
+    <% end %>
+  </div>
+</.modal>
